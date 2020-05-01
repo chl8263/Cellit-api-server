@@ -6,6 +6,7 @@ plugins {
     id("org.asciidoctor.convert") version "1.5.8"
     kotlin("jvm") version "1.3.71"
     kotlin("plugin.spring") version "1.3.71"
+    kotlin("plugin.jpa") version "1.3.61"
 }
 
 group = "me.ewan"
@@ -23,9 +24,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation("io.github.microutils:kotlin-logging:1.7.9")
+    implementation("org.jetbrains.kotlin:kotlin-noarg")
+    implementation("org.jetbrains.kotlin:kotlin-allopen")
+
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

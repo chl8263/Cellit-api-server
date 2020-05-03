@@ -11,6 +11,4 @@ class LogInOutController {
         println("login controller")
         return "/login"
     }
-
-
 }

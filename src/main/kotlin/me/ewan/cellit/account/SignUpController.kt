@@ -15,8 +15,10 @@ class SignUpController {
     fun signUpForm() : String = "/signUp"
 
     @PostMapping
-    fun Account(@ModelAttribute account: Account) : String{
-        val savedAccount = accountService.createAccount(account)
+    fun signUpProcess(@ModelAttribute account: Account) : String{
+        account.role = "USER"
+        accountService.createAccount(account)
+        println("signUpProcess")
         return "redirect:/"
     }
 }

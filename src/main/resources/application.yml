@@ -1,6 +1,11 @@
-#spring:
-#  resources:
-#    static-locations: classpath:/static/
-#    add-mappings: true
-#  mvc:
-#    static-path-pattern: /static/**
+project:
+  base-dir: file:///C:/Users/gyun/IdeaProjects/cellit
+
+spring:
+  resources:
+    static-locations: ${project.base-dir}/src/main/resources/static/
+    cache:
+      period: 0
+  thymeleaf:
+    prefix: ${project.base-dir}/src/main/resources/templates/
+    cache: false

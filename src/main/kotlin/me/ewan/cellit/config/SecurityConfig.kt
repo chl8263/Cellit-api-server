@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.http.SessionCreationPolicy
 import java.lang.Exception
 
 @Configuration
@@ -14,8 +15,14 @@ import java.lang.Exception
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
-    override fun configure(web: WebSecurity) {
-        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+    override fun configure(web: WebSecurity?) {
+        web?.let {
+            //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            it.ignoring()
+                    .antMatchers("/assets/**")
+                    .antMatchers("/dist/**")
+                    .antMatchers("/images/**")
+        }
     }
 
     @Throws(Exception::class)
@@ -26,8 +33,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                     .mvcMatchers("/admin").hasRole("ADMIN")
                     .anyRequest().authenticated()
 
-            it.httpBasic()
             it.formLogin()
+                    .loginPage("/login").permitAll()
+
+            it.httpBasic()
+
+            it.sessionManagement()
+                    .sessionFixation()
+                    .changeSessionId()
+                    .invalidSessionUrl("/login")
+                    .maximumSessions(1)
+                    .maxSessionsPreventsLogin(true)
+
+            it.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+
         }
     }
 }

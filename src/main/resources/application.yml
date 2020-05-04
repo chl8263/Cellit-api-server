@@ -1,6 +1,7 @@
+
+#Thymeleaf hot loading
 project:
   base-dir: file:///C:/Users/gyun/IdeaProjects/cellit
-
 spring:
   resources:
     static-locations: ${project.base-dir}/src/main/resources/static/
@@ -9,3 +10,8 @@ spring:
   thymeleaf:
     prefix: ${project.base-dir}/src/main/resources/templates/
     cache: false
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true

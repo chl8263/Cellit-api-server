@@ -35,15 +35,14 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity?) {
         http?.let {
             it.authorizeRequests()
-                    .mvcMatchers("/signUp", "/login**").permitAll()
-
+                    .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
                     .mvcMatchers("/admin").hasRole("ADMIN")
                     .anyRequest().authenticated()
 
             it.formLogin()
-                    .loginPage("/login").permitAll()
+                    .loginPage("/login")
                     .failureHandler(authenticationFailureHandler())
-
+                    .permitAll()
             it.httpBasic()
 
             it.sessionManagement()

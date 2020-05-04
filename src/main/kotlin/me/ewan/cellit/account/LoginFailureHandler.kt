@@ -15,13 +15,9 @@ class LoginFailureHandler : AuthenticationFailureHandler {
 
     override fun onAuthenticationFailure(request: HttpServletRequest?, response: HttpServletResponse?, exception: AuthenticationException?) {
 
-//        response?.status = HttpStatus.UNAUTHORIZED.value()
-//        response?.contentType = "text/html; charset=UTF-8"
-//        val data = mapOf("exception" to exception?.message.toString())
-//        response?.outputStream?.println(objectMapper.writeValueAsString(data))
-        println(exception?.message)
-        //request?.setAttribute("error", exception?.message)
-        //request?.getRequestDispatcher("/login?error=sex")?.forward(request, response)
-        response?.sendRedirect("/login?error=${exception?.message}")
+        request?.setAttribute("errorMsg", exception?.message)
+        request?.setAttribute("username", request.getParameter("username"))
+
+        request?.getRequestDispatcher("/loginError")?.forward(request, response)
     }
 }

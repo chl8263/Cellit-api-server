@@ -1,17 +1,19 @@
 package me.ewan.cellit.config
 
 import me.ewan.cellit.account.LoginFailureHandler
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.session.SessionRegistry
+import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
-import java.lang.Exception
+import org.springframework.security.web.session.HttpSessionEventPublisher
+import kotlin.Any as Any1
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +21,13 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun authenticationFailureHandler() : AuthenticationFailureHandler = LoginFailureHandler()
+
+    @Bean
+    fun sessionRegistry() : SessionRegistry = SessionRegistryImpl()
+
+    @Bean
+    fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher> = ServletListenerRegistrationBean(HttpSessionEventPublisher())
+
 
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
@@ -43,7 +52,14 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                     .loginPage("/login")
                     .failureHandler(authenticationFailureHandler())
                     .permitAll()
+
             it.httpBasic()
+
+            it.logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/")
+//                    .deleteCookies("JSESSIONID")
+//                    .invalidateHttpSession(true)
 
             it.sessionManagement()
                     .sessionFixation()

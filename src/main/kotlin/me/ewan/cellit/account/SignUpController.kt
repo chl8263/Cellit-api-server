@@ -15,6 +15,7 @@ class SignUpController {
     @GetMapping
     fun signUpForm() : String = "/signUp"
 
+
     @PostMapping
     fun signUpProcess(@ModelAttribute account: Account, model: Model) : String{
         account.role = "USER"

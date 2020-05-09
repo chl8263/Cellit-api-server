@@ -1,19 +1,21 @@
 package me.ewan.cellit.account
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import me.ewan.cellit.cell.AccountCell
+import me.ewan.cellit.cell.Cell
+import javax.persistence.*
 
 @Entity
 data class Account(
         @Id @GeneratedValue
-        var id: Long? = null,
+        var accountId: Long? = null,
 
         @Column(unique = true)
         var username: String,
 
         var password: String,
 
-        var role: String? = null
+        var role: String? = null,
+
+        @OneToMany(mappedBy = "account")
+        var cells: MutableSet<AccountCell> = mutableSetOf()
 )

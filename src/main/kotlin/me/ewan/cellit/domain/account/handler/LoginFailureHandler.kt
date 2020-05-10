@@ -1,8 +1,7 @@
-package me.ewan.cellit.account
+package me.ewan.cellit.domain.account.handler
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import javax.servlet.http.HttpServletRequest

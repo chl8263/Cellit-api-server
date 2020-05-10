@@ -1,5 +1,7 @@
-package me.ewan.cellit.account
+package me.ewan.cellit.domain.account
 
+import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.service.AccountService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -51,7 +53,7 @@ class AccountControllerTest {
                 .andExpect(unauthenticated())
     }
 
-    private fun newAccount(name: String, pw: String) : Account{
+    private fun newAccount(name: String, pw: String) : Account {
 
         val savedAccount = accountService.createAccount(Account(username = name, password = pw))
 

@@ -1,10 +1,12 @@
-package me.ewan.cellit.account
+package me.ewan.cellit.domain.account
 
 import me.ewan.cellit.TestConfiguration
-import me.ewan.cellit.cell.AccountCell
-import me.ewan.cellit.cell.AccountCellRepository
-import me.ewan.cellit.cell.Cell
-import me.ewan.cellit.cell.CellRepository
+import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.dao.AccountRepository
+import me.ewan.cellit.domain.cell.domain.AccountCell
+import me.ewan.cellit.domain.cell.dao.AccountCellRepository
+import me.ewan.cellit.domain.cell.domain.Cell
+import me.ewan.cellit.domain.cell.dao.CellRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -58,14 +60,14 @@ class AccountRepositoryTest {
         assertThat(savedAccountCell.cell).isEqualTo(savedCell)
     }
 
-    private fun createAccount(name: String, pw: String, role: String = "USER"): Account{
+    private fun createAccount(name: String, pw: String, role: String = "USER"): Account {
         var account = Account(username = name, password = pw, role = role)
 
         var savedAccount =  accountRepository.save(account)
         return savedAccount
     }
 
-    private fun createCell(name: String): Cell{
+    private fun createCell(name: String): Cell {
         var cell = Cell(cellName = name)
 
         var savedCell =  cellRepository.save(cell)

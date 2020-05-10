@@ -1,6 +1,6 @@
-package me.ewan.cellit.config
+package me.ewan.cellit.global.config
 
-import me.ewan.cellit.account.LoginFailureHandler
+import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +13,6 @@ import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.session.HttpSessionEventPublisher
-import kotlin.Any as Any1
 
 @Configuration
 @EnableWebSecurity

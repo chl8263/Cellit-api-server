@@ -1,6 +1,6 @@
-package me.ewan.cellit.cell
+package me.ewan.cellit.domain.cell.domain
 
-import me.ewan.cellit.account.Account
+import me.ewan.cellit.domain.account.domain.Account
 import javax.persistence.*
 
 @Entity

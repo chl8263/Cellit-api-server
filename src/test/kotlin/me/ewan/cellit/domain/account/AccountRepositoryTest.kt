@@ -3,6 +3,7 @@ package me.ewan.cellit.domain.account
 import me.ewan.cellit.TestConfiguration
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
+import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.cell.domain.AccountCell
 import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.domain.Cell
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Import
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
-@Import(TestConfiguration::class)
 class AccountRepositoryTest {
 
     @Autowired
@@ -60,7 +60,7 @@ class AccountRepositoryTest {
         assertThat(savedAccountCell.cell).isEqualTo(savedCell)
     }
 
-    private fun createAccount(name: String, pw: String, role: String = "USER"): Account {
+    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
         var account = Account(username = name, password = pw, role = role)
 
         var savedAccount =  accountRepository.save(account)

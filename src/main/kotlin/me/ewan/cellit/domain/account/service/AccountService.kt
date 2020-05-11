@@ -2,6 +2,7 @@ package me.ewan.cellit.domain.account.service
 
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
+import me.ewan.cellit.domain.account.domain.AccountRole
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
@@ -27,14 +28,14 @@ class AccountService : UserDetailsService {
         return User.builder()
                 .username(account.username)
                 .password(account.password)
-                .roles(account.role)
+                .roles(account.role.toString())
                 .build()
-
     }
+
 
     fun createAccount(account: Account) : Account {
         account.password = passWordEncoder.encode(account.password)
-        account.role = "USER"
+        account.role = AccountRole.USER
         val savedAccount = accountRepository.save(account)
         return savedAccount
     }

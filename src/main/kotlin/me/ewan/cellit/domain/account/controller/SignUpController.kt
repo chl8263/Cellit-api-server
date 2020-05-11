@@ -1,6 +1,7 @@
 package me.ewan.cellit.domain.account.controller
 
 import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -20,7 +21,7 @@ class SignUpController {
 
     @PostMapping
     fun signUpProcess(@ModelAttribute account: Account, model: Model) : String{
-        account.role = "USER"
+        account.role = AccountRole.USER
 
         try {
             accountService.createAccount(account)

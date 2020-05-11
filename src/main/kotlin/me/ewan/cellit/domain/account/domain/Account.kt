@@ -13,7 +13,9 @@ data class Account(
 
         var password: String,
 
-        var role: String? = null,
+        //@ElementCollection(fetch = FetchType.EAGER)
+        @Enumerated(EnumType.STRING)
+        var role: AccountRole = AccountRole.USER,
 
         @OneToMany(mappedBy = "account")
         var cells: MutableSet<AccountCell> = mutableSetOf()

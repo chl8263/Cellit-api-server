@@ -1,9 +1,14 @@
 package me.ewan.cellit.global.config
 
 import me.ewan.cellit.domain.account.handler.LoginFailureHandler
+import me.ewan.cellit.domain.account.service.AccountService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -11,12 +16,29 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.provider.token.TokenStore
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.session.HttpSessionEventPublisher
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig : WebSecurityConfigurerAdapter() {
+
+    @Autowired
+    lateinit var accountService: AccountService
+
+    @Autowired
+    lateinit var passwordEncoder: PasswordEncoder
+
+    @Bean
+    fun tokenStore(): TokenStore = InMemoryTokenStore()
+
+    @Bean
+    override fun authenticationManagerBean(): AuthenticationManager {
+        return super.authenticationManagerBean()
+    }
 
     @Bean
     fun authenticationFailureHandler() : AuthenticationFailureHandler = LoginFailureHandler()
@@ -27,6 +49,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Bean
     fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher> = ServletListenerRegistrationBean(HttpSessionEventPublisher())
 
+    override fun configure(auth: AuthenticationManagerBuilder?) {
+        auth?.userDetailsService(accountService)
+                ?.passwordEncoder(passwordEncoder)
+    }
 
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
@@ -45,6 +71,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             it.authorizeRequests()
                     .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
                     .mvcMatchers("/admin").hasRole("ADMIN")
+                    .mvcMatchers(HttpMethod.GET,"/cells/**").anonymous()
                     .anyRequest().authenticated()
 
             it.formLogin()

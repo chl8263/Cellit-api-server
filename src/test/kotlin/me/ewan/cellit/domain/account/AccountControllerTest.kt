@@ -2,6 +2,7 @@ package me.ewan.cellit.domain.account
 
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.common.BaseControllerTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,14 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated
 
-
-@ExtendWith(SpringExtension::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-class AccountControllerTest {
-
-    @Autowired
-    lateinit var mockMvc: MockMvc
+class AccountControllerTest : BaseControllerTest() {
 
     @Autowired
     lateinit var accountService: AccountService
@@ -30,12 +24,12 @@ class AccountControllerTest {
     @Test
     fun loginSuccess(){
         //Given
-        val name = "ewan2"
+        val name = "test_ewan"
         val pw = "123"
         val account = newAccount(name, pw)
 
         //When & Then
-        mockMvc.perform(formLogin().user(account.username).password(account.password))
+        mockMvc.perform(formLogin().user(account.username).password(pw))
                 .andDo(print())
                 .andExpect(authenticated())
     }

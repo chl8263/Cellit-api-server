@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 
 @RestController
@@ -17,6 +18,12 @@ class CellController {
         val uri = linkTo(methodOn(CellController::class.java).getCellsFromAccountId()).slash("1").toUri()
 
         return ResponseEntity.created(uri).build()
+    }
+
+    @PostMapping("/cells/1")
+    fun testCellPost(): String{
+
+        return "test"
     }
 
 }

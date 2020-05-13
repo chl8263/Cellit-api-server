@@ -1,5 +1,8 @@
-package me.ewan.cellit.account
+package me.ewan.cellit.domain.account
 
+import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.common.BaseControllerTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,21 +12,11 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
-
-@ExtendWith(SpringExtension::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-class AccountControllerTest {
-
-    @Autowired
-    lateinit var mockMvc: MockMvc
+class AccountControllerTest : BaseControllerTest() {
 
     @Autowired
     lateinit var accountService: AccountService
@@ -31,12 +24,12 @@ class AccountControllerTest {
     @Test
     fun loginSuccess(){
         //Given
-        val name = "ewan2"
+        val name = "test_ewan"
         val pw = "123"
         val account = newAccount(name, pw)
 
         //When & Then
-        mockMvc.perform(formLogin().user(account.username).password(account.password))
+        mockMvc.perform(formLogin().user(account.username).password(pw))
                 .andDo(print())
                 .andExpect(authenticated())
     }
@@ -54,7 +47,7 @@ class AccountControllerTest {
                 .andExpect(unauthenticated())
     }
 
-    private fun newAccount(name: String, pw: String) : Account{
+    private fun newAccount(name: String, pw: String) : Account {
 
         val savedAccount = accountService.createAccount(Account(username = name, password = pw))
 

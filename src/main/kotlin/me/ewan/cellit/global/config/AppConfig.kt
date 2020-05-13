@@ -1,4 +1,4 @@
-package me.ewan.cellit.config
+package me.ewan.cellit.global.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean

@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    hikari.jdbc-url: jdbc:h2:mem:testdb
+
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
+#        format_sql: true
+#        show-sql: true
+#        dialect: org.hibernate.dialect.H2Dialect
+#  output:
+#    ansi:
+#      enabled: always

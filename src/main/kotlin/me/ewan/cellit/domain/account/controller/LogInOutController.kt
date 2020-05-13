@@ -1,4 +1,4 @@
-package me.ewan.cellit.account
+package me.ewan.cellit.domain.account.controller
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

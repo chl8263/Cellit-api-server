@@ -10,6 +10,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 
 class AuthServerConfigTest : BaseControllerTest() {
 
@@ -32,6 +33,7 @@ class AuthServerConfigTest : BaseControllerTest() {
                 .param("password", password)
                 .param("grant_type", "password")
         )
+                .andDo(print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("access_token").exists())
     }

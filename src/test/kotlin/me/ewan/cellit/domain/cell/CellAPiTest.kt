@@ -4,6 +4,7 @@ import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.common.BaseControllerTest
+import me.ewan.cellit.global.common.AppProperties
 import org.aspectj.lang.annotation.Before
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -18,8 +19,10 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer
@@ -34,14 +37,13 @@ class CellAPiTest : BaseControllerTest() {
     @Autowired
     lateinit var accountService: AccountService
 
+    @Autowired
+    private lateinit var appProperties: AppProperties
 
-//    @BeforeEach
-//    fun setup() {
-//        mockMvc = MockMvcBuilders
-//                .webAppContextSetup(context)
-//                .apply<DefaultMockMvcBuilder>(springSecurity())
-//                .build()
-//    }
+    @BeforeEach
+    fun deleteRepository(){
+        //TODO : Must clean repository data for each test
+    }
 
     @Test
     fun getCellsFromAccountId(){
@@ -51,23 +53,13 @@ class CellAPiTest : BaseControllerTest() {
         val pw = "123"
         val savedAccount = createAccount(name = name, pw = pw)
 
-        //when
-        mockMvc.perform(formLogin().user(name).password(pw))
+        mockMvc.perform(get("/cells/1").with(user("ewan").password("123").roles("USER")))
                 .andDo(print())
-                .andExpect(authenticated())
-
-//        mockMvc.perform(get("/cells/1"))
-//                .andDo(print())
-//                .andExpect(status().isOk)
+                .andExpect(status().isOk)
     }
 
     @Test
     fun testPostCell(){
-
-        //given
-//        val name = "test_ewan"
-//        val pw = "123"
-//        val savedAccount = createAccount(name = name, pw = pw)
 
         //when
         mockMvc.perform(post("/api/cells/1").with(user("ewan").password("123").roles("USER"))
@@ -79,12 +71,12 @@ class CellAPiTest : BaseControllerTest() {
 
     private fun getAccessToken(): String {
         //Given
-        val username = "test_ewan"
-        val password = "123"
+        val username = appProperties.testUserUsername
+        val password = appProperties.testUserPassword
         val savedAccount = createAccount(name = username, pw = password)
 
-        val clientID = "myApp"
-        val clientSecret = "pass"
+        val clientID = appProperties.clientId
+        val clientSecret = appProperties.clientSecret
 
         val perform: ResultActions = this.mockMvc.perform(post("/oauth/token")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic(clientID, clientSecret))

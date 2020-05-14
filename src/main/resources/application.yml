@@ -2,11 +2,14 @@
 #Thymeleaf hot loading
 project:
   base-dir: file:///C:/Users/gyun/IdeaProjects/cellit
+
 spring:
+
   datasource:
     url: jdbc:postgresql://10.0.0.204:5432/postgres
     username: postgres
     password: 930324
+
   resources:
     static-locations: ${project.base-dir}/src/main/resources/static/
     cache:
@@ -14,11 +17,13 @@ spring:
   thymeleaf:
     prefix: ${project.base-dir}/src/main/resources/templates/
     cache: false
+
   http:
     encoding:
       charset: UTF-8
       enabled: true
       force: true
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -28,6 +33,18 @@ spring:
   output:
     ansi:
       enabled: always
+
+my-app:
+  adminUsername: admin
+  adminPassword: 123
+  userUsername: ewan
+  userPassword: 123
+  testAdminUsername: test_ewan_admin
+  testAdminPassword: 123
+  testUserUsername: test_ewan_user
+  testUserPassword: 123
+  clientId: myApp
+  clientSecret: pass
 
 logging:
   level:

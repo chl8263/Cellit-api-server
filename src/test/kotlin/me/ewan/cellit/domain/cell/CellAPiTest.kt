@@ -5,7 +5,6 @@ import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.common.BaseControllerTest
 import me.ewan.cellit.global.common.AppProperties
-import org.aspectj.lang.annotation.Before
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,19 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin
+import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
-import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.test.web.servlet.setup.MockMvcConfigurer
 import org.springframework.web.context.WebApplicationContext
 
 
@@ -41,32 +41,49 @@ class CellAPiTest : BaseControllerTest() {
     private lateinit var appProperties: AppProperties
 
     @BeforeEach
-    fun deleteRepository(){
+    fun setUp(){
         //TODO : Must clean repository data for each test
+
+//        println("a<><><>><><><><><><><><><><><><>")
+//        mockMvc = MockMvcBuilders
+//                .webAppContextSetup(context)
+//                .apply<DefaultMockMvcBuilder>(springSecurity())
+//                .build()
     }
 
     @Test
     fun getCellsFromAccountId(){
 
         //given
-        val name = "test_ewan"
-        val pw = "123"
-        val savedAccount = createAccount(name = name, pw = pw)
+        val name = appProperties.testUserUsername
+        val pw = appProperties.testUserPassword
+        //val savedAccount = createAccount(name = name, pw = pw)
 
-        mockMvc.perform(get("/cells/1").with(user("ewan").password("123").roles("USER")))
+        mockMvc.perform(get("/api/cells/1").with(user(name).password(pw).roles("USER"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+        )
                 .andDo(print())
                 .andExpect(status().isOk)
     }
 
+
     @Test
+    //@WithUserDetails("test_ewan_user")
+    @WithMockUser("ewan")
     fun testPostCell(){
 
+        val name = "ewan"
+        val pw = "123"
+        //val savedAccount = createAccount(name = name, pw = pw)
+
         //when
-        mockMvc.perform(post("/api/cells/1").with(user("ewan").password("123").roles("USER"))
+        //mockMvc.perform(post("/api/cells/a").with(user("ewan").password("123").roles("USER"))
+        mockMvc.perform(post("/api/cells/a")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .with(csrf())
         )
                 .andDo(print())
-                .andExpect(authenticated())
+                .andExpect(jsonPath("test").exists());
     }
 
     private fun getAccessToken(): String {

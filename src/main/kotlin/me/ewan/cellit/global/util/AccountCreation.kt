@@ -21,6 +21,7 @@ class AccountCreation : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         println(appProperties.clientId)
+        //accountService.createAccount(Account(username = appProperties.testUserUsername, password = appProperties.testUserPassword))
         accountService.createAccount(Account(username = appProperties.userUsername, password = appProperties.userPassword))
     }
 }

@@ -39,10 +39,10 @@ my-app:
   adminPassword: 123
   userUsername: ewan
   userPassword: 123
-  testAdminUsername: test_ewan_admin
-  testAdminPassword: 123
-  testUserUsername: test_ewan_user
-  testUserPassword: 123
+#  testAdminUsername: test_ewan_admin
+#  testAdminPassword: 123
+#  testUserUsername: test_ewan_user
+#  testUserPassword: 123
   clientId: myApp
   clientSecret: pass
 

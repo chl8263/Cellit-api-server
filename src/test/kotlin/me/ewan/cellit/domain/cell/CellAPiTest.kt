@@ -1,5 +1,6 @@
 package me.ewan.cellit.domain.cell
 
+import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
@@ -28,7 +29,11 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-
+/**
+ * Test class for the {@link CellController}
+ *
+ * @author Ewan
+ */
 class CellAPiTest : BaseControllerTest() {
 
     @Autowired
@@ -38,46 +43,42 @@ class CellAPiTest : BaseControllerTest() {
     lateinit var accountService: AccountService
 
     @Autowired
+    lateinit var accountRepository: AccountRepository
+
+    @Autowired
     private lateinit var appProperties: AppProperties
 
     @BeforeEach
     fun setUp(){
-        //TODO : Must clean repository data for each test
+        accountRepository.deleteAll()
 
-//        println("a<><><>><><><><><><><><><><><><>")
-//        mockMvc = MockMvcBuilders
-//                .webAppContextSetup(context)
-//                .apply<DefaultMockMvcBuilder>(springSecurity())
-//                .build()
+        val username = appProperties.testUserUsername
+        val password = appProperties.testUserPassword
+        createAccount(name = username, pw = password)
     }
 
     @Test
-    fun getCellsFromAccountId(){
+    fun `get cells list with account id`(){
 
         //given
         val name = appProperties.testUserUsername
         val pw = appProperties.testUserPassword
-        //val savedAccount = createAccount(name = name, pw = pw)
 
         mockMvc.perform(get("/api/cells/1").with(user(name).password(pw).roles("USER"))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
         )
                 .andDo(print())
-                .andExpect(status().isOk)
+                .andExpect(status().isCreated) // 201 created
+                .andExpect(jsonPath("_link.self").exists())
+                .andExpect(jsonPath("_link.query-events").exists())
+                .andExpect(jsonPath("_link.update-events").exists())
     }
 
-
     @Test
-    //@WithUserDetails("test_ewan_user")
-    @WithMockUser("ewan")
-    fun testPostCell(){
-
-        val name = "ewan"
-        val pw = "123"
-        //val savedAccount = createAccount(name = name, pw = pw)
+    @WithMockUser("test_ewan_user")
+    fun `test Post cell`(){
 
         //when
-        //mockMvc.perform(post("/api/cells/a").with(user("ewan").password("123").roles("USER"))
         mockMvc.perform(post("/api/cells/a")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .with(csrf())
@@ -90,7 +91,7 @@ class CellAPiTest : BaseControllerTest() {
         //Given
         val username = appProperties.testUserUsername
         val password = appProperties.testUserPassword
-        val savedAccount = createAccount(name = username, pw = password)
+        //val savedAccount = createAccount(name = username, pw = password)
 
         val clientID = appProperties.clientId
         val clientSecret = appProperties.clientSecret

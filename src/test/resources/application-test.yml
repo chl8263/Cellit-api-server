@@ -6,6 +6,12 @@ spring:
     driver-class-name: org.h2.Driver
     hikari.jdbc-url: jdbc:h2:mem:testdb
 
+my-app:
+  testAdminUsername: test_ewan_admin
+  testAdminPassword: 123
+  testUserUsername: test_ewan_user
+  testUserPassword: 123
+
 #  jpa:
 #    hibernate:
 #      ddl-auto: create

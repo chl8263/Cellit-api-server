@@ -9,7 +9,7 @@ data class Account(
         var accountId: Long? = null,
 
         @Column(unique = true)
-        var username: String,
+        var accountname: String,
 
         var password: String,
 
@@ -17,6 +17,6 @@ data class Account(
         @Enumerated(EnumType.STRING)
         var role: AccountRole = AccountRole.USER,
 
-        @OneToMany(mappedBy = "account")
-        var cells: MutableSet<AccountCell> = mutableSetOf()
+        @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+        var accountCells: MutableList<AccountCell> = mutableListOf()
 )

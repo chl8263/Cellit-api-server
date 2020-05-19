@@ -35,9 +35,9 @@ spring:
       enabled: always
 
 my-app:
-  adminUsername: admin
+  adminAccountname: admin
   adminPassword: 123
-  userUsername: ewan
+  userAccountName: ewan
   userPassword: 123
 #  testAdminUsername: test_ewan_admin
 #  testAdminPassword: 123

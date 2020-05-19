@@ -4,6 +4,10 @@ import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.cell.dao.AccountCellRepository
+import me.ewan.cellit.domain.cell.dao.CellRepository
+import me.ewan.cellit.domain.cell.domain.AccountCell
+import me.ewan.cellit.domain.cell.domain.Cell
 import me.ewan.cellit.domain.common.BaseControllerTest
 import me.ewan.cellit.global.common.AppProperties
 import org.junit.jupiter.api.BeforeAll
@@ -46,28 +50,41 @@ class CellAPiTest : BaseControllerTest() {
     lateinit var accountRepository: AccountRepository
 
     @Autowired
-    private lateinit var appProperties: AppProperties
+    private lateinit var cellRepository: CellRepository
+
+    @Autowired
+    private lateinit var accountCellRepository: AccountCellRepository
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         accountRepository.deleteAll()
-
-        val username = appProperties.testUserUsername
-        val password = appProperties.testUserPassword
-        createAccount(name = username, pw = password)
     }
 
     @Test
-    fun `get cells list with account id`(){
+    @WithMockUser("test_ewan_user")
+    fun `get cells list with account id`() {
 
         //given
-        val name = appProperties.testUserUsername
+        val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
+        val savedAccount = createAccount(name = name, pw = pw)
 
-        mockMvc.perform(get("/api/cells/1").with(user(name).password(pw).roles("USER"))
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-        )
+        val cellName = "IT team"
+        val savedCell = createCell(cellName)
+
+        val accountCell = AccountCell(account = savedAccount, cell = savedCell)
+        val savedAccountCell = accountCellRepository.save(accountCell)
+
+//        val reCallAccount = accountRepository.findByAccountname(name)
+//
+        //println("/api/account/${savedAccount.accountId}/cells")
+
+        //when
+        mockMvc.perform(get("/api/account/${savedAccount.accountname}/cells"))
+        //mockMvc.perform(get("/api/account/1/cells"))
                 .andDo(print())
+
+        //then
                 .andExpect(status().isCreated) // 201 created
                 .andExpect(jsonPath("_link.self").exists())
                 .andExpect(jsonPath("_link.query-events").exists())
@@ -76,10 +93,14 @@ class CellAPiTest : BaseControllerTest() {
 
     @Test
     @WithMockUser("test_ewan_user")
-    fun `test Post cell`(){
+    fun `test Post cell`() {
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        createAccount(name = name, pw = pw)
 
         //when
-        mockMvc.perform(post("/api/cells/a")
+        mockMvc.perform(post("/api/cells/test")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .with(csrf())
         )
@@ -89,9 +110,9 @@ class CellAPiTest : BaseControllerTest() {
 
     private fun getAccessToken(): String {
         //Given
-        val username = appProperties.testUserUsername
+        val username = appProperties.testUserAccountname
         val password = appProperties.testUserPassword
-        //val savedAccount = createAccount(name = username, pw = password)
+        //createAccount(name = username, pw = password)
 
         val clientID = appProperties.clientId
         val clientSecret = appProperties.clientSecret
@@ -110,9 +131,16 @@ class CellAPiTest : BaseControllerTest() {
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
-        var account = Account(username = name, password = pw, role = role)
+        var account = Account(accountname = name, password = pw, role = role)
 
-        var savedAccount =  accountService.createAccount(account)
+        var savedAccount = accountService.createAccount(account)
         return savedAccount
+    }
+
+    private fun createCell(name: String): Cell {
+        var cell = Cell(cellName = name)
+
+        var savedCell = cellRepository.save(cell)
+        return savedCell
     }
 }

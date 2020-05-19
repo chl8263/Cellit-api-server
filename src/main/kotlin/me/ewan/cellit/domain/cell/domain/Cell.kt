@@ -9,5 +9,5 @@ data class Cell(
        var cellName: String,
 
        @OneToMany(mappedBy = "cell")
-       var accounts: MutableSet<AccountCell> = mutableSetOf()
+       var accounts: MutableList<AccountCell> = mutableListOf()
 )

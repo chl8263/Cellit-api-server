@@ -9,8 +9,4 @@ class CellService {
 
     @Autowired
     lateinit var cellRepository: CellRepository
-
-    fun getCellsWithAccountId(accountId: Long){
-        cellRepository.findById(accountId)
-    }
 }

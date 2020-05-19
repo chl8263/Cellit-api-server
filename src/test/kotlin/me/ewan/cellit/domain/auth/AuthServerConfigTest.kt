@@ -18,13 +18,10 @@ class AuthServerConfigTest : BaseControllerTest() {
     @Autowired
     private lateinit var accountService: AccountService
 
-    @Autowired
-    private lateinit var appProperties: AppProperties
-
     @Test
     fun getAuthToken(){
         //Given
-        val username = appProperties.testUserUsername
+        val username = appProperties.testUserAccountname
         val password = appProperties.testUserPassword
         val savedAccount = createAccount(name = username, pw = password)
 
@@ -43,7 +40,7 @@ class AuthServerConfigTest : BaseControllerTest() {
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
-        var account = Account(username = name, password = pw, role = role)
+        var account = Account(accountname = name, password = pw, role = role)
 
         var savedAccount =  accountService.createAccount(account)
         return savedAccount

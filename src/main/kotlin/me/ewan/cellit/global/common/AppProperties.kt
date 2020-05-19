@@ -14,13 +14,13 @@ class AppProperties{
 
         constructor()
 
-        lateinit var adminUsername: String
+        lateinit var adminAccountname: String
         lateinit var adminPassword: String
-        lateinit var userUsername: String
+        lateinit var userAccountName: String
         lateinit var userPassword: String
-        lateinit var testAdminUsername: String
+        lateinit var testAdminAccountname: String
         lateinit var testAdminPassword: String
-        lateinit var testUserUsername: String
+        lateinit var testUserAccountname: String
         lateinit var testUserPassword: String
         lateinit var clientId: String
         lateinit var clientSecret: String

@@ -33,12 +33,12 @@ class AccountRepositoryTest {
     @Test
     fun createAccount(){
         //given
-        val username = "ewan"
+        val accountname = "ewan"
         val pw = "123"
-        val account = createAccount(username, pw)
+        val account = createAccount(accountname, pw)
 
         //then
-        assertThat(account.username).isEqualTo(username)
+        assertThat(account.accountname).isEqualTo(accountname)
     }
 
     @Test
@@ -47,21 +47,21 @@ class AccountRepositoryTest {
         val cellName = "workout"
         val savedCell = createCell(name = cellName)
 
-        val username = "ewan"
+        val accountname = "ewan"
         val userPw = "123"
-        val savedAccount = createAccount(name = username, pw = userPw)
+        val savedAccount = createAccount(name = accountname, pw = userPw)
 
         val accountCell = AccountCell(account = savedAccount, cell = savedCell)
         val savedAccountCell = accountCellRepository.saveAndFlush(accountCell)
 
         //then
-        assertThat(savedAccount.username).isEqualTo(username)
+        assertThat(savedAccount.accountname).isEqualTo(accountname)
         assertThat(savedAccountCell.account).isEqualTo(savedAccount)
         assertThat(savedAccountCell.cell).isEqualTo(savedCell)
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
-        var account = Account(username = name, password = pw, role = role)
+        var account = Account(accountname = name, password = pw, role = role)
 
         var savedAccount =  accountRepository.save(account)
         return savedAccount

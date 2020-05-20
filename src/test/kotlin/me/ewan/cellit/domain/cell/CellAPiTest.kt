@@ -58,6 +58,8 @@ class CellAPiTest : BaseControllerTest() {
     @BeforeEach
     fun setUp() {
         accountRepository.deleteAll()
+        cellRepository.deleteAll()
+        accountCellRepository.deleteAll()
     }
 
     @Test
@@ -78,6 +80,7 @@ class CellAPiTest : BaseControllerTest() {
 //        val reCallAccount = accountRepository.findByAccountname(name)
 //
         //println("/api/account/${savedAccount.accountId}/cells")
+        println("/api/account/${savedAccount.accountname}/cells")
 
         //when
         mockMvc.perform(get("/api/account/${savedAccount.accountname}/cells"))
@@ -105,7 +108,7 @@ class CellAPiTest : BaseControllerTest() {
                 .with(csrf())
         )
                 .andDo(print())
-                .andExpect(jsonPath("test").exists());
+                .andExpect(jsonPath("test").exists())
     }
 
     private fun getAccessToken(): String {

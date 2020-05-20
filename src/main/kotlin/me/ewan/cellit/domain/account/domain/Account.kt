@@ -17,6 +17,6 @@ data class Account(
         @Enumerated(EnumType.STRING)
         var role: AccountRole = AccountRole.USER,
 
-        @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "account")
         var accountCells: MutableList<AccountCell> = mutableListOf()
 )

@@ -44,13 +44,16 @@ class AccountService : UserDetailsService {
     fun getAccount(accountId: Long): Account = accountRepository.findByAccountId(accountId)
     fun getAccount(username: String): Account = accountRepository.findByAccountname(username)
 
-    fun getCellsWithAccountId (accountName: String): List<Cell>{
+    fun getCellsWithAccountName (accountName: String){ //: List<Cell>{
         val account = accountRepository.findByAccountname(accountName)
-        val cells = account.accountCells.map {
-            it.cell
-        }
-
-        return cells
+        println("@@@@@")
+        println("@@@@@" + account.accountCells)
+        //println("@@@@@ $account")
+//        val cells = account.accountCells.map {
+//            it.cell
+//        }
+//
+//        return cells
     }
 
 }

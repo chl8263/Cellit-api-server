@@ -18,12 +18,15 @@ class AccountController {
 
     @GetMapping("/{accountName}/cells")
     fun getCellsFromAccountId(@PathVariable accountName: String): ResponseEntity<CellModel> {
+        println("~~~~~~~~")
+        val cells = accountService.getCellsWithAccountName(accountName)
+        println("~~~~~~~~"+accountName)
+        //println("~~~~~~~~"+cells[0])
+//
+//        val cellModel = CellModel(cells[0])
 
-        val cells = accountService.getCellsWithAccountId(accountName)
-
-        val cellModel = CellModel(cells[0])
-
-        return ResponseEntity.ok(cellModel)
+        //return ResponseEntity.ok(cellModel)
+        return ResponseEntity.ok().build()
     }
 
 }

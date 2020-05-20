@@ -8,6 +8,6 @@ data class Cell(
        var cellId: Long? = null,
        var cellName: String,
 
-       @OneToMany(mappedBy = "cell")
+       @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
        var accounts: MutableList<AccountCell> = mutableListOf()
 )

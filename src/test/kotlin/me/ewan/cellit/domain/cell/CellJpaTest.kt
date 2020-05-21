@@ -44,7 +44,7 @@ class CellJpaTest : BaseControllerTest(){
     }
 
     @Test
-    fun `save account cell`(){
+        fun `save account cell`(){
         //given
         val userName = appProperties.testUserAccountname
         val userPw = appProperties.testUserPassword
@@ -78,8 +78,6 @@ class CellJpaTest : BaseControllerTest(){
 
         //when
         val reCallAccount = accountRepository.findByAccountname(accountname)
-        println("ascascsacascsacascascasc")
-        println(reCallAccount.toString())
 
         //then
         assertThat(savedAccount.accountId).isEqualTo(reCallAccount.accountCells[0].account.accountId)

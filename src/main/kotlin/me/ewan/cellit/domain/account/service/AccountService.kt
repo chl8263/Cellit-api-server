@@ -3,7 +3,7 @@ package me.ewan.cellit.domain.account.service
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.domain.AccountRole
-import me.ewan.cellit.domain.cell.domain.Cell
+import me.ewan.cellit.domain.cell.model.CellDto
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
@@ -44,16 +44,12 @@ class AccountService : UserDetailsService {
     fun getAccount(accountId: Long): Account = accountRepository.findByAccountId(accountId)
     fun getAccount(username: String): Account = accountRepository.findByAccountname(username)
 
-    fun getCellsWithAccountName (accountName: String){ //: List<Cell>{
+    fun getCellsWithAccountName (accountName: String): List<CellDto>{
         val account = accountRepository.findByAccountname(accountName)
-        println("@@@@@")
-        println("@@@@@" + account)
-        //println("@@@@@ $account")
-//        val cells = account.accountCells.map {
-//            it.cell
-//        }
-//
-//        return cells
+        val cellDtos = account.accountCells.map {
+            CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName )
+        }
+        return cellDtos
     }
 
 }

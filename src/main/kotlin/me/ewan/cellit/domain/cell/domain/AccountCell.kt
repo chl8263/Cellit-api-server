@@ -8,11 +8,11 @@ data class AccountCell (
         @Id @GeneratedValue
         var accountCellId : Long? = null,
 
-        @ManyToOne
+        @ManyToOne()
         @JoinColumn(name = "accountId")
         var account: Account,
 
-        @ManyToOne
+        @ManyToOne()
         @JoinColumn(name = "cellId")
         var cell: Cell
 )

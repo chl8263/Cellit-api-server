@@ -47,7 +47,7 @@ class AccountService : UserDetailsService {
     fun getCellsWithAccountName (accountName: String){ //: List<Cell>{
         val account = accountRepository.findByAccountname(accountName)
         println("@@@@@")
-        println("@@@@@" + account.accountCells)
+        println("@@@@@" + account)
         //println("@@@@@ $account")
 //        val cells = account.accountCells.map {
 //            it.cell

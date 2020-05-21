@@ -34,6 +34,10 @@ spring:
     ansi:
       enabled: always
 
+  h2:
+    console:
+      enabled: true
+
 my-app:
   adminAccountname: admin
   adminPassword: 123

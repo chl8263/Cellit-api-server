@@ -9,14 +9,14 @@ import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.domain.AccountCell
 import me.ewan.cellit.domain.cell.domain.Cell
 import me.ewan.cellit.domain.common.BaseControllerTest
-import me.ewan.cellit.global.common.AppProperties
+import org.aspectj.lang.annotation.Before
+import org.assertj.core.api.Assertions.assertThat
+import org.h2.tools.Server
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.assertj.core.api.Assertions.assertThat
+
 
 class CellJpaTest : BaseControllerTest(){
 
@@ -32,8 +32,10 @@ class CellJpaTest : BaseControllerTest(){
     @Autowired
     private lateinit var accountCellRepository: AccountCellRepository
 
+
     @BeforeEach
     fun setUp(){
+
 //        accountRepository.deleteAll()
 //
 //        val username = appProperties.testUserUsername
@@ -72,10 +74,12 @@ class CellJpaTest : BaseControllerTest(){
         val savedCell = createCell(name = cellName)
 
         val accountCell = AccountCell(account = savedAccount, cell = savedCell)
-        val savedAccountCell = accountCellRepository.save(accountCell)
+        val savedAccountCell = accountCellRepository.saveAndFlush(accountCell)
 
         //when
         val reCallAccount = accountRepository.findByAccountname(accountname)
+        println("ascascsacascsacascascasc")
+        println(reCallAccount.toString())
 
         //then
         assertThat(savedAccount.accountId).isEqualTo(reCallAccount.accountCells[0].account.accountId)

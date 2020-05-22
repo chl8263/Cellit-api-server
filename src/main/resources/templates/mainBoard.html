@@ -22,6 +22,9 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Common js -->
+    <script th:src="@{/common/js/const.js}"></script>
 </head>
 <body>
 <!-- ============================================================== -->
@@ -230,12 +233,27 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+    const userName = [[${userName}]];
+    const URL_GET_CELLS = "/api/account/" + userName + "/cells";
 
+    console.log(userName)
+
+    window.onload = () => {
+        fetch(URL_GET_CELLS, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }).then((res) => {
+            console.log(res)
+        })
+    };
 
 </script>
 
 
+<!-- Jquery -->
 <script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
 <!-- Bootstrap tether Core JavaScript -->
 <script th:src="@{/assets/libs/popper.js/dist/umd/popper.min.js}"></script>

@@ -13,11 +13,9 @@ class CellModel : RepresentationModel<CellModel> {
 
     constructor(cell: CellDto){
         this.cell = listOf(cell)
-        add(linkTo(CellController::class.java).withSelfRel())
     }
 
     constructor(cell: List<CellDto>){
         this.cell = cell
-        add(linkTo(CellController::class.java).withSelfRel())
     }
 }

@@ -88,10 +88,8 @@ class CellAPiTest : BaseControllerTest() {
                 .andDo(print())
 
         //then
-                .andExpect(status().isCreated) // 201 created
-                .andExpect(jsonPath("_link.self").exists())
-                .andExpect(jsonPath("_link.query-events").exists())
-                .andExpect(jsonPath("_link.update-events").exists())
+                .andExpect(status().isOk) // 201 created
+                .andExpect(jsonPath("_links.self").exists())
     }
 
     @Test

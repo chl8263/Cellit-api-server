@@ -6,6 +6,7 @@ import me.ewan.cellit.domain.cell.service.CellService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.http.ResponseEntity
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -29,7 +30,7 @@ class CellController {
 //    }
 
     @PostMapping("/test")
-    fun testCellPost(): Map<String, String>{
+    fun testCellPost(model: Model): Map<String, String>{
 
         return mapOf("test" to "testSuccess")
     }

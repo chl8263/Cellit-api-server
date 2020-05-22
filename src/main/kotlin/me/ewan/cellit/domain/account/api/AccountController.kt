@@ -1,11 +1,13 @@
 package me.ewan.cellit.domain.account.api
 
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.model.CellModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,6 +27,7 @@ class AccountController {
         val cells = accountService.getCellsWithAccountName(accountName)
 
         val cellModel = CellModel(cells)
+        cellModel.add(linkTo(methodOn(AccountController::class.java).getCellsFromAccountId(accountName)).slash(accountName).slash("cells").withSelfRel())
 
         return ResponseEntity.ok(cellModel)
     }

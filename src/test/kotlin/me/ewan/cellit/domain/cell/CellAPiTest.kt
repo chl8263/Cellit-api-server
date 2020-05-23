@@ -92,6 +92,7 @@ class CellAPiTest : BaseControllerTest() {
                 .andExpect(jsonPath("_links.self").exists())
     }
 
+
     @Test
     @WithMockUser("test_ewan_user")
     fun `test Post cell`() {

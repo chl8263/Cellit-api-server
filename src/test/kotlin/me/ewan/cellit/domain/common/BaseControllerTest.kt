@@ -1,5 +1,6 @@
 package me.ewan.cellit.domain.common
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jdk.nashorn.internal.ir.annotations.Ignore
 import me.ewan.cellit.global.common.AppProperties
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,4 +23,7 @@ class BaseControllerTest {
 
     @Autowired
     protected lateinit var appProperties: AppProperties
+
+    @Autowired
+    protected lateinit var objectMapper: ObjectMapper
 }

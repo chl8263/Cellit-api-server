@@ -8,13 +8,16 @@ import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.domain.AccountCell
 import me.ewan.cellit.domain.cell.domain.Cell
+import me.ewan.cellit.domain.cell.model.CellDto
 import me.ewan.cellit.domain.common.BaseControllerTest
 import me.ewan.cellit.global.common.AppProperties
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.MediaTypes
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser
 import org.springframework.security.test.context.support.WithMockUser
@@ -64,32 +67,27 @@ class CellAPiTest : BaseControllerTest() {
 
     @Test
     @WithMockUser("test_ewan_user")
-    fun `get cells list with account id`() {
-
+    fun `create cell`(){
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        val savedAccount = createAccount(name = name, pw = pw)
+        createAccount(name = name, pw = pw)
 
-        val cellName = "IT team"
-        val savedCell = createCell(cellName)
-
-        val accountCell = AccountCell(account = savedAccount, cell = savedCell)
-        val savedAccountCell = accountCellRepository.save(accountCell)
-
-//        val reCallAccount = accountRepository.findByAccountname(name)
-//
-        //println("/api/account/${savedAccount.accountId}/cells")
-        println("/api/account/${savedAccount.accountname}/cells")
+        val cellName = "Accounting"
+        val cell = CellDto(cellName = cellName)
 
         //when
-        mockMvc.perform(get("/api/account/${savedAccount.accountname}/cells"))
-        //mockMvc.perform(get("/api/account/1/cells"))
-                .andDo(print())
+        mockMvc.perform(post("/api/cells")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(cell))
+                .with(csrf())
+        )
 
         //then
-                .andExpect(status().isOk) // 201 created
-                .andExpect(jsonPath("_links.self").exists())
+                .andDo(print())
+                .andExpect(jsonPath("test").exists())
     }
 
 

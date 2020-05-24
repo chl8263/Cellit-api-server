@@ -31,6 +31,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation(group = "org.springframework.security.oauth.boot", name = "spring-security-oauth2-autoconfigure", version = "2.2.5.RELEASE")
 
+    implementation(group = "org.modelmapper", name = "modelmapper", version = "2.3.2")
+
     implementation("io.github.microutils:kotlin-logging:1.7.9")
     implementation("org.jetbrains.kotlin:kotlin-noarg")
     implementation("org.jetbrains.kotlin:kotlin-allopen")

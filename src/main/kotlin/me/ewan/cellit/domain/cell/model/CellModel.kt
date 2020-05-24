@@ -9,13 +9,10 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 class CellModel : RepresentationModel<CellModel> {
 
     @JsonUnwrapped
-    var cell: List<CellDto>
+    var cell: CellDto
 
     constructor(cell: CellDto){
-        this.cell = listOf(cell)
-    }
-
-    constructor(cell: List<CellDto>){
         this.cell = cell
     }
+
 }

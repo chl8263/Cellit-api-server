@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated
 
-class AccountControllerTest : BaseControllerTest() {
+class LoginAndOutTest : BaseControllerTest() {
 
     @Autowired
     lateinit var accountService: AccountService

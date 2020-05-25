@@ -25,6 +25,7 @@
 
     <!-- Common js -->
     <script th:src="@{/common/js/const.js}"></script>
+    <script th:src="@{/common/js/util.js}"></script>
 
 </head>
 <body>
@@ -247,7 +248,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label class="control-label">Cell Unit Name</label>
-                            <input id="cellName" class="form-control form-white" placeholder="Enter name" type="text" name="category-name" />
+                            <input id="cellName" name="cellName" class="form-control form-white" placeholder="Enter name" type="text"  />
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Choose Category Color</label>
@@ -273,13 +274,17 @@
 
 
 <script th:inline="javascript">
-    const userName = [[${userName}]];
-    const URL_GET_CELLS = "/api/account/" + userName + "/cells";
+    const userName = [[${userId}]];
+    const URL_GET_CELLS = "/api/account/" + userName + "/cells",
+        URL_CREATE_CELLS = "/api/cells",
+        URL_AUTH_TOKEN = "/oauth/token";
+
     const createNewCellUnitForm = document.querySelector("#createNewCellUnitForm"),
         cellName = createNewCellUnitForm.querySelector("#cellName"),
         createNewCellUnitSubmitButton = document.querySelector("#createNewCellUnitSubmitButton");
 
-    console.log(userName)
+    console.log([[${username}]]);
+    console.log([[${password}]]);
 
     window.onload = () => {
         fetch(URL_GET_CELLS, {
@@ -289,11 +294,36 @@
             }
         }).then((res) => {
             console.log(res)
-    })
+        });
     };
 
     createNewCellUnitSubmitButton.onclick = () => {
 
+        let headers = new Headers();
+        headers.set("Authorization", 'Basic ' + btoa("myApp" + ":" + "pass"));
+
+        const body = {
+            "username" : [[${username}]],
+            "password" : "123",
+            "grant_type" : "password",
+        }
+
+        fetch(URL_AUTH_TOKEN + "?" + new URLSearchParams(body), {
+            method: 'POST',
+            headers: headers,
+        }).then(res => res.json())
+        .then(json => console.log(json))
+
+        // formToJson("createNewCellUnitForm")
+        // fetch(URL_CREATE_CELLS, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-type': 'application/json'
+        //     },
+        //     body: formToJson("createNewCellUnitForm")
+        // }).then((res) => {
+        //     console.log(res)
+        // });
     };
 
 </script>

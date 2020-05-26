@@ -5,8 +5,9 @@ import org.codehaus.jackson.annotate.JsonIgnore
 import javax.persistence.*
 
 @Entity
-data class Account(
-        @Id @GeneratedValue
+class Account (
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         var accountId: Long? = null,
 
         @Column(unique = true)
@@ -19,6 +20,6 @@ data class Account(
         var role: AccountRole = AccountRole.USER,
 
         @JsonIgnore
-        @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
         var accountCells: MutableList<AccountCell> = mutableListOf()
 )

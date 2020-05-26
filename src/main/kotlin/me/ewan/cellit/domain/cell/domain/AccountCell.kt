@@ -5,18 +5,18 @@ import me.ewan.cellit.domain.cell.model.AccountCellRole
 import javax.persistence.*
 
 @Entity
-data class AccountCell (
-        @Id @GeneratedValue
+class AccountCell (
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var accountCellId : Long? = null,
 
         @Enumerated(EnumType.STRING)
         var accountCellRole : AccountCellRole? = AccountCellRole.USER,
 
-        @ManyToOne()
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "accountId")
         var account: Account,
 
-        @ManyToOne()
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "cellId")
         var cell: Cell
 )

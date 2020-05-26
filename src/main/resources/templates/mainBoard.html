@@ -306,13 +306,13 @@
             "username" : [[${username}]],
             "password" : "123",
             "grant_type" : "password",
-        }
+        };
 
         fetch(URL_AUTH_TOKEN + "?" + new URLSearchParams(body), {
             method: 'POST',
             headers: headers,
         }).then(res => res.json())
-        .then(json => console.log(json))
+        .then(json => console.log(json));
 
         // formToJson("createNewCellUnitForm")
         // fetch(URL_CREATE_CELLS, {

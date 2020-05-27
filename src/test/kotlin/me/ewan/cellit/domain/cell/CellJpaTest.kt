@@ -12,13 +12,15 @@ import me.ewan.cellit.domain.common.BaseControllerTest
 import org.aspectj.lang.annotation.Before
 import org.assertj.core.api.Assertions.assertThat
 import org.h2.tools.Server
+import org.hibernate.Hibernate
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 
-class CellJpaTest : BaseControllerTest(){
+open class CellJpaTest : BaseControllerTest(){
 
     @Autowired
     private lateinit var accountService: AccountService
@@ -63,8 +65,9 @@ class CellJpaTest : BaseControllerTest(){
         assertThat(savedAccountCell.cell).isEqualTo(savedCell)
     }
 
+    //@Transactional
     @Test
-    fun `get account cell with account id`(){
+    open fun `get account cell with account id`(){
         //given
         val accountname = appProperties.testUserAccountname
         val userPw = appProperties.testUserPassword
@@ -74,13 +77,18 @@ class CellJpaTest : BaseControllerTest(){
         val savedCell = createCell(name = cellName)
 
         val accountCell = AccountCell(account = savedAccount, cell = savedCell)
-        val savedAccountCell = accountCellRepository.saveAndFlush(accountCell)
+        val savedAccountCell = accountCellRepository.save(accountCell)
 
         //when
-        val reCallAccount = accountRepository.findByAccountname(accountname)
+        //val reCallAccount = accountRepository.findByAccountId(savedAccount.accountId!!)
+        //val reCallAccount = accountRepository.findAllAccountData()
+        val reCallAccount = accountRepository.findByAccountIdFetch(savedAccount.accountId!!)
+
+        Hibernate.initialize(reCallAccount.accountCells)
+        val list = reCallAccount.accountCells
 
         //then
-        assertThat(savedAccount.accountId).isEqualTo(reCallAccount.accountCells[0].account.accountId)
+        assertThat(savedAccount.accountname).isEqualTo(reCallAccount.accountCells[0].account.accountname)
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {

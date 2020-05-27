@@ -81,8 +81,8 @@ open class CellJpaTest : BaseControllerTest(){
 
         //when
         //val reCallAccount = accountRepository.findByAccountId(savedAccount.accountId!!)
-        //val reCallAccount = accountRepository.findAllAccountData()
-        val reCallAccount = accountRepository.findByAccountIdFetch(savedAccount.accountId!!)
+        val reCallAccount = accountRepository.findAccountFetch(savedAccount.accountId!!)
+        //val reCallAccount = accountRepository.findByAccountIdFetch(savedAccount.accountId!!)
 
         Hibernate.initialize(reCallAccount.accountCells)
         val list = reCallAccount.accountCells

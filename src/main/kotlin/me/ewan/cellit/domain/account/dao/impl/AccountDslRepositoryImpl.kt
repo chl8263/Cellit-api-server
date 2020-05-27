@@ -7,11 +7,15 @@ import me.ewan.cellit.domain.cell.domain.QAccountCell
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 class AccountDslRepositoryImpl() : QuerydslRepositorySupport(Account::class.java), AccountDslRepository{
-    private val account = QAccount.account
-    private val accountCell = QAccountCell.accountCell
 
-    override fun findAllAccountData(): Account =
-            from(account)
-                    .innerJoin(account.accountCells, accountCell)
-                    .fetchOne()
+    override fun findAccountFetch(accountId: Long): Account {
+        val account = QAccount.account
+        val accountCell = QAccountCell.accountCell
+
+        // @Query("SELECT a FROM Account a  JOIN FETCH a.accountCells WHERE a.accountId = :accountId")
+        return from(account)
+                .leftJoin(account.accountCells, accountCell).fetchJoin()
+                .where(account.accountId.eq(accountId))
+                .fetchOne()
+    }
 }

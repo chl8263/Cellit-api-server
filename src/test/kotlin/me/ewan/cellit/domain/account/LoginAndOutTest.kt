@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated
 
-class AccountControllerTest : BaseControllerTest() {
+class LoginAndOutTest : BaseControllerTest() {
 
     @Autowired
     lateinit var accountService: AccountService
@@ -29,7 +29,7 @@ class AccountControllerTest : BaseControllerTest() {
         val account = newAccount(name, pw)
 
         //When & Then
-        mockMvc.perform(formLogin().user(account.username).password(pw))
+        mockMvc.perform(formLogin().user(account.accountname).password(pw))
                 .andDo(print())
                 .andExpect(authenticated())
     }
@@ -42,14 +42,14 @@ class AccountControllerTest : BaseControllerTest() {
         val account = newAccount(name, pw)
 
         //When & Then
-        mockMvc.perform(formLogin().user(account.username).password("123"))
+        mockMvc.perform(formLogin().user(account.accountname).password("123"))
                 .andDo(print())
                 .andExpect(unauthenticated())
     }
 
     private fun newAccount(name: String, pw: String) : Account {
 
-        val savedAccount = accountService.createAccount(Account(username = name, password = pw))
+        val savedAccount = accountService.createAccount(Account(accountname = name, password = pw))
 
         return savedAccount;
     }

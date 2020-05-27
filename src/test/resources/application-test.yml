@@ -2,9 +2,15 @@ spring:
   datasource:
     username: sa
     password:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:tcp://localhost/~/test #jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
-    hikari.jdbc-url: jdbc:h2:mem:testdb
+    #hikari.jdbc-url: jdbc:h2:mem:testdb
+
+my-app:
+  testAdminAccountname: test_ewan_admin
+  testAdminPassword: 123
+  testUserAccountname: test_ewan_user
+  testUserPassword: 123
 
 #  jpa:
 #    hibernate:

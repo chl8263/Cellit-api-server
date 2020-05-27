@@ -22,7 +22,7 @@ class AccountServiceTest {
     @Test
     fun findByUsername(){
         //given
-        val account = Account(username = "ewan2", password = "123")
+        val account = Account(accountname = "ewan2", password = "123")
         accountService.createAccount(account)
 
         //when

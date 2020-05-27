@@ -75,9 +75,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http?.let {
             it.authorizeRequests()
                     .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
-                    .mvcMatchers(HttpMethod.GET, "/api/**").anonymous()
+                    .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
                     .mvcMatchers("/admin").hasRole("ADMIN")
-                    .mvcMatchers(HttpMethod.GET,"/cells/**").anonymous()
                     .anyRequest().authenticated()
                     .and()
                     .exceptionHandling()

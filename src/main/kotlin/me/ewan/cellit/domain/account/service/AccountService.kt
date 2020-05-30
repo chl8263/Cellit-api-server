@@ -4,6 +4,7 @@ import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.cell.model.CellDto
+import me.ewan.cellit.global.security.AccountContext
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
@@ -25,13 +26,18 @@ class AccountService : UserDetailsService {
 
     override fun loadUserByUsername(username: String?): UserDetails {
         val account = accountRepository.findByAccountname(username)
+        //TODO NoSuchElementException
 
-        return User.builder()
-                .username(account.accountname)
-                .password(account.password)
-                .roles(account.role.toString())
-                .build()
+//        return User.builder()
+//                .username(account.accountname)
+//                .password(account.password)
+//                .roles(account.role.toString())
+//                .build()
+
+        return getAccountContext(account)
     }
+
+    private fun getAccountContext(account: Account): AccountContext = AccountContext.fromAccountModel(account)
 
 
     fun createAccount(account: Account) : Account {

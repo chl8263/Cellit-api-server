@@ -59,23 +59,23 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 ?.passwordEncoder(passwordEncoder)
     }
 
-    @Throws(Exception::class)
-    override fun configure(web: WebSecurity?) {
-        web?.let {
-            //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-            it.ignoring()
-                    .antMatchers("/assets/**")
-                    .antMatchers("/dist/**")
-                    .antMatchers("/images/**")
-        }
-    }
+            @Throws(Exception::class)
+            override fun configure(web: WebSecurity?) {
+                web?.let {
+                    //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    it.ignoring()
+                            .antMatchers("/assets/**")
+                            .antMatchers("/dist/**")
+                            .antMatchers("/images/**")
+                }
+            }
 
-    @Throws(Exception::class)
-    override fun configure(http: HttpSecurity?) {
-        http?.let {
-            it.authorizeRequests()
-                    .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
-                    .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
+            @Throws(Exception::class)
+            override fun configure(http: HttpSecurity?) {
+                http?.let {
+                    it.authorizeRequests()
+                            .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
+                            .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
                     .mvcMatchers("/admin").hasRole("ADMIN")
                     .anyRequest().authenticated()
                     .and()

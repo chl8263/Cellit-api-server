@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletResponse
 
 class FormLoginFilter(defaultFilterProcessesUrl: String?) : AbstractAuthenticationProcessingFilter(defaultFilterProcessesUrl) {
 
-
-
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

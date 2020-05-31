@@ -2,6 +2,7 @@ package me.ewan.cellit.global.config
 
 import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationSuccessHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
@@ -36,6 +37,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     lateinit var passwordEncoder: PasswordEncoder
+
+    @Autowired
+    lateinit var formLoginAuthenticationSuccessHandler: FormLoginAuthenticationSuccessHandler
 
     @Bean
     fun tokenStore(): TokenStore = InMemoryTokenStore()

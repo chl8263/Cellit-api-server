@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Component
 
+@Component
 class FormLoginAuthenticationProvider: AuthenticationProvider {
 
     @Autowired
@@ -39,6 +41,6 @@ class FormLoginAuthenticationProvider: AuthenticationProvider {
     }
 
     private fun isCorrectPassword(password: String, account: Account): Boolean{
-        return passwordEncoder.matches(account.password, password)
+        return passwordEncoder.matches(password, account.password)
     }
 }

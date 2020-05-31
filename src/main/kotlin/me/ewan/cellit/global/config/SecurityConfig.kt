@@ -3,7 +3,9 @@ package me.ewan.cellit.global.config
 import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.security.filters.FormLoginFilter
+import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationFailureHandler
 import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationSuccessHandler
+import me.ewan.cellit.global.security.providers.FormLoginAuthenticationProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
@@ -25,6 +27,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
 
 @Configuration
@@ -40,11 +43,19 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     private lateinit var passwordEncoder: PasswordEncoder
 
     @Autowired
+    private lateinit var provider: FormLoginAuthenticationProvider
+
+    @Autowired
     private lateinit var formLoginAuthenticationSuccessHandler: FormLoginAuthenticationSuccessHandler
 
+    @Autowired
+    private lateinit var formLoginAuthenticationFailureHandler: FormLoginAuthenticationFailureHandler
+
     @Throws(Exception::class)
-    protected fun formLoginFilter(): FormLoginFilter{
-        //val filter = FormLoginFilter("/formlogin", formLoginAuthenticationSuccessHandler. )
+    protected fun formLoginFilter(): FormLoginFilter {
+        val filter = FormLoginFilter("/formlogin", formLoginAuthenticationSuccessHandler, formLoginAuthenticationFailureHandler)
+        filter.setAuthenticationManager(authenticationManagerBean())
+        return filter
     }
 
     @Bean
@@ -56,64 +67,76 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun authenticationFailureHandler() : AuthenticationFailureHandler = LoginFailureHandler()
+    fun authenticationFailureHandler(): AuthenticationFailureHandler = LoginFailureHandler()
 
     @Bean
-    fun sessionRegistry() : SessionRegistry = SessionRegistryImpl()
+    fun sessionRegistry(): SessionRegistry = SessionRegistryImpl()
 
     @Bean
     fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher> = ServletListenerRegistrationBean(HttpSessionEventPublisher())
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
+
+        auth?.authenticationProvider(this.provider)
+
         auth?.userDetailsService(accountService)
                 ?.passwordEncoder(passwordEncoder)
     }
 
-            @Throws(Exception::class)
-            override fun configure(web: WebSecurity?) {
-                web?.let {
-                    //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                    it.ignoring()
-                            .antMatchers("/assets/**")
-                            .antMatchers("/dist/**")
-                            .antMatchers("/images/**")
-                }
-            }
+    @Throws(Exception::class)
+    override fun configure(web: WebSecurity?) {
+        web?.let {
+            //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            it.ignoring()
+                    .antMatchers("/assets/**")
+                    .antMatchers("/dist/**")
+                    .antMatchers("/images/**")
+        }
+    }
 
-            @Throws(Exception::class)
-            override fun configure(http: HttpSecurity?) {
-                http?.let {
-                    it.authorizeRequests()
-                            .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
-                            .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
-                    .mvcMatchers("/admin").hasRole("ADMIN")
-                    .anyRequest().authenticated()
-                    .and()
-                    .exceptionHandling()
-                        .accessDeniedHandler(OAuth2AccessDeniedHandler())
+    @Throws(Exception::class)
+    override fun configure(http: HttpSecurity) {
 
-            it.formLogin()
-                    .loginPage("/login")
-                    .failureHandler(authenticationFailureHandler())
-                    .permitAll()
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-            it.httpBasic()
+        http.csrf().disable()
 
-            it.logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/")
+        http.headers().frameOptions().disable()
+
+        http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter::class.java)
+
+//        http?.let {
+//            it.authorizeRequests()
+//                    .mvcMatchers("/signUp", "/login**", "/loginError", "/formlogin").permitAll()
+//                    .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
+//                    .mvcMatchers("/admin").hasRole("ADMIN")
+//                    .anyRequest().authenticated()
+//                    .and()
+//                    .exceptionHandling()
+//                    .accessDeniedHandler(OAuth2AccessDeniedHandler())
+//
+//            it.formLogin()
+//                    .loginPage("/login")
+//                    .failureHandler(authenticationFailureHandler())
+//                    .permitAll()
+//
+//            it.httpBasic()
+//
+//            it.logout()
+//                    .logoutUrl("/logout")
+//                    .logoutSuccessUrl("/")
 //                    .deleteCookies("JSESSIONID")
 //                    .invalidateHttpSession(true)
 
-            it.sessionManagement()
-                    .sessionFixation()
-                    .changeSessionId()
-                    .invalidSessionUrl("/login")
-                    .maximumSessions(1)
-                    .maxSessionsPreventsLogin(true)
+//            it.sessionManagement()
+//                    .sessionFixation()
+//                    .changeSessionId()
+//                    .invalidSessionUrl("/login")
+//                    .maximumSessions(1)
+//                    .maxSessionsPreventsLogin(true)
+//
+//            it.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 
-            it.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-
-        }
     }
 }

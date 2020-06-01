@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.account
+package me.ewan.cellit.domain.account.repository
 
 import me.ewan.cellit.TestConfiguration
 import me.ewan.cellit.domain.account.domain.Account

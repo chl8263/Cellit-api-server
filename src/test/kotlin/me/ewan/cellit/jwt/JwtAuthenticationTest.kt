@@ -10,12 +10,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
+import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.util.*
-
 
 class JwtAuthenticationTest : BaseControllerTest() {
 
@@ -35,7 +35,8 @@ class JwtAuthenticationTest : BaseControllerTest() {
 
         //when
         val perform: ResultActions = this.mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .accept(MediaTypes.HAL_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationDto))
         )
 

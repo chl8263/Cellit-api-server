@@ -30,7 +30,6 @@ class SignUpController {
             return "/signUp"
         }
 
-        println("signUpProcess")
         return "redirect:/"
     }
 }

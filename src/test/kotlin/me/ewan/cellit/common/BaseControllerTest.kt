@@ -26,4 +26,8 @@ class BaseControllerTest {
 
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
+
+    companion object{
+        const val BEARER_PREFIX: String = "Bearer "
+    }
 }

@@ -5,9 +5,8 @@ import me.ewan.cellit.global.exception.dtos.ErrorDto
 import me.ewan.cellit.global.security.HeaderTokenExtractor
 import me.ewan.cellit.global.security.JwtDecoder
 import me.ewan.cellit.global.security.JwtProperties.HEADER_STRING
-import me.ewan.cellit.global.security.JwtProperties.TOKEN_PREFIX
+import me.ewan.cellit.global.security.JwtProperties.BEARER_PREFIX
 import me.ewan.cellit.global.security.tokens.PostAuthorizationToken
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationManager
@@ -20,22 +19,11 @@ import javax.servlet.http.HttpServletResponse
 class JwtAuthorizationFilter(authenticationManager: AuthenticationManager, private val extractor: HeaderTokenExtractor, private val decoder: JwtDecoder)
     : BasicAuthenticationFilter(authenticationManager) {
 
-//    @Autowired
-//    private lateinit var objectMapper: ObjectMapper
-
-//    @Autowired
-//    private lateinit var extractor: HeaderTokenExtractor
-//
-//    @Autowired
-//    private lateinit var decoder: JwtDecoder
-
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
 
         val tokenPayload = request.getHeader(HEADER_STRING)
 
-        println( "!!!!" + tokenPayload)
-
-        if(tokenPayload.isNullOrBlank() || !tokenPayload.startsWith(TOKEN_PREFIX)){
+        if(tokenPayload.isNullOrBlank() || !tokenPayload.startsWith(BEARER_PREFIX)){
 
             val objectMapper = ObjectMapper()
 
@@ -44,21 +32,12 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager, priva
             response.contentType = MediaType.APPLICATION_JSON_VALUE
             response.status = HttpStatus.UNAUTHORIZED.value()
             response.writer.write(objectMapper.writeValueAsString(errorDto))
-            //chain.doFilter(request, response)
             return
         }
 
         val accountContext = decoder.decodeJwt(extractor.extract(tokenPayload))
-
-        println( "@@@@@@@@" + accountContext.authorities)
-
         val token = PostAuthorizationToken(accountContext.account, accountContext.password, accountContext.authorities)
-        //val authentication = authenticationManager.authenticate(token)
-
         SecurityContextHolder.getContext().authentication = token
-
-        println( "@@@@@#@#@#@@@@" + SecurityContextHolder.getContext().authentication)
-
         chain.doFilter(request, response)
     }
 

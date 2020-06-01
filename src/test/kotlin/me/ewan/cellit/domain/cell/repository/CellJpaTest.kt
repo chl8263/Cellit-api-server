@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.cell
+package me.ewan.cellit.domain.cell.repository
 
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.domain.Account

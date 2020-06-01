@@ -28,17 +28,10 @@ class AccountService : UserDetailsService {
         val account = accountRepository.findByAccountname(username)
         //TODO NoSuchElementException
 
-//        return User.builder()
-//                .username(account.accountname)
-//                .password(account.password)
-//                .roles(account.role.toString())
-//                .build()
-
         return getAccountContext(account)
     }
 
     private fun getAccountContext(account: Account): AccountContext = AccountContext.fromAccountModel(account)
-
 
     fun createAccount(account: Account) : Account {
         account.password = passWordEncoder.encode(account.password)
@@ -57,5 +50,4 @@ class AccountService : UserDetailsService {
         }
         return cellDtos
     }
-
 }

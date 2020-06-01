@@ -30,10 +30,6 @@ class CellService {
     fun createCell(cellDto: CellDto, name: String): CellDto {
 
         val currentUserDetail = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        println("!!!!!!!!!!!!!!!")
-        println(name)
-        println(currentUserDetail.password)
-        println("!!!!!!!!!!!!!!!")
         val currentUser = accountService.getAccount(currentUserDetail.username)
 
         val cell = modelMapper.map(cellDto, Cell::class.java)

@@ -98,7 +98,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .authorizeRequests()
                 .mvcMatchers("/signUp", "/login**", "/loginError").permitAll()
                 .mvcMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
-                .mvcMatchers("/admin/user").hasAnyAuthority("ROLE_USER")
-                .anyRequest().hasRole("USER")
+                .anyRequest().authenticated()
     }
 }

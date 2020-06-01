@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.account
+package me.ewan.cellit.domain.account.service
 
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService

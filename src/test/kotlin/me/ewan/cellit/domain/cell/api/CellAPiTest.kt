@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.cell
+package me.ewan.cellit.domain.cell.api
 
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.domain.Account
@@ -68,7 +68,6 @@ class CellAPiTest : BaseControllerTest() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(cell))
-                .with(csrf())
         )
 
         //then

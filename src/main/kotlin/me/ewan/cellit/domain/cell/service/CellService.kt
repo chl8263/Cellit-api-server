@@ -29,8 +29,7 @@ class CellService {
 
     fun createCell(cellDto: CellDto, name: String): CellDto {
 
-        val currentUserDetail = SecurityContextHolder.getContext().authentication.principal as UserDetails
-        val currentUser = accountService.getAccount(currentUserDetail.username)
+        val currentUser = accountService.getAccount(name)
 
         val cell = modelMapper.map(cellDto, Cell::class.java)
         val savedCell = cellRepository.save(cell)

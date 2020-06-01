@@ -36,7 +36,7 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager, priva
         }
 
         val accountContext = decoder.decodeJwt(extractor.extract(tokenPayload))
-        val token = PostAuthorizationToken(accountContext.account, accountContext.password, accountContext.authorities)
+        val token = PostAuthorizationToken(accountContext.username, accountContext.password, accountContext.authorities)
         SecurityContextHolder.getContext().authentication = token
         chain.doFilter(request, response)
     }

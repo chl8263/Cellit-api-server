@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
 class JetFactoryTest : BaseControllerTest(){
 
-    private val logger = KotlinLogging.logger {}
+    private val log = KotlinLogging.logger {}
 
     @Autowired
     lateinit var accountService: AccountService
@@ -31,7 +31,7 @@ class JetFactoryTest : BaseControllerTest(){
         val accountContext = AccountContext.fromAccountModel(account)
 
         //When & Then
-        logger.info { factory.generateToken(accountContext) }
+        log.info { factory.generateToken(accountContext) }
     }
 
     private fun newAccount(name: String, pw: String) : Account {

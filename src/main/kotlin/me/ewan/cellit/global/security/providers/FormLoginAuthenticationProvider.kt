@@ -36,9 +36,9 @@ class FormLoginAuthenticationProvider: AuthenticationProvider {
         throw NoSuchElementException("Authentication information is now correct.")
     }
 
-    override fun supports(authentication: Class<*>?): Boolean { // support which object
-        return PreAuthorizationToken::class.java.isAssignableFrom(authentication)
-    }
+    override fun supports(authentication: Class<*>?): Boolean = // support which object
+            PreAuthorizationToken::class.java.isAssignableFrom(authentication)
+
 
     private fun isCorrectPassword(password: String, account: Account): Boolean{
         return passwordEncoder.matches(password, account.password)

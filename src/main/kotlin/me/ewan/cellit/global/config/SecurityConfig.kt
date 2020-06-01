@@ -2,7 +2,10 @@ package me.ewan.cellit.global.config
 
 import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.global.security.HeaderTokenExtractor
+import me.ewan.cellit.global.security.JwtDecoder
 import me.ewan.cellit.global.security.filters.FormLoginFilter
+import me.ewan.cellit.global.security.filters.JwtAuthorizationFilter
 import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationFailureHandler
 import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationSuccessHandler
 import me.ewan.cellit.global.security.providers.FormLoginAuthenticationProvider
@@ -23,7 +26,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler
 import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
@@ -51,12 +53,25 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var formLoginAuthenticationFailureHandler: FormLoginAuthenticationFailureHandler
 
+    @Autowired
+    private lateinit var extractor: HeaderTokenExtractor
+
+    @Autowired
+    private lateinit var decoder: JwtDecoder
+
     @Throws(Exception::class)
     protected fun formLoginFilter(): FormLoginFilter {
         val filter = FormLoginFilter("/formlogin", formLoginAuthenticationSuccessHandler, formLoginAuthenticationFailureHandler)
         filter.setAuthenticationManager(authenticationManagerBean())
         return filter
     }
+
+//    @Throws(Exception::class)
+//    protected fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
+//        val filter = JwtAuthenticationFilter("/formlogin", formLoginAuthenticationSuccessHandler, formLoginAuthenticationFailureHandler)
+//        filter.setAuthenticationManager(authenticationManagerBean())
+//        return filter
+//    }
 
     @Bean
     fun tokenStore(): TokenStore = InMemoryTokenStore()
@@ -97,14 +112,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
 
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
         http.csrf().disable()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
         http.headers().frameOptions().disable()
-
         http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter::class.java)
+        http
+                .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
+                .authorizeRequests()
+                .mvcMatchers("/signUp", "/login**", "/loginError", "/formlogin").permitAll()
+                //.antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .mvcMatchers("/admin").hasAnyAuthority("ROLE_USER")
+                .anyRequest().hasRole("USER")
+
+
 
 //        http?.let {
 //            it.authorizeRequests()

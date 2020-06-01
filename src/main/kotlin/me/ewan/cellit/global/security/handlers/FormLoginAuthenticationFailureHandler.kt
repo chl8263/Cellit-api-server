@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class FormLoginAuthenticationFailureHandler : AuthenticationFailureHandler {
 
-    private val logger = KotlinLogging.logger {}
+    private val log = KotlinLogging.logger {}
 
     override fun onAuthenticationFailure(request: HttpServletRequest?, response: HttpServletResponse?, exception: AuthenticationException?) {
         // TODO : Send response as error message with DTO
-        logger.error { exception?.message }
+        log.error { exception?.message }
     }
 }

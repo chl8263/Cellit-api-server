@@ -42,7 +42,6 @@ class AccountService : UserDetailsService {
 
     fun createAccount(account: Account) : Account {
         account.password = passWordEncoder.encode(account.password)
-        account.role = AccountRole.USER
         val savedAccount = accountRepository.save(account)
         return savedAccount
     }

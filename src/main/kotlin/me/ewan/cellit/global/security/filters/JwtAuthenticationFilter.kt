@@ -2,6 +2,7 @@ package me.ewan.cellit.global.security.filters
 
 import me.ewan.cellit.global.security.HeaderTokenExtractor
 import me.ewan.cellit.global.security.handlers.JwtAuthenticationFailureHandler
+import me.ewan.cellit.global.security.tokens.JwtPreProcessingToken
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
@@ -17,21 +18,31 @@ import javax.servlet.http.HttpServletResponse
 
 class JwtAuthenticationFilter(reqMatcher: RequestMatcher) : AbstractAuthenticationProcessingFilter(reqMatcher) {
 
-    private val logger = KotlinLogging.logger {}
+    companion object{
+        const val AUTHORIZATION = "Authorization"
+    }
+
+    private val log = KotlinLogging.logger {}
 
     private var failureHandler: JwtAuthenticationFailureHandler? = null
 
-    private var extractor: HeaderTokenExtractor? = null
+    @Autowired
+    private lateinit var extractor: HeaderTokenExtractor
 
-    constructor(reqMatcher: RequestMatcher, failureHandler: JwtAuthenticationFailureHandler, extractor: HeaderTokenExtractor) : this(reqMatcher){
+    constructor(reqMatcher: RequestMatcher, failureHandler: JwtAuthenticationFailureHandler) : this(reqMatcher){
         this.failureHandler = failureHandler
     }
 
-    override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication {
-        TODO()
+    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+
+        val tokenPayload = request.getHeader(AUTHORIZATION)
+
+        val token = JwtPreProcessingToken(this.extractor.extract(tokenPayload))
+
+        return super.getAuthenticationManager().authenticate(token)
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
+    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
 
         val context = SecurityContextHolder.createEmptyContext()
 

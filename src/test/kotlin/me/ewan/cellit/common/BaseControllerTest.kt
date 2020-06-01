@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.common
+package me.ewan.cellit.common
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jdk.nashorn.internal.ir.annotations.Ignore

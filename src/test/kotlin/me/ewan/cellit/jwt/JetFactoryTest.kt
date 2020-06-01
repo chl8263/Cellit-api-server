@@ -2,15 +2,12 @@ package me.ewan.cellit.jwt
 
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
-import me.ewan.cellit.domain.common.BaseControllerTest
+import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.global.security.AccountContext
 import me.ewan.cellit.global.security.JwtFactory
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders
-import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
 class JetFactoryTest : BaseControllerTest(){
 

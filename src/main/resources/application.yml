@@ -47,8 +47,6 @@ my-app:
 #  testAdminPassword: 123
 #  testUserUsername: test_ewan_user
 #  testUserPassword: 123
-  clientId: myApp
-  clientSecret: pass
 
 logging:
   level:

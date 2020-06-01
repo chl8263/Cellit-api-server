@@ -1,6 +1,6 @@
 package me.ewan.cellit.global.security.filters
 
-import me.ewan.cellit.domain.account.dtos.FormLoginDto
+import me.ewan.cellit.global.security.dtos.JwtAuthenticationDto
 import me.ewan.cellit.global.security.tokens.PreAuthorizationToken
 import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.security.core.Authentication
@@ -8,7 +8,6 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -25,7 +24,7 @@ class JwtAuthenticationFilter(defaultFilterProcessesUrl: String?) : AbstractAuth
 
     override fun attemptAuthentication(req: HttpServletRequest, res: HttpServletResponse): Authentication {
 
-        val formLoginDto = ObjectMapper().readValue(req.reader, FormLoginDto::class.java)
+        val formLoginDto = ObjectMapper().readValue(req.reader, JwtAuthenticationDto::class.java)
 
         val token = PreAuthorizationToken(formLoginDto)
 

@@ -20,9 +20,6 @@ class JwtDecoder {
         val userName = decodedJWT.getClaim(USER_NAME).asString()
         val role = decodedJWT.getClaim(USER_ROLE).asString()
 
-        println(userName)
-        println(role)
-
         return AccountContext(userName, "****", role)
     }
 

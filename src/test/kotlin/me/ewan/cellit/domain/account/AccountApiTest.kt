@@ -8,7 +8,7 @@ import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.domain.AccountCell
 import me.ewan.cellit.domain.cell.domain.Cell
-import me.ewan.cellit.domain.common.BaseControllerTest
+import me.ewan.cellit.common.BaseControllerTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.test.context.support.WithMockUser
@@ -60,7 +60,7 @@ class AccountApiTest : BaseControllerTest() {
                 .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
     }
 
-    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
+    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)
 
         var savedAccount = accountService.createAccount(account)

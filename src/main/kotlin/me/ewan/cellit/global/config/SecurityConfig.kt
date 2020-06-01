@@ -60,17 +60,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     protected fun formLoginFilter(): JwtAuthenticationFilter {
-        val filter = JwtAuthenticationFilter("/formlogin", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
+        val filter = JwtAuthenticationFilter("/login", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
         filter.setAuthenticationManager(authenticationManagerBean())
         return filter
     }
-
-//    @Throws(Exception::class)
-//    protected fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
-//        val filter = JwtAuthenticationFilter("/formlogin", formLoginAuthenticationSuccessHandler, formLoginAuthenticationFailureHandler)
-//        filter.setAuthenticationManager(authenticationManagerBean())
-//        return filter
-//    }
 
     @Bean
     fun tokenStore(): TokenStore = InMemoryTokenStore()
@@ -100,7 +93,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
         web?.let {
-            //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
             it.ignoring()
                     .antMatchers("/assets/**")
                     .antMatchers("/dist/**")
@@ -119,44 +111,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
-                .mvcMatchers("/signUp", "/login**", "/loginError", "/formlogin").permitAll()
+                .mvcMatchers("/signUp", "/login**", "/loginError").permitAll()
                 .mvcMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
                 .mvcMatchers("/admin/user").hasAnyAuthority("ROLE_USER")
                 .anyRequest().hasRole("USER")
-
-
-
-//        http?.let {
-//            it.authorizeRequests()
-//                    .mvcMatchers("/signUp", "/login**", "/loginError", "/formlogin").permitAll()
-//                    .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
-//                    .mvcMatchers("/admin").hasRole("ADMIN")
-//                    .anyRequest().authenticated()
-//                    .and()
-//                    .exceptionHandling()
-//                    .accessDeniedHandler(OAuth2AccessDeniedHandler())
-//
-//            it.formLogin()
-//                    .loginPage("/login")
-//                    .failureHandler(authenticationFailureHandler())
-//                    .permitAll()
-//
-//            it.httpBasic()
-//
-//            it.logout()
-//                    .logoutUrl("/logout")
-//                    .logoutSuccessUrl("/")
-//                    .deleteCookies("JSESSIONID")
-//                    .invalidateHttpSession(true)
-
-//            it.sessionManagement()
-//                    .sessionFixation()
-//                    .changeSessionId()
-//                    .invalidSessionUrl("/login")
-//                    .maximumSessions(1)
-//                    .maxSessionsPreventsLogin(true)
-//
-//            it.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-
     }
 }

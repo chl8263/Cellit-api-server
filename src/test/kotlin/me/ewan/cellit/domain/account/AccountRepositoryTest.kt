@@ -60,7 +60,7 @@ class AccountRepositoryTest {
         assertThat(savedAccountCell.cell).isEqualTo(savedCell)
     }
 
-    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
+    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)
 
         var savedAccount =  accountRepository.save(account)

@@ -34,8 +34,8 @@ class AuthServerConfig : AuthorizationServerConfigurerAdapter() {
     @Autowired
     private lateinit var appProperties: AppProperties
 
-    private val CLIETN_ID by lazy { appProperties.clientId }
-    private val CLIENT_CECRET by lazy {appProperties.clientSecret}
+//    private val CLIETN_ID by lazy { appProperties.clientId }
+//    private val CLIENT_CECRET by lazy {appProperties.clientSecret}
     private val AUTHORIZED_GRANT_TYPES_1 by lazy { "password" }
     private val AUTHORIZED_GRANT_TYPES_2 by lazy { "refresh_token" }
     private val SCOPE_1 by lazy { "read" }
@@ -49,16 +49,16 @@ class AuthServerConfig : AuthorizationServerConfigurerAdapter() {
     }
 
     override fun configure(clients: ClientDetailsServiceConfigurer?) {
-        clients?.let {
-            it.inMemory()
-                    .withClient(CLIETN_ID)
-                    .authorizedGrantTypes(AUTHORIZED_GRANT_TYPES_1, AUTHORIZED_GRANT_TYPES_2)
-                    .scopes(SCOPE_1, SCOPE_2)
-                    .secret(this.passwordEncoder.encode(CLIENT_CECRET))
-                    .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
-                    .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS)
-
-        }
+//        clients?.let {
+//            it.inMemory()
+//                    .withClient(CLIETN_ID)
+//                    .authorizedGrantTypes(AUTHORIZED_GRANT_TYPES_1, AUTHORIZED_GRANT_TYPES_2)
+//                    .scopes(SCOPE_1, SCOPE_2)
+//                    .secret(this.passwordEncoder.encode(CLIENT_CECRET))
+//                    .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
+//                    .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS)
+//
+//        }
     }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {

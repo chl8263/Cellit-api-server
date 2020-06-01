@@ -15,57 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 @EnableResourceServer
 class ResourceServerConfig : ResourceServerConfigurerAdapter(){
 
-    @Autowired
-    lateinit var authenticationFailureHandler: AuthenticationFailureHandler
-
     override fun configure(resources: ResourceServerSecurityConfigurer?) {
         resources?.resourceId("event")
     }
-
-//    override fun configure(http: HttpSecurity?) {
-//        http?.let{
-//            it.anonymous()
-//                    .and()
-//                    .authorizeRequests()
-//                    .mvcMatchers(HttpMethod.GET, "/api/**")
-//                        .anonymous()
-//                    .anyRequest()
-//                        .authenticated()
-//                    .and()
-//                    .exceptionHandling()
-//                        .accessDeniedHandler(OAuth2AccessDeniedHandler())
-//        }
-//        http?.let {
-//            it.authorizeRequests()
-//                    .mvcMatchers(HttpMethod.GET, "/api/**").anonymous()
-//                    .mvcMatchers("/signUp", "/login**", "/loginError", "logout").permitAll()
-//                    .mvcMatchers("/admin").hasRole("ADMIN")
-//                    .anyRequest().authenticated()
-//                    .and()
-//                    .exceptionHandling()
-//                    .accessDeniedHandler(OAuth2AccessDeniedHandler())
-//
-//            it.formLogin()
-//                    .loginPage("/login")
-//                    .failureHandler(authenticationFailureHandler)
-//                    .permitAll()
-//
-//            it.httpBasic()
-//
-//            it.logout()
-//                    .logoutUrl("/logout")
-//                    .logoutSuccessUrl("/")
-////                    .deleteCookies("JSESSIONID")
-////                    .invalidateHttpSession(true)
-//
-//            it.sessionManagement()
-//                    .sessionFixation()
-//                    .changeSessionId()
-//                    .invalidSessionUrl("/login")
-//                    .maximumSessions(1)
-//                    .maxSessionsPreventsLogin(true)
-//
-//            it.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-//        }
-//    }
 }

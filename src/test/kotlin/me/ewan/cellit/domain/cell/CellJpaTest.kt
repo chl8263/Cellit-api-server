@@ -8,16 +8,12 @@ import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.domain.AccountCell
 import me.ewan.cellit.domain.cell.domain.Cell
-import me.ewan.cellit.domain.common.BaseControllerTest
-import org.aspectj.lang.annotation.Before
+import me.ewan.cellit.common.BaseControllerTest
 import org.assertj.core.api.Assertions.assertThat
-import org.h2.tools.Server
 import org.hibernate.Hibernate
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.transaction.annotation.Transactional
 
 
 open class CellJpaTest : BaseControllerTest(){
@@ -91,7 +87,7 @@ open class CellJpaTest : BaseControllerTest(){
         assertThat(savedAccount.accountname).isEqualTo(reCallAccount.accountCells[0].account.accountname)
     }
 
-    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.USER): Account {
+    private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)
 
         var savedAccount = accountService.createAccount(account)

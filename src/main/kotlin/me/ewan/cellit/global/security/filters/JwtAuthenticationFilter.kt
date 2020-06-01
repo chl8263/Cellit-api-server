@@ -1,61 +1,51 @@
 package me.ewan.cellit.global.security.filters
 
-import me.ewan.cellit.global.security.HeaderTokenExtractor
-import me.ewan.cellit.global.security.handlers.JwtAuthenticationFailureHandler
-import me.ewan.cellit.global.security.tokens.JwtPreProcessingToken
-import mu.KotlinLogging
-import org.springframework.beans.factory.annotation.Autowired
+import me.ewan.cellit.domain.account.dtos.FormLoginDto
+import me.ewan.cellit.global.security.tokens.PreAuthorizationToken
+import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
-import org.springframework.security.web.util.matcher.RequestMatcher
-import java.security.Security
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JwtAuthenticationFilter(reqMatcher: RequestMatcher) : AbstractAuthenticationProcessingFilter(reqMatcher) {
+class JwtAuthenticationFilter(defaultFilterProcessesUrl: String?) : AbstractAuthenticationProcessingFilter(defaultFilterProcessesUrl) {
 
-    companion object{
-        const val AUTHORIZATION = "Authorization"
+    private var myAuthenticationSuccessHandler: AuthenticationSuccessHandler? = null
+    private var myAuthenticationFailureHandler: AuthenticationFailureHandler? = null
+
+    constructor(defaultFilterProcessesUrl: String, authenticationSuccessHandler: AuthenticationSuccessHandler, authenticationFailureHandler: AuthenticationFailureHandler) : this(defaultFilterProcessesUrl){
+        this.myAuthenticationSuccessHandler = authenticationSuccessHandler
+        this.myAuthenticationFailureHandler = authenticationFailureHandler
     }
 
-    private val log = KotlinLogging.logger {}
+    override fun attemptAuthentication(req: HttpServletRequest, res: HttpServletResponse): Authentication {
 
-    private var failureHandler: JwtAuthenticationFailureHandler? = null
+        val formLoginDto = ObjectMapper().readValue(req.reader, FormLoginDto::class.java)
 
-    @Autowired
-    private lateinit var extractor: HeaderTokenExtractor
-
-    constructor(reqMatcher: RequestMatcher, failureHandler: JwtAuthenticationFailureHandler) : this(reqMatcher){
-        this.failureHandler = failureHandler
-    }
-
-    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-
-        val tokenPayload = request.getHeader(AUTHORIZATION)
-
-        val token = JwtPreProcessingToken(this.extractor.extract(tokenPayload))
+        val token = PreAuthorizationToken(formLoginDto)
 
         return super.getAuthenticationManager().authenticate(token)
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
-
-        val context = SecurityContextHolder.createEmptyContext()
-
-        context.authentication = authResult
-        SecurityContextHolder.setContext(context)
-
-        chain?.doFilter(request, response)
+    /*
+    * Try authentication at FormLoginAuthenticationProvider
+    * This method perform to make JWT token and inject to response
+    * */
+    override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
+        this.myAuthenticationSuccessHandler?.onAuthenticationSuccess(request, response, authResult)
     }
 
+    /*
+    * Try authentication at FormLoginAuthenticationProvider
+    * This method perform to handle error about FormLoginAuthenticationProvider result
+    * */
     override fun unsuccessfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, failed: AuthenticationException?) {
-
-        SecurityContextHolder.clearContext() // must call this cause this request was never authentication.
-
-        this.unsuccessfulAuthentication(request,response, failed)
+        //super.unsuccessfulAuthentication(request, response, failed)
+        this.myAuthenticationFailureHandler?.onAuthenticationFailure(request, response, failed)
     }
 }

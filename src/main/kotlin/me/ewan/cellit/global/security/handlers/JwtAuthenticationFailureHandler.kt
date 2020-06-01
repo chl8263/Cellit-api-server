@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class JwtAuthenticationFailureHandler() : AuthenticationFailureHandler {
+class JwtAuthenticationFailureHandler : AuthenticationFailureHandler {
 
     private val log = KotlinLogging.logger {}
 

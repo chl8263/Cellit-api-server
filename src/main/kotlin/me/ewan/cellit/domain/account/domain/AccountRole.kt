@@ -5,6 +5,6 @@ enum class AccountRole {
 
     companion object {
         fun getRoleByName(role: String) : AccountRole =
-                values().find { x -> x.name == "ROLE_$role" } ?: throw NoSuchElementException()
+                values().find { x -> x.name == role } ?: throw NoSuchElementException()
     }
 }

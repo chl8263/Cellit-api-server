@@ -4,17 +4,16 @@ import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.security.HeaderTokenExtractor
 import me.ewan.cellit.global.security.JwtDecoder
-import me.ewan.cellit.global.security.filters.FormLoginFilter
+import me.ewan.cellit.global.security.filters.JwtAuthenticationFilter
 import me.ewan.cellit.global.security.filters.JwtAuthorizationFilter
-import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationFailureHandler
-import me.ewan.cellit.global.security.handlers.FormLoginAuthenticationSuccessHandler
-import me.ewan.cellit.global.security.providers.FormLoginAuthenticationProvider
+import me.ewan.cellit.global.security.handlers.JwtAuthenticationFailureHandler
+import me.ewan.cellit.global.security.handlers.JwtAuthenticationSuccessHandler
+import me.ewan.cellit.global.security.providers.JwtAuthenticationProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -45,13 +44,13 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     private lateinit var passwordEncoder: PasswordEncoder
 
     @Autowired
-    private lateinit var provider: FormLoginAuthenticationProvider
+    private lateinit var provider: JwtAuthenticationProvider
 
     @Autowired
-    private lateinit var formLoginAuthenticationSuccessHandler: FormLoginAuthenticationSuccessHandler
+    private lateinit var formLoginAuthenticationSuccessHandler: JwtAuthenticationSuccessHandler
 
     @Autowired
-    private lateinit var formLoginAuthenticationFailureHandler: FormLoginAuthenticationFailureHandler
+    private lateinit var jwtAuthenticationFailureHandler: JwtAuthenticationFailureHandler
 
     @Autowired
     private lateinit var extractor: HeaderTokenExtractor
@@ -60,8 +59,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     private lateinit var decoder: JwtDecoder
 
     @Throws(Exception::class)
-    protected fun formLoginFilter(): FormLoginFilter {
-        val filter = FormLoginFilter("/formlogin", formLoginAuthenticationSuccessHandler, formLoginAuthenticationFailureHandler)
+    protected fun formLoginFilter(): JwtAuthenticationFilter {
+        val filter = JwtAuthenticationFilter("/formlogin", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
         filter.setAuthenticationManager(authenticationManagerBean())
         return filter
     }
@@ -121,8 +120,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
                 .mvcMatchers("/signUp", "/login**", "/loginError", "/formlogin").permitAll()
-                //.antMatchers(HttpMethod.GET, "/api/**").permitAll()
-                .mvcMatchers("/admin").hasAnyAuthority("ROLE_USER")
+                .mvcMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
+                .mvcMatchers("/admin/user").hasAnyAuthority("ROLE_USER")
                 .anyRequest().hasRole("USER")
 
 

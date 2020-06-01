@@ -2,7 +2,6 @@ package me.ewan.cellit.global.security
 
 import me.ewan.cellit.domain.account.domain.Account
 import me.ewan.cellit.domain.account.domain.AccountRole
-import me.ewan.cellit.global.security.tokens.JwtPostProcessingToken
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
@@ -21,9 +20,6 @@ class AccountContext : User {
     companion object{
         fun fromAccountModel(account: Account): AccountContext =
                 AccountContext(account, account.accountname, account.password, parseAuthorities(account.role))
-
-        fun fromJwtPostToken(token: JwtPostProcessingToken) =
-                AccountContext(null, token.getUsername(), token.getPassword(), token.authorities)
 
         private fun parseAuthorities(role: AccountRole): List<GrantedAuthority> = mutableListOf(role).map { x -> SimpleGrantedAuthority(x.name) }
 

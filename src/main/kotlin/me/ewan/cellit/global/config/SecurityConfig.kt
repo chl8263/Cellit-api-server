@@ -10,7 +10,6 @@ import me.ewan.cellit.global.security.handlers.JwtAuthenticationFailureHandler
 import me.ewan.cellit.global.security.handlers.JwtAuthenticationSuccessHandler
 import me.ewan.cellit.global.security.providers.JwtAuthenticationProvider
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -22,14 +21,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.session.SessionRegistry
-import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.provider.token.TokenStore
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.session.HttpSessionEventPublisher
 
 @Configuration
 @EnableWebSecurity
@@ -44,7 +38,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     private lateinit var passwordEncoder: PasswordEncoder
 
     @Autowired
-    private lateinit var provider: JwtAuthenticationProvider
+    private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
 
     @Autowired
     private lateinit var formLoginAuthenticationSuccessHandler: JwtAuthenticationSuccessHandler
@@ -66,9 +60,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun tokenStore(): TokenStore = InMemoryTokenStore()
-
-    @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
@@ -76,15 +67,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Bean
     fun authenticationFailureHandler(): AuthenticationFailureHandler = LoginFailureHandler()
 
-    @Bean
-    fun sessionRegistry(): SessionRegistry = SessionRegistryImpl()
-
-    @Bean
-    fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher> = ServletListenerRegistrationBean(HttpSessionEventPublisher())
-
     override fun configure(auth: AuthenticationManagerBuilder?) {
 
-        auth?.authenticationProvider(this.provider)
+        auth?.authenticationProvider(this.jwtAuthenticationProvider)
 
         auth?.userDetailsService(accountService)
                 ?.passwordEncoder(passwordEncoder)

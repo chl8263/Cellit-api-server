@@ -1,6 +1,7 @@
 package me.ewan.cellit.global.util
 
 import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.common.AppProperties
 import org.h2.tools.Server
@@ -23,8 +24,7 @@ class AccountCreation : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
 
 
-        println(appProperties.clientId)
-        //accountService.createAccount(Account(username = appProperties.testUserUsername, password = appProperties.testUserPassword))
         accountService.createAccount(Account(accountname = appProperties.userAccountName, password = appProperties.userPassword))
+        accountService.createAccount(Account(accountname = appProperties.adminAccountname, password = appProperties.adminPassword, role = AccountRole.ROLE_ADMIN))
     }
 }

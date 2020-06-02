@@ -26,7 +26,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate.format_sql: true
     show-sql: true
@@ -47,8 +47,6 @@ my-app:
 #  testAdminPassword: 123
 #  testUserUsername: test_ewan_user
 #  testUserPassword: 123
-  clientId: myApp
-  clientSecret: pass
 
 logging:
   level:

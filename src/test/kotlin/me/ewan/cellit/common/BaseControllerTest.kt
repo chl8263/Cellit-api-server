@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.common
+package me.ewan.cellit.common
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jdk.nashorn.internal.ir.annotations.Ignore
@@ -26,4 +26,8 @@ class BaseControllerTest {
 
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
+
+    companion object{
+        const val BEARER_PREFIX: String = "Bearer "
+    }
 }

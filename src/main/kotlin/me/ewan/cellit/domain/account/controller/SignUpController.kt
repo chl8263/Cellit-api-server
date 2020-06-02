@@ -21,7 +21,7 @@ class SignUpController {
 
     @PostMapping
     fun signUpProcess(@ModelAttribute account: Account, model: Model) : String{
-        account.role = AccountRole.USER
+        account.role = AccountRole.ROLE_USER
 
         try {
             accountService.createAccount(account)
@@ -30,7 +30,6 @@ class SignUpController {
             return "/signUp"
         }
 
-        println("signUpProcess")
         return "redirect:/"
     }
 }

@@ -9,10 +9,10 @@ import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
@@ -25,35 +25,12 @@ class CellController {
     @Autowired
     private lateinit var accountService: AccountService
 
-//    @GetMapping("/{accountId}")
-//    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CellModel>{
-//
-//        val cells = accountService.getCellsWithAccountId(accountId)
-//
-//        val cellModel = CellModel(cells[0])
-//
-//        return ResponseEntity.ok(cellModel)
-//    }
-
-//    val cells = accountService.getCellsWithAccountId(accountId)
-//
-//    val entityModel = cells.map {
-//        val cellModel = CellModel(it)
-//        val selfLink = linkTo(CellController::class.java).slash(it.cellId)
-//                .withSelfRel()
-//        cellModel.add(selfLink)
-//    }
-//
-//    val selfLink = linkTo(WebMvcLinkBuilder.methodOn(AccountController::class.java).getCellsFromAccountId(accountId)).withSelfRel()
-//
-//    val resultEntityModel = CollectionModel(entityModel, selfLink)
-//
-//    return ResponseEntity.ok(resultEntityModel)
-
     @PostMapping
-    fun createCell(@RequestBody cellDto: CellDto, principal: Principal): ResponseEntity<CellModel> {
+    fun createCell(@RequestBody cellDto: CellDto): ResponseEntity<CellModel> {
 
-        val savedCell = cellService.createCell(cellDto, principal.name)
+        val auth = SecurityContextHolder.getContext().authentication
+
+        val savedCell = cellService.createCell(cellDto, auth.name)
 
         val entityModel = savedCell.let {
             val cellModel = CellModel(it)

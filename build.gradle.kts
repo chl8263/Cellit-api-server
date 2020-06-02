@@ -39,6 +39,10 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:4.2.2:jpa")
     kapt("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final")
 
+    // https://mvnrepository.com/artifact/com.auth0/java-jwt
+    implementation(group = "com.auth0", name = "java-jwt", version = "3.10.3")
+
+
     implementation(group = "org.modelmapper", name = "modelmapper", version = "2.3.2")
 
     implementation("io.github.microutils:kotlin-logging:1.7.9")

@@ -22,7 +22,7 @@ class Account (
         var password: String,
 
         @Enumerated(EnumType.STRING)
-        var role: AccountRole = AccountRole.USER,
+        var role: AccountRole = AccountRole.ROLE_USER,
 
         // default fetch type = LAZY
         @JsonIgnore

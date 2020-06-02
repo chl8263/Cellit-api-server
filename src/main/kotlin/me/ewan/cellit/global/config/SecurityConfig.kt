@@ -2,12 +2,17 @@ package me.ewan.cellit.global.config
 
 import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.global.security.HeaderTokenExtractor
+import me.ewan.cellit.global.security.JwtDecoder
+import me.ewan.cellit.global.security.filters.JwtAuthenticationFilter
+import me.ewan.cellit.global.security.filters.JwtAuthorizationFilter
+import me.ewan.cellit.global.security.handlers.JwtAuthenticationFailureHandler
+import me.ewan.cellit.global.security.handlers.JwtAuthenticationSuccessHandler
+import me.ewan.cellit.global.security.providers.JwtAuthenticationProvider
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -16,14 +21,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.session.SessionRegistry
-import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler
-import org.springframework.security.oauth2.provider.token.TokenStore
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
-import org.springframework.security.web.session.HttpSessionEventPublisher
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
@@ -32,13 +32,32 @@ import org.springframework.security.web.session.HttpSessionEventPublisher
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
-    lateinit var accountService: AccountService
+    private lateinit var accountService: AccountService
 
     @Autowired
-    lateinit var passwordEncoder: PasswordEncoder
+    private lateinit var passwordEncoder: PasswordEncoder
 
-    @Bean
-    fun tokenStore(): TokenStore = InMemoryTokenStore()
+    @Autowired
+    private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
+
+    @Autowired
+    private lateinit var formLoginAuthenticationSuccessHandler: JwtAuthenticationSuccessHandler
+
+    @Autowired
+    private lateinit var jwtAuthenticationFailureHandler: JwtAuthenticationFailureHandler
+
+    @Autowired
+    private lateinit var extractor: HeaderTokenExtractor
+
+    @Autowired
+    private lateinit var decoder: JwtDecoder
+
+    @Throws(Exception::class)
+    protected fun formLoginFilter(): JwtAuthenticationFilter {
+        val filter = JwtAuthenticationFilter("/login", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
+        filter.setAuthenticationManager(authenticationManagerBean())
+        return filter
+    }
 
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
@@ -46,15 +65,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun authenticationFailureHandler() : AuthenticationFailureHandler = LoginFailureHandler()
-
-    @Bean
-    fun sessionRegistry() : SessionRegistry = SessionRegistryImpl()
-
-    @Bean
-    fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher> = ServletListenerRegistrationBean(HttpSessionEventPublisher())
+    fun authenticationFailureHandler(): AuthenticationFailureHandler = LoginFailureHandler()
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
+
+        auth?.authenticationProvider(this.jwtAuthenticationProvider)
+
         auth?.userDetailsService(accountService)
                 ?.passwordEncoder(passwordEncoder)
     }
@@ -62,7 +78,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
         web?.let {
-            //it.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
             it.ignoring()
                     .antMatchers("/assets/**")
                     .antMatchers("/dist/**")
@@ -71,39 +86,18 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Throws(Exception::class)
-    override fun configure(http: HttpSecurity?) {
-        http?.let {
-            it.authorizeRequests()
-                    .mvcMatchers("/signUp", "/login**","/loginError").permitAll()
-                    .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
-                    .mvcMatchers("/admin").hasRole("ADMIN")
-                    .anyRequest().authenticated()
-                    .and()
-                    .exceptionHandling()
-                        .accessDeniedHandler(OAuth2AccessDeniedHandler())
+    override fun configure(http: HttpSecurity) {
 
-            it.formLogin()
-                    .loginPage("/login")
-                    .failureHandler(authenticationFailureHandler())
-                    .permitAll()
+        http.csrf().disable()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-            it.httpBasic()
-
-            it.logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/")
-//                    .deleteCookies("JSESSIONID")
-//                    .invalidateHttpSession(true)
-
-            it.sessionManagement()
-                    .sessionFixation()
-                    .changeSessionId()
-                    .invalidSessionUrl("/login")
-                    .maximumSessions(1)
-                    .maxSessionsPreventsLogin(true)
-
-            it.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-
-        }
+        http.headers().frameOptions().disable()
+        http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter::class.java)
+        http
+                .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
+                .authorizeRequests()
+                .mvcMatchers("/signUp", "/login**", "/loginError").permitAll()
+                .mvcMatchers("/admin**").hasAnyAuthority("ROLE_ADMIN")
+                .anyRequest().authenticated()
     }
 }

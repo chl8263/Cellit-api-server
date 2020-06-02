@@ -54,7 +54,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     protected fun formLoginFilter(): JwtAuthenticationFilter {
-        val filter = JwtAuthenticationFilter("/login", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
+        val filter = JwtAuthenticationFilter("/auth", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
         filter.setAuthenticationManager(authenticationManagerBean())
         return filter
     }
@@ -82,6 +82,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                     .antMatchers("/assets/**")
                     .antMatchers("/dist/**")
                     .antMatchers("/images/**")
+                    .antMatchers("/common/**")
         }
     }
 
@@ -96,7 +97,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
-                .mvcMatchers("/signUp", "/login**", "/loginError").permitAll()
+                .mvcMatchers("/", "/signUp", "/login**", "/loginError").permitAll()
                 .mvcMatchers("/admin**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
     }

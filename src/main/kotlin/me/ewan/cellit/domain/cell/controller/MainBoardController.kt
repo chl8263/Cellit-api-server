@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView
 import java.security.Principal
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/mainBoard")
 class MainBoardController {
 
     companion object : KLogging()

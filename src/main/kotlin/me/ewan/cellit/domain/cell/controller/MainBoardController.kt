@@ -24,14 +24,5 @@ class MainBoardController {
     private lateinit var passWordEncoder: PasswordEncoder
 
     @GetMapping
-    fun mainBoardForm(principal: Principal, model: Model) : ModelAndView {
-
-        val currentAccount = accountService.getAccount(principal.name)
-
-        model.addAttribute("userId", currentAccount.accountId)
-        model.addAttribute("username", currentAccount.accountname)
-        model.addAttribute("password", currentAccount.password)
-
-        return ModelAndView("/mainBoard")
-    }
+    fun mainBoardForm(model: Model) : String = "/mainBoard"
 }

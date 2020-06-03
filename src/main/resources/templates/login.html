@@ -173,9 +173,8 @@
                 'Content-type': MediaType.JSON
             },
             body: Util.formDataToJson("login_Form")
-        }).then((res) => {
-            Error.handleFetchError(res)
-        }).then((res) => {
+        }).then(Error.handleFetchError)
+        .then((res) => {
             return res.json()
         }).then((json) => {
             console.log(json);

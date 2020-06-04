@@ -2,7 +2,7 @@ package me.ewan.cellit.domain.cell.api
 
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
-import me.ewan.cellit.domain.cell.vo.model.CellRepresentModel
+import me.ewan.cellit.domain.cell.vo.model.CellModel
 import me.ewan.cellit.domain.cell.service.CellService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
@@ -22,14 +22,14 @@ class CellController {
     private lateinit var accountService: AccountService
 
     @PostMapping
-    fun createCell(@RequestBody cellDto: CellDto): ResponseEntity<CellRepresentModel> {
+    fun createCell(@RequestBody cellDto: CellDto): ResponseEntity<CellModel> {
 
         val auth = SecurityContextHolder.getContext().authentication
 
         val savedCell = cellService.createCell(cellDto, auth.name)
 
         val entityModel = savedCell.let {
-            val cellModel = CellRepresentModel(it)
+            val cellModel = CellModel(it)
             val selfLink = linkTo(CellController::class.java).slash(it.cellId)
                     .withSelfRel()
             cellModel.add(selfLink)

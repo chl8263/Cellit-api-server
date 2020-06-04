@@ -2,8 +2,12 @@ package me.ewan.cellit.domain.account.api
 
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.domain.account.vo.model.AccountModel
 import me.ewan.cellit.domain.cell.api.CellController
-import me.ewan.cellit.domain.cell.vo.model.CellRepresentModel
+import me.ewan.cellit.domain.cell.vo.model.CellModel
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
@@ -19,19 +23,35 @@ class AccountController{
     @Autowired
     private lateinit var accountService: AccountService
 
+    @Autowired
+    lateinit var modelMapper: ModelMapper
+
     @PostMapping
-    fun createNewAccount(@ModelAttribute account: Account){
-        accountService.createAccount(account)
+    fun createNewAccount(@RequestBody account: Account): ResponseEntity<AccountModel>{
+        account.role = AccountRole.ROLE_USER
+        val savedAccount = accountService.createAccount(account)
+
+        val accountModel = savedAccount.let {
+            //val accountDto = modelMapper.map(savedAccount, AccountDto::class.java)
+            val accountModel = AccountModel(it)
+            val selfLink = linkTo(methodOn(AccountController::class.java).createNewAccount(account)).withSelfRel()
+            accountModel.add(selfLink)
+        }
+
+        val linkBuilder = linkTo(AccountController::class.java).slash(savedAccount.accountId)
+        val createdUri = linkBuilder.toUri()
+
+        return ResponseEntity.created(createdUri).body(accountModel)
     }
 
 
     @GetMapping("/{accountId}/cells")
-    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellRepresentModel>> {
+    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellModel>> {
 
         val cells = accountService.getCellsWithAccountId(accountId)
 
         val entityModel = cells.map {
-            val cellModel = CellRepresentModel(it)
+            val cellModel = CellModel(it)
             val selfLink = linkTo(CellController::class.java).slash(it.cellId)
                     .withSelfRel()
             cellModel.add(selfLink)

@@ -2,6 +2,7 @@ package me.ewan.cellit.domain.account.service
 
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.global.security.AccountContext
 import mu.KLogging

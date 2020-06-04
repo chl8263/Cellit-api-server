@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import org.springframework.hateoas.RepresentationModel
 
-class CellRepresentModel : RepresentationModel<CellRepresentModel> {
+class CellModel : RepresentationModel<CellModel> {
 
     @JsonUnwrapped
     var cell: CellDto

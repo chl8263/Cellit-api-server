@@ -3,14 +3,12 @@ package me.ewan.cellit.domain.cell.service
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
-import me.ewan.cellit.domain.cell.domain.AccountCell
-import me.ewan.cellit.domain.cell.domain.Cell
-import me.ewan.cellit.domain.cell.model.AccountCellRole
-import me.ewan.cellit.domain.cell.model.CellDto
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
+import me.ewan.cellit.domain.cell.vo.domain.Cell
+import me.ewan.cellit.domain.cell.vo.model.AccountCellRole
+import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 
 @Service

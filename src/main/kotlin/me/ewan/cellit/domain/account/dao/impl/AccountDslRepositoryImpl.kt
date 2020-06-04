@@ -1,9 +1,9 @@
 package me.ewan.cellit.domain.account.dao.impl
 
 import me.ewan.cellit.domain.account.dao.AccountDslRepository
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.account.domain.QAccount
-import me.ewan.cellit.domain.cell.domain.QAccountCell
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.QAccount
+import me.ewan.cellit.domain.cell.vo.domain.QAccountCell
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 class AccountDslRepositoryImpl() : QuerydslRepositorySupport(Account::class.java), AccountDslRepository{

@@ -1,6 +1,5 @@
 package me.ewan.cellit.global.config
 
-import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.security.HeaderTokenExtractor
 import me.ewan.cellit.global.security.JwtDecoder
@@ -22,7 +21,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
@@ -63,9 +61,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
-
-    @Bean
-    fun authenticationFailureHandler(): AuthenticationFailureHandler = LoginFailureHandler()
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
 

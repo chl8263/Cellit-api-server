@@ -1,13 +1,13 @@
 package me.ewan.cellit.domain.cell.repository
 
 import me.ewan.cellit.domain.account.dao.AccountRepository
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.account.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
-import me.ewan.cellit.domain.cell.domain.AccountCell
-import me.ewan.cellit.domain.cell.domain.Cell
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
+import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.common.BaseControllerTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.Hibernate

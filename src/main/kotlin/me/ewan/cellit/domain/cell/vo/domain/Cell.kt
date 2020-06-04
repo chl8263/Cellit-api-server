@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.cell.domain
+package me.ewan.cellit.domain.cell.vo.domain
 
 import au.com.console.kassava.kotlinEquals
 import au.com.console.kassava.kotlinHashCode

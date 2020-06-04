@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Form -->
-                <form class="form-horizontal m-t-20" method="post" th:action="@{/signUp}">
+                <form id="signUpForm" class="form-horizontal m-t-20">
                     <div class="row p-b-30">
                         <div class="col-12">
                             <!-- username -->
@@ -131,6 +131,44 @@
 <script>
     $('[data-toggle="tooltip"]').tooltip();
     $(".preloader").fadeOut();
+
+    const URL_SIGN_UP = "/singUp";
+
+    const signUpForm = document.querySelector("#signUpForm");
+
+    window.onload = () => {
+        init();
+    };
+
+    function init(){
+        signUpForm.addEventListener("submit", handleSubmit);
+    }
+
+    function handleSubmit(event){
+        event.preventDefault();
+        doSubmit();
+    }
+
+    const doSubmit = () => {
+        fetch(URL_SIGN_UP, {
+            method: HTTP.METHOD_POST,
+            headers: {
+                'Content-type': MediaType.JSON
+            },
+            body: Util.formDataToJson("login_Form")
+        }).then(Error.handleFetchError)
+            .then((res) => {
+                return res.json()
+            }).then((json) => {
+            console.log(json);
+            JWT_TOKEN = json.token;
+            window.location.href="/mainBoard"
+        }).catch(error => {
+            loginErrorMsgBox.style.display = "block";
+            loginErrorMsg.innerHTML = "Please check account information again";
+        });
+    };
+
 </script>
 </body>
 </html>

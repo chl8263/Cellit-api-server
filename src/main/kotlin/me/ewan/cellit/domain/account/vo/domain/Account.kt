@@ -1,11 +1,11 @@
-package me.ewan.cellit.domain.account.domain
+package me.ewan.cellit.domain.account.vo.domain
 
 import au.com.console.kassava.kotlinEquals
 import au.com.console.kassava.kotlinHashCode
 import au.com.console.kassava.kotlinToString
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
-import me.ewan.cellit.domain.cell.domain.AccountCell
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import org.codehaus.jackson.annotate.JsonIgnore
 import javax.persistence.*
 

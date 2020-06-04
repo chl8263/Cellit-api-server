@@ -1,4 +1,4 @@
-package me.ewan.cellit.domain.account.domain
+package me.ewan.cellit.domain.account.vo.domain
 
 enum class AccountRole {
     ROLE_ADMIN, ROLE_USER;

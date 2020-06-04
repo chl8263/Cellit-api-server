@@ -1,19 +1,15 @@
 package me.ewan.cellit.domain.cell.api
 
 import me.ewan.cellit.domain.account.service.AccountService
-import me.ewan.cellit.domain.cell.model.CellDto
-import me.ewan.cellit.domain.cell.model.CellModel
+import me.ewan.cellit.domain.cell.vo.dto.CellDto
+import me.ewan.cellit.domain.cell.vo.model.CellRepresentModel
 import me.ewan.cellit.domain.cell.service.CellService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 
 @RestController
 @RequestMapping(value = ["/api/cells"], produces = [MediaTypes.HAL_JSON_VALUE])
@@ -26,14 +22,14 @@ class CellController {
     private lateinit var accountService: AccountService
 
     @PostMapping
-    fun createCell(@RequestBody cellDto: CellDto): ResponseEntity<CellModel> {
+    fun createCell(@RequestBody cellDto: CellDto): ResponseEntity<CellRepresentModel> {
 
         val auth = SecurityContextHolder.getContext().authentication
 
         val savedCell = cellService.createCell(cellDto, auth.name)
 
         val entityModel = savedCell.let {
-            val cellModel = CellModel(it)
+            val cellModel = CellRepresentModel(it)
             val selfLink = linkTo(CellController::class.java).slash(it.cellId)
                     .withSelfRel()
             cellModel.add(selfLink)

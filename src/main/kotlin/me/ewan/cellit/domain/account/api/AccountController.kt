@@ -23,8 +23,6 @@ class AccountController{
     @Autowired
     private lateinit var accountService: AccountService
 
-    @Autowired
-    lateinit var modelMapper: ModelMapper
 
     @PostMapping
     fun createNewAccount(@RequestBody account: Account): ResponseEntity<AccountModel>{
@@ -32,7 +30,6 @@ class AccountController{
         val savedAccount = accountService.createAccount(account)
 
         val accountModel = savedAccount.let {
-            //val accountDto = modelMapper.map(savedAccount, AccountDto::class.java)
             val accountModel = AccountModel(it)
             val selfLink = linkTo(methodOn(AccountController::class.java).createNewAccount(account)).withSelfRel()
             accountModel.add(selfLink)

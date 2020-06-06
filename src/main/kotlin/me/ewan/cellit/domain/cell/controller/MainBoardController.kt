@@ -24,5 +24,5 @@ class MainBoardController {
     private lateinit var passWordEncoder: PasswordEncoder
 
     @GetMapping
-    fun mainBoardForm() : String = "/mainBoard"
+    fun mainBoardForm() : String = "/cellUnit/mainBoard"
 }

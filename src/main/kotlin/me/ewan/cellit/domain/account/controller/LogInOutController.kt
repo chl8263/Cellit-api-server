@@ -15,9 +15,6 @@ class LogInOutController {
 
     @GetMapping("/login")
     fun login(request: HttpServletRequest) : String {
-        return "/login"
+        return "/common/login"
     }
-
-    @RequestMapping("/loginError")
-    fun loginError(model: Model) : String = "/login"
 }

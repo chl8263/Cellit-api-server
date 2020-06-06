@@ -16,18 +16,5 @@ class SignUpController {
     lateinit var accountService: AccountService
 
     @GetMapping
-    fun signUpForm() : String = "/signUp"
-
-
-    @PostMapping
-    fun signUpProcess(@ModelAttribute account: Account) : String{
-
-        try {
-            accountService.createAccount(account)
-        }catch (e: Exception){
-            return "/signUp"
-        }
-
-        return "redirect:/"
-    }
+    fun signUpForm() : String = "/common/signUp"
 }

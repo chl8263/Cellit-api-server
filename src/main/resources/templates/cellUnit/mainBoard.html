@@ -274,7 +274,6 @@
 
 
 <script th:inline="javascript">
-    const userName = [[${userId}]];
     const URL_GET_CELLS = "/api/account/" + userName + "/cells",
         URL_CREATE_CELLS = "/api/cells",
         URL_AUTH_TOKEN = "/oauth/token";
@@ -282,9 +281,6 @@
     const createNewCellUnitForm = document.querySelector("#createNewCellUnitForm"),
         cellName = createNewCellUnitForm.querySelector("#cellName"),
         createNewCellUnitSubmitButton = document.querySelector("#createNewCellUnitSubmitButton");
-
-    console.log([[${username}]]);
-    console.log([[${password}]]);
 
     window.onload = () => {
         fetch(URL_GET_CELLS, {

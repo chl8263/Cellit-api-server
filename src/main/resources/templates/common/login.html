@@ -78,7 +78,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-success text-white" id="basic-addon1"><i class="ti-user"></i></span>
                                 </div>
-                                <input type="text" th:value="${accountname}" name="accountname" class="form-control form-control-lg" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" required="">
+                                <input type="text" id="accountname" name="accountname" class="form-control form-control-lg" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" required="">
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -161,7 +161,8 @@
         loginBtn = document.querySelector("#loginButton"),
         loginErrorMsgBox = document.querySelector("#loginErrorMsgBox"),
         loginErrorMsg = document.querySelector("#loginErrorMsg"),
-        loginForm = document.querySelector("#login_Form");
+        loginForm = document.querySelector("#login_Form"),
+        accountnameField = document.querySelector("#accountname");
 
 
     // Must change JWT_TOKEN value ""
@@ -194,8 +195,8 @@
         .then((res) => {
             return res.json()
         }).then((json) => {
-            console.log(json);
             JWT_TOKEN = json.token;
+            accountname = accountnameField.value;
             window.location.href="/mainBoard"
         }).catch(error => {
             loginErrorMsgBox.style.display = "block";

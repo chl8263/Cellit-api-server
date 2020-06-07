@@ -274,7 +274,7 @@
 
 
 <script th:inline="javascript">
-    const URL_GET_CELLS = "/api/account/" + userName + "/cells",
+    const URL_GET_CELLS = "/api/account/" + accountname + "/cells",
         URL_CREATE_CELLS = "/api/cells",
         URL_AUTH_TOKEN = "/oauth/token";
 
@@ -283,6 +283,7 @@
         createNewCellUnitSubmitButton = document.querySelector("#createNewCellUnitSubmitButton");
 
     window.onload = () => {
+        init();
         fetch(URL_GET_CELLS, {
             method: 'GET',
             headers: {
@@ -293,6 +294,14 @@
         }).then((error) => {
             console.log(error)
         });
+    };
+
+    const init = () => {
+        console.log(accountname)
+        console.log(JWT_TOKEN)
+        console.log(HTTP.METHOD_POST)
+        // if(accountname === "" || JWT_TOKEN === "")
+        //     //window.location.href="/login"
     };
 
     createNewCellUnitSubmitButton.onclick = () => {

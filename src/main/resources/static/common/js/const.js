@@ -17,3 +17,4 @@ class MediaType{
 
 // jwt
 let JWT_TOKEN = "";
+let accountname = "";

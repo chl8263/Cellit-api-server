@@ -197,7 +197,8 @@
         }).then((json) => {
             JWT_TOKEN = json.token;
             accountname = accountnameField.value;
-            window.location.href="/mainBoard"
+            window.location.replace("/mainBoard")
+            //window.location.href="/mainBoard"
         }).catch(error => {
             loginErrorMsgBox.style.display = "block";
             loginErrorMsg.innerHTML = "Please check account information again";

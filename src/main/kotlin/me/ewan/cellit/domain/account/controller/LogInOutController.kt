@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest
 class LogInOutController {
 
     @GetMapping("/")
-    fun welcome() = "redirect:/login"
+    fun welcome(): String = "/common/login"
 
 
     @GetMapping("/login")

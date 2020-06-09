@@ -93,7 +93,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
-                .mvcMatchers("/", "/signUp", "/login**", "/mainBoard").permitAll()
+                .mvcMatchers("/", "/signUp", "/login**").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/api/account").permitAll()
                 .mvcMatchers("/admin**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()

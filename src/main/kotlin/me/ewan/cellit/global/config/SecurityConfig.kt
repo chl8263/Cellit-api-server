@@ -74,11 +74,11 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
         web?.let {
-            it.ignoring()
-                    .antMatchers("/assets/**")
-                    .antMatchers("/dist/**")
-                    .antMatchers("/images/**")
-                    .antMatchers("/common/**")
+//            it.ignoring()
+//                    .antMatchers("/assets/**")
+//                    .antMatchers("/dist/**")
+//                    .antMatchers("/images/**")
+//                    .antMatchers("/common/**")
         }
     }
 
@@ -93,7 +93,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
-                .mvcMatchers("/", "/signUp", "/login**").permitAll()
+                .mvcMatchers("/", "/signUp", "/login**", "/mainBoard").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/api/account").permitAll()
                 .mvcMatchers("/admin**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()

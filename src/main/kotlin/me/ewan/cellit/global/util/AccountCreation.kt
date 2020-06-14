@@ -1,7 +1,7 @@
 package me.ewan.cellit.global.util
 
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.account.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.common.AppProperties
 import org.h2.tools.Server

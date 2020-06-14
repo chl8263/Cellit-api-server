@@ -25,13 +25,7 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager, priva
 
         if(tokenPayload.isNullOrBlank() || !tokenPayload.startsWith(BEARER_PREFIX)){
 
-            val objectMapper = ObjectMapper()
-
-            val errorDto = ErrorDto("UNAUTHORIZED", "UNAUTHORIZED")
-
-            response.contentType = MediaType.APPLICATION_JSON_VALUE
-            response.status = HttpStatus.UNAUTHORIZED.value()
-            response.writer.write(objectMapper.writeValueAsString(errorDto))
+            chain.doFilter(request, response)
             return
         }
 

@@ -1,13 +1,12 @@
 package me.ewan.cellit.domain.account.service
 
-import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
-import me.ewan.cellit.domain.account.domain.AccountRole
-import me.ewan.cellit.domain.cell.model.CellDto
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
+import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.global.security.AccountContext
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder

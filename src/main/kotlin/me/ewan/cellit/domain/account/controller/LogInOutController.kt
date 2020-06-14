@@ -9,11 +9,12 @@ import javax.servlet.http.HttpServletRequest
 @Controller
 class LogInOutController {
 
+    @GetMapping("/")
+    fun welcome(): String = "/common/login"
+
+
     @GetMapping("/login")
     fun login(request: HttpServletRequest) : String {
-        return "/login"
+        return "/common/login"
     }
-
-    @RequestMapping("/loginError")
-    fun loginError(model: Model) : String = "/login"
 }

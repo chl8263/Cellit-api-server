@@ -1,7 +1,7 @@
 package me.ewan.cellit.jwt
 
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.account.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.global.security.JwtDecoder

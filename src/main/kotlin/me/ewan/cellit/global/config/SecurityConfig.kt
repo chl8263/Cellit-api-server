@@ -1,6 +1,5 @@
 package me.ewan.cellit.global.config
 
-import me.ewan.cellit.domain.account.handler.LoginFailureHandler
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.security.HeaderTokenExtractor
 import me.ewan.cellit.global.security.JwtDecoder
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -22,7 +22,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
@@ -54,7 +53,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     protected fun formLoginFilter(): JwtAuthenticationFilter {
-        val filter = JwtAuthenticationFilter("/login", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
+        val filter = JwtAuthenticationFilter("/auth", formLoginAuthenticationSuccessHandler, jwtAuthenticationFailureHandler)
         filter.setAuthenticationManager(authenticationManagerBean())
         return filter
     }
@@ -63,9 +62,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
-
-    @Bean
-    fun authenticationFailureHandler(): AuthenticationFailureHandler = LoginFailureHandler()
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
 
@@ -78,10 +74,11 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
         web?.let {
-            it.ignoring()
-                    .antMatchers("/assets/**")
-                    .antMatchers("/dist/**")
-                    .antMatchers("/images/**")
+//            it.ignoring()
+//                    .antMatchers("/assets/**")
+//                    .antMatchers("/dist/**")
+//                    .antMatchers("/images/**")
+//                    .antMatchers("/common/**")
         }
     }
 
@@ -96,7 +93,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
-                .mvcMatchers("/signUp", "/login**", "/loginError").permitAll()
+                .mvcMatchers("/", "/signUp", "/login**", "/mainBoard").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/api/account").permitAll()
                 .mvcMatchers("/admin**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
     }

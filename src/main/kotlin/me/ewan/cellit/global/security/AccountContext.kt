@@ -1,7 +1,7 @@
 package me.ewan.cellit.global.security
 
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.account.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User

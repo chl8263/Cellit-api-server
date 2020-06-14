@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView
 import java.security.Principal
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/mainBoard")
 class MainBoardController {
 
     companion object : KLogging()
@@ -24,14 +24,5 @@ class MainBoardController {
     private lateinit var passWordEncoder: PasswordEncoder
 
     @GetMapping
-    fun mainBoardForm(principal: Principal, model: Model) : ModelAndView {
-
-        val currentAccount = accountService.getAccount(principal.name)
-
-        model.addAttribute("userId", currentAccount.accountId)
-        model.addAttribute("username", currentAccount.accountname)
-        model.addAttribute("password", currentAccount.password)
-
-        return ModelAndView("/mainBoard")
-    }
+    fun mainBoardForm() : String = "/cellUnit/mainBoard"
 }

@@ -2,7 +2,7 @@ package me.ewan.cellit.global.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.global.security.JwtProperties.ISSUER
 import me.ewan.cellit.global.security.JwtProperties.SECRET
 import me.ewan.cellit.global.security.JwtProperties.USER_NAME

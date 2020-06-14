@@ -1,21 +1,20 @@
 package me.ewan.cellit.domain.account.api
 
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.domain.account.vo.model.AccountModel
 import me.ewan.cellit.domain.cell.api.CellController
-import me.ewan.cellit.domain.cell.model.CellDto
-import me.ewan.cellit.domain.cell.model.CellModel
+import me.ewan.cellit.domain.cell.vo.model.CellModel
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
-import org.springframework.hateoas.RepresentationModel
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/account", produces = [MediaTypes.HAL_JSON_VALUE])
@@ -23,6 +22,25 @@ class AccountController{
 
     @Autowired
     private lateinit var accountService: AccountService
+
+
+    @PostMapping
+    fun createNewAccount(@RequestBody account: Account): ResponseEntity<AccountModel>{
+        account.role = AccountRole.ROLE_USER
+        val savedAccount = accountService.createAccount(account)
+
+        val accountModel = savedAccount.let {
+            val accountModel = AccountModel(it)
+            val selfLink = linkTo(methodOn(AccountController::class.java).createNewAccount(account)).withSelfRel()
+            accountModel.add(selfLink)
+        }
+
+        val linkBuilder = linkTo(AccountController::class.java).slash(savedAccount.accountId)
+        val createdUri = linkBuilder.toUri()
+
+        return ResponseEntity.created(createdUri).body(accountModel)
+    }
+
 
     @GetMapping("/{accountId}/cells")
     fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellModel>> {

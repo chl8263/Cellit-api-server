@@ -1,6 +1,6 @@
 package me.ewan.cellit.jwt
 
-import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.global.security.AccountContext
@@ -24,7 +24,7 @@ class JetFactoryTest : BaseControllerTest(){
         //Given
         val name = "test_ewan"
         val pw = "123"
-        val account = Account(accountname = name,  password = pw)
+        val account = Account(accountname = name, password = pw)
         val accountContext = AccountContext.fromAccountModel(account)
 
         //When & Then

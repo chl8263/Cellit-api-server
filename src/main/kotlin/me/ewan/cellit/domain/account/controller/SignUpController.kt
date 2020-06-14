@@ -1,7 +1,7 @@
 package me.ewan.cellit.domain.account.controller
 
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.account.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -16,20 +16,5 @@ class SignUpController {
     lateinit var accountService: AccountService
 
     @GetMapping
-    fun signUpForm() : String = "/signUp"
-
-
-    @PostMapping
-    fun signUpProcess(@ModelAttribute account: Account, model: Model) : String{
-        account.role = AccountRole.ROLE_USER
-
-        try {
-            accountService.createAccount(account)
-        }catch (e: Exception){
-            model.addAttribute("errorMsg", "Cannot use this user name, try another user name")
-            return "/signUp"
-        }
-
-        return "redirect:/"
-    }
+    fun signUpForm() : String = "/common/signUp"
 }

@@ -1,8 +1,8 @@
 package me.ewan.cellit.domain.account.dao
 
-import me.ewan.cellit.domain.account.domain.Account
-import me.ewan.cellit.domain.cell.domain.AccountCell
-import me.ewan.cellit.domain.cell.domain.Cell
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
+import me.ewan.cellit.domain.cell.vo.domain.Cell
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 

@@ -1,6 +1,6 @@
 package me.ewan.cellit.global.security.providers
 
-import me.ewan.cellit.domain.account.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.security.AccountContext
 import me.ewan.cellit.global.security.tokens.PostAuthorizationToken

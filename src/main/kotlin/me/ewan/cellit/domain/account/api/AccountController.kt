@@ -4,17 +4,19 @@ import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
 import me.ewan.cellit.domain.account.vo.model.AccountModel
 import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.vo.model.CellModel
-import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/account", produces = [MediaTypes.HAL_JSON_VALUE])
@@ -23,9 +25,22 @@ class AccountController{
     @Autowired
     private lateinit var accountService: AccountService
 
+    @Autowired
+    private lateinit var accountDtoValidator: AccountDtoValidator
+
 
     @PostMapping
-    fun createNewAccount(@RequestBody accountDto: AccountDto): ResponseEntity<AccountModel>{
+    fun createNewAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<AccountModel>{
+
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().build()
+        }
+
+        accountDtoValidator.validate(accountDto, errors)
+
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().build()
+        }
 
         val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
         //account.role = AccountRole.ROLE_USER
@@ -33,7 +48,7 @@ class AccountController{
 
         val accountModel = savedAccount.let {
             val accountModel = AccountModel(it)
-            val selfLink = linkTo(methodOn(AccountController::class.java).createNewAccount(accountDto)).withSelfRel()
+            val selfLink = linkTo(AccountController::class.java).withSelfRel()
             accountModel.add(selfLink)
         }
 

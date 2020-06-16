@@ -74,6 +74,51 @@ class AccountApiTest : BaseControllerTest() {
     }
 
     @Test
+    fun `Create new user with wrong value and return Bad Request`(){
+        //given
+        val name = "ewan_test_test"
+        val pw = "123123"
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(
+                        """
+                            {
+                                "accountname": "$name",
+                                "password": "$pw",
+                                "role": "admin"
+                            }
+                        """.trimIndent()
+                )
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    fun `Create new user with empty value and return Bad Request`(){
+        //given
+        val name = ""
+        val pw = ""
+        val account = AccountDto(accountname = name, password = pw)
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(account))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
     fun `Get cells list with account id`() {
 
         //given

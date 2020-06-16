@@ -16,5 +16,4 @@ class AccountModel : RepresentationModel<AccountModel> {
         this.accountName = account.accountname
         this.role = account.role.name
     }
-
 }

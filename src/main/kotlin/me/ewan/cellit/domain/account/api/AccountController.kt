@@ -25,13 +25,15 @@ class AccountController{
 
 
     @PostMapping
-    fun createNewAccount(@RequestBody account: Account): ResponseEntity<AccountModel>{
-        account.role = AccountRole.ROLE_USER
+    fun createNewAccount(@RequestBody accountDto: AccountDto): ResponseEntity<AccountModel>{
+
+        val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
+        //account.role = AccountRole.ROLE_USER
         val savedAccount = accountService.createAccount(account)
 
         val accountModel = savedAccount.let {
             val accountModel = AccountModel(it)
-            val selfLink = linkTo(methodOn(AccountController::class.java).createNewAccount(account)).withSelfRel()
+            val selfLink = linkTo(methodOn(AccountController::class.java).createNewAccount(accountDto)).withSelfRel()
             accountModel.add(selfLink)
         }
 

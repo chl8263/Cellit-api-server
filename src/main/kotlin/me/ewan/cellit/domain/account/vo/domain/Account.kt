@@ -1,17 +1,17 @@
 package me.ewan.cellit.domain.account.vo.domain
 
-import au.com.console.kassava.kotlinEquals
-import au.com.console.kassava.kotlinHashCode
-import au.com.console.kassava.kotlinToString
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import org.codehaus.jackson.annotate.JsonIgnore
+import org.hibernate.annotations.CreationTimestamp
+import org.springframework.data.jpa.repository.Temporal
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.persistence.*
 
+
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator::class, property = "accountId")
-class Account (
+//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator::class, property = "accountId")
+class Account(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var accountId: Long? = null,
@@ -27,20 +27,31 @@ class Account (
         // default fetch type = LAZY
         @JsonIgnore
         @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
-        var accountCells: MutableList<AccountCell> = mutableListOf()
-){
-        override fun toString() = kotlinToString(properties = toStringProperties)
+        var accountCells: MutableList<AccountCell> = mutableListOf(),
 
-        override fun equals(other: Any?) = kotlinEquals(other = other, properties = equalsAndHashCodeProperties)
+        //@CreationTimestamp
+        @Temporal(TemporalType.TIMESTAMP)
+        var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),
 
-        override fun hashCode() = kotlinHashCode(properties = equalsAndHashCodeProperties)
+        //@CreationTimestamp
+        @Temporal(TemporalType.TIMESTAMP)
+        var modifyDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),
 
-
-        companion object {
-                private val equalsAndHashCodeProperties = arrayOf(Account::accountId)
-                private val toStringProperties = arrayOf(
-                        Account::accountId,
-                        Account::accountname
-                )
-        }
-}
+        var active: Int = 1
+)
+//{
+//        override fun toString() = kotlinToString(properties = toStringProperties)
+//
+//        override fun equals(other: Any?) = kotlinEquals(other = other, properties = equalsAndHashCodeProperties)
+//
+//        override fun hashCode() = kotlinHashCode(properties = equalsAndHashCodeProperties)
+//
+//
+//        companion object {
+//                private val equalsAndHashCodeProperties = arrayOf(Account::accountId)
+//                private val toStringProperties = arrayOf(
+//                        Account::accountId,
+//                        Account::accountname
+//                )
+//        }
+//}

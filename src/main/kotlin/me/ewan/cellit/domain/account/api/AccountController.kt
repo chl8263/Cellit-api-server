@@ -30,17 +30,16 @@ class AccountController{
 
 
     @PostMapping
-    fun createNewAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<AccountModel>{
+    fun createNewAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<Any>{
+
 
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().build()
         }
-
-        accountDtoValidator.validate(accountDto, errors)
-
-        if(errors.hasErrors()){
-            return ResponseEntity.badRequest().build()
-        }
+//        accountDtoValidator.validate(accountDto, errors)
+//        if(errors.hasErrors()){
+//            return ResponseEntity.badRequest().body(errors)
+//        }
 
         val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
         //account.role = AccountRole.ROLE_USER

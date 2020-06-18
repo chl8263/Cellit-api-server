@@ -1,5 +1,7 @@
 package me.ewan.cellit.domain.account.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
@@ -8,6 +10,8 @@ import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
 import me.ewan.cellit.domain.account.vo.model.AccountModel
 import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.vo.model.CellModel
+import me.ewan.cellit.global.common.ErrorSerializer
+import me.ewan.cellit.global.common.ErrorToJson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
@@ -28,18 +32,19 @@ class AccountController{
     @Autowired
     private lateinit var accountDtoValidator: AccountDtoValidator
 
+    @Autowired
+    private lateinit var errorToJson: ErrorToJson
 
     @PostMapping
     fun createNewAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<Any>{
-
-
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().build()
         }
-//        accountDtoValidator.validate(accountDto, errors)
-//        if(errors.hasErrors()){
-//            return ResponseEntity.badRequest().body(errors)
-//        }
+        accountDtoValidator.validate(accountDto, errors)
+        if(errors.hasErrors()){
+
+            return ResponseEntity.badRequest().body(errorToJson.convert(errors))
+        }
 
         val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
         //account.role = AccountRole.ROLE_USER
@@ -71,7 +76,6 @@ class AccountController{
         }
 
         val selfLink = linkTo(methodOn(AccountController::class.java).getCellsFromAccountId(accountId)).withSelfRel()
-
         val resultEntityModel = CollectionModel(entityModel, selfLink)
 
         return ResponseEntity.ok(resultEntityModel)

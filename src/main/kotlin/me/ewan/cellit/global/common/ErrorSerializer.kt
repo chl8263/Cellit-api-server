@@ -7,7 +7,6 @@ import org.springframework.boot.jackson.JsonComponent
 import org.springframework.validation.Errors
 import java.io.IOException
 
-@JsonComponent
 class ErrorSerializer : JsonSerializer<Errors>(){
 
     override fun serialize(value: Errors, gen: JsonGenerator, serializers: SerializerProvider) {

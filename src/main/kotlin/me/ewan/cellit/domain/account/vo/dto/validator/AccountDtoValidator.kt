@@ -8,9 +8,10 @@ import org.springframework.validation.Errors
 class AccountDtoValidator {
 
     fun validate(accountDto: AccountDto, errors: Errors){
+
         if(accountDto.accountname?.isBlank()!!){
-            //errors.rejectValue("accountname", "wrongValue", "accountname is wrong")
-            errors.reject("Invalid input", "Value account is wrong")
+            errors.rejectValue("accountname", "wrongValue", "accountname is wrong")
+            //errors.reject("Invalid input", "Value account is wrong")
         }
 
         if(accountDto.password?.isBlank()!!){

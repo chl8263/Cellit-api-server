@@ -28,9 +28,9 @@ class CellController {
 
         val savedCell = cellService.createCell(cellDto, auth.name)
 
-        val entityModel = savedCell.let {
-            val cellModel = CellModel(it)
-            val selfLink = linkTo(CellController::class.java).slash(it.cellId)
+        val entityModel = savedCell.run {
+            val cellModel = CellModel(this)
+            val selfLink = linkTo(CellController::class.java).slash(this.cellId)
                     .withSelfRel()
             cellModel.add(selfLink)
         }
@@ -40,10 +40,4 @@ class CellController {
 
         return ResponseEntity.created(createdUri).body(entityModel)
     }
-
-//    @PostMapping("/test")
-//    fun testCellPost(model: Model): Map<String, String>{
-//
-//        return mapOf("test" to "testSuccess")
-//    }
 }

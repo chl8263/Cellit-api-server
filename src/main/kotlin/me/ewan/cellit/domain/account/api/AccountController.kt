@@ -37,12 +37,11 @@ class AccountController{
 
     @PostMapping
     fun createNewAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<Any>{
-        if(errors.hasErrors()){
-            return ResponseEntity.badRequest().build()
-        }
+//        if(errors.hasErrors()){
+//            return ResponseEntity.badRequest().build()
+//        }
         accountDtoValidator.validate(accountDto, errors)
         if(errors.hasErrors()){
-
             return ResponseEntity.badRequest().body(errorToJson.convert(errors))
         }
 
@@ -50,8 +49,8 @@ class AccountController{
         //account.role = AccountRole.ROLE_USER
         val savedAccount = accountService.createAccount(account)
 
-        val accountModel = savedAccount.let {
-            val accountModel = AccountModel(it)
+        val accountModel = savedAccount.run {
+            val accountModel = AccountModel(this)
             val selfLink = linkTo(AccountController::class.java).withSelfRel()
             accountModel.add(selfLink)
         }

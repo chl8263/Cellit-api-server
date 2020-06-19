@@ -1,6 +1,7 @@
 package me.ewan.cellit.domain.account.vo.dto.validator
 
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.global.ValidErrorCode.*
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
 
@@ -9,13 +10,16 @@ class AccountDtoValidator {
 
     fun validate(accountDto: AccountDto, errors: Errors){
 
-        if(accountDto.accountname?.isBlank()!!){
-            errors.rejectValue("accountname", "wrongValue", "accountname is wrong")
-            //errors.reject("Invalid input", "Value account is wrong")
+        accountDto.accountname?.let {
+            if(it.contains(" ", false)) {
+                errors.rejectValue("accountname", WRONG_VALUE.value, "Account name cannot have blank value")
+            }
         }
 
-        if(accountDto.password?.isBlank()!!){
-            errors.rejectValue("password", "wrongValue", "password is wrong")
+        accountDto.password?.let {
+            if(it.contains(" ", false)) {
+                errors.rejectValue("password", WRONG_VALUE.value, "Password name cannot have blank value")
+            }
         }
     }
 }

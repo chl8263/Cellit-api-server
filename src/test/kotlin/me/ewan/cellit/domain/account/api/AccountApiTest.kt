@@ -102,8 +102,8 @@ class AccountApiTest : BaseControllerTest() {
     @Test
     fun `Create new user with empty value and return Bad Request`(){
         //given
-        val name = ""
-        val pw = ""
+        val name = "   "
+        val pw = "   "
         val account = AccountDto(accountname = name, password = pw)
 
         //when

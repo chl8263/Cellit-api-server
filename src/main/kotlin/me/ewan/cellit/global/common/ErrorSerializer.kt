@@ -20,24 +20,24 @@ class ErrorSerializer : JsonSerializer<Errors>(){
                 gen.writeStringField("objectName", it.objectName)
                 gen.writeStringField("code", it.code)
                 gen.writeStringField("defaultMessage", it.defaultMessage)
-                it.rejectedValue?.let { x ->  gen.writeStringField("defaultMessage", it.rejectedValue.toString()) }
+                it.rejectedValue?.let { x ->  gen.writeStringField("rejectedValue", it.rejectedValue.toString()) }
                 gen.writeEndObject()
             }catch (e: IOException){
                 e.printStackTrace()
             }
         }
 
-        value.globalErrors.forEach {
-            try{
-                gen.writeStartObject()
-                gen.writeStringField("objectName", it.objectName)
-                gen.writeStringField("code", it.code)
-                gen.writeStringField("defaultMessage", it.defaultMessage)
-                gen.writeEndObject()
-            }catch (e: IOException){
-                e.printStackTrace()
-            }
-        }
+//        value.globalErrors.forEach {
+//            try{
+//                gen.writeStartObject()
+//                gen.writeStringField("objectName", it.objectName)
+//                gen.writeStringField("code", it.code)
+//                gen.writeStringField("defaultMessage", it.defaultMessage)
+//                gen.writeEndObject()
+//            }catch (e: IOException){
+//                e.printStackTrace()
+//            }
+//        }
 
         gen.writeEndArray()
     }

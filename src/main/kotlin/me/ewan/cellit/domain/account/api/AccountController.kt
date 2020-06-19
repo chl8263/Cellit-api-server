@@ -1,16 +1,13 @@
 package me.ewan.cellit.domain.account.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
 import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
-import me.ewan.cellit.domain.account.vo.model.AccountModel
+import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
 import me.ewan.cellit.domain.cell.api.CellController
-import me.ewan.cellit.domain.cell.vo.model.CellModel
-import me.ewan.cellit.global.common.ErrorSerializer
+import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.global.common.ErrorToJson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
@@ -23,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/account", produces = [MediaTypes.HAL_JSON_VALUE])
+@RequestMapping(value = ["/api/account"], produces = [MediaTypes.HAL_JSON_VALUE])
 class AccountController{
 
     @Autowired
@@ -36,7 +33,7 @@ class AccountController{
     private lateinit var errorToJson: ErrorToJson
 
     @PostMapping
-    fun createNewAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<Any>{
+    fun createAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<Any>{
 //        if(errors.hasErrors()){
 //            return ResponseEntity.badRequest().build()
 //        }
@@ -49,27 +46,27 @@ class AccountController{
         //account.role = AccountRole.ROLE_USER
         val savedAccount = accountService.createAccount(account)
 
-        val accountModel = savedAccount.run {
-            val accountModel = AccountModel(this)
-            val selfLink = linkTo(AccountController::class.java).withSelfRel()
+        val accountEntityModel = savedAccount.run {
+            val accountModel = AccountEntityModel(this)
+            val selfLink = linkTo(AccountController::class.java).slash(savedAccount.accountId).withSelfRel()
             accountModel.add(selfLink)
         }
 
-        val linkBuilder = linkTo(AccountController::class.java).slash(savedAccount.accountId)
+        val linkBuilder = linkTo(AccountController::class.java)
         val createdUri = linkBuilder.toUri()
 
-        return ResponseEntity.created(createdUri).body(accountModel)
+        return ResponseEntity.created(createdUri).body(accountEntityModel)
     }
 
 
     @GetMapping("/{accountId}/cells")
-    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellModel>> {
+    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellEntityModel>> {
 
         val cells = accountService.getCellsWithAccountId(accountId)
 
         val entityModel = cells.map {
-            val cellModel = CellModel(it)
-            val selfLink = linkTo(CellController::class.java).slash(it.cellId)
+            val cellModel = CellEntityModel(it)
+            val selfLink = linkTo(CellController::class.java).slash(it.cellName)
                     .withSelfRel()
             cellModel.add(selfLink)
         }

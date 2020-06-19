@@ -57,7 +57,7 @@ class CellAPiTest : BaseControllerTest() {
 
     @Test
     @WithMockUser("test_ewan_user")
-    fun `create cell`(){
+    fun `Create cell`(){
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
@@ -66,19 +66,22 @@ class CellAPiTest : BaseControllerTest() {
         val jwtToken = getJwtToken(name, pw)
 
         val cellName = "Accounting"
-        val cell = CellDto(cellName = cellName)
+        val cellDto = CellDto(cellName = cellName)
 
         //when
         mockMvc.perform(post("/api/cells")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
-                .content(objectMapper.writeValueAsString(cell))
+                .content(objectMapper.writeValueAsString(cellDto))
         )
 
         //then
                 .andDo(print())
-                .andExpect(jsonPath("test").exists())
+                .andExpect(jsonPath("cellId").exists())
+                .andExpect(jsonPath("cellName").exists())
+                .andExpect(jsonPath("_links.self").exists())
+
     }
 
     private fun getJwtToken(username: String, pw: String): String{

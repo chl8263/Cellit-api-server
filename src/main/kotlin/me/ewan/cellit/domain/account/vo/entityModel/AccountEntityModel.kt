@@ -1,10 +1,10 @@
-package me.ewan.cellit.domain.account.vo.model
+package me.ewan.cellit.domain.account.vo.entityModel
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped
 import me.ewan.cellit.domain.account.vo.domain.Account
 import org.springframework.hateoas.RepresentationModel
 
-class AccountModel : RepresentationModel<AccountModel> {
+class AccountEntityModel : RepresentationModel<AccountEntityModel> {
 
     @JsonUnwrapped
     var accountName: String

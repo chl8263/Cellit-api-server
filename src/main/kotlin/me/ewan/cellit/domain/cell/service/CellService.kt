@@ -5,7 +5,7 @@ import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
-import me.ewan.cellit.domain.cell.vo.model.AccountCellRole
+import me.ewan.cellit.domain.cell.vo.domain.AccountCellRole
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,12 +29,13 @@ class CellService {
 
         val currentUser = accountService.getAccount(name)
 
-        val cell = modelMapper.map(cellDto, Cell::class.java)
+        val cell = Cell(cellName = cellDto.cellName!!.trim())
+        //val cell = modelMapper.map(cellDto, Cell::class.java)
         val savedCell = cellRepository.save(cell)
-        val accountCell = AccountCell(accountCellRole = AccountCellRole.ADMIN, account = currentUser, cell = savedCell)
+        val accountCell = AccountCell(accountCellRole = AccountCellRole.CREATOR, account = currentUser, cell = savedCell)
 
         val savedAccountCell = accountCellRepository.save(accountCell)
 
-        return modelMapper.map(cell, CellDto::class.java)
+        return modelMapper.map(savedCell, CellDto::class.java)
     }
 }

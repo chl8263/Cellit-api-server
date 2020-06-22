@@ -68,6 +68,7 @@ class AccountApiTest : BaseControllerTest() {
         //then
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated)
+                .andExpect(jsonPath("accountId").exists())
                 .andExpect(jsonPath("accountName").value(name))
                 .andExpect(jsonPath("role").value(AccountRole.ROLE_USER.name))
                 .andExpect(jsonPath("_links.self").exists())

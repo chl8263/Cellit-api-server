@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.web.context.WebApplicationContext
 
@@ -78,6 +79,7 @@ class CellAPiTest : BaseControllerTest() {
 
         //then
                 .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isCreated)
                 .andExpect(jsonPath("cellId").exists())
                 .andExpect(jsonPath("cellName").exists())
                 .andExpect(jsonPath("_links.self").exists())

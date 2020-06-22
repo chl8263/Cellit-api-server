@@ -58,6 +58,20 @@ class AccountController{
         return ResponseEntity.created(createdUri).body(accountEntityModel)
     }
 
+    @GetMapping("/{accountName}")
+    fun getAccountWithUserName(@PathVariable accountName: String): ResponseEntity<Any>{
+
+        val account = accountService.getAccount(accountName)
+
+        val accountEntityModel = account.run {
+            val accountModel = AccountEntityModel(this)
+            val selfLink = linkTo(AccountController::class.java).slash(account.accountId).withSelfRel()
+            accountModel.add(selfLink)
+        }
+
+        return ResponseEntity.ok(accountEntityModel)
+    }
+
 
     @GetMapping("/{accountId}/cells")
     fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellEntityModel>> {

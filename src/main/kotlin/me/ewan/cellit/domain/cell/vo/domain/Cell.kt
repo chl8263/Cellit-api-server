@@ -1,11 +1,5 @@
 package me.ewan.cellit.domain.cell.vo.domain
 
-import au.com.console.kassava.kotlinEquals
-import au.com.console.kassava.kotlinHashCode
-import au.com.console.kassava.kotlinToString
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
-import org.hibernate.annotations.CreationTimestamp
 import org.springframework.data.jpa.repository.Temporal
 import java.text.SimpleDateFormat
 import java.util.*

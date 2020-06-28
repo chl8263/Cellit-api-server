@@ -19,21 +19,25 @@ class Account(
         @Column(unique = true)
         var accountname: String,
 
+        @Column
         var password: String,
 
+        @Column
         @Enumerated(EnumType.STRING)
         var role: AccountRole = AccountRole.ROLE_USER,
 
         // default fetch type = LAZY
-        @JsonIgnore
+        @JsonIgnore // prevent infinity loop when trans JSON
         @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
         var accountCells: MutableList<AccountCell> = mutableListOf(),
 
         //@CreationTimestamp
+        @Column
         @Temporal(TemporalType.TIMESTAMP)
         var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),
 
         //@CreationTimestamp
+        @Column
         @Temporal(TemporalType.TIMESTAMP)
         var modifyDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),
 

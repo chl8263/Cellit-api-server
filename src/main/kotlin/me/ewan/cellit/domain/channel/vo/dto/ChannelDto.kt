@@ -7,6 +7,8 @@ data class ChannelDto(
 
         var channelId: Long? = null,
 
+        @NotEmpty
+        @NotNull
         var cellId: Long? = null,
 
         @NotEmpty

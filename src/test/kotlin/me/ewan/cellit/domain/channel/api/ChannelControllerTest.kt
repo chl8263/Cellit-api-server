@@ -52,7 +52,7 @@ internal class ChannelControllerTest : BaseControllerTest() {
         val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
 
         //when
-        mockMvc.perform(post("api/channels")
+        mockMvc.perform(post("/api/channels")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)

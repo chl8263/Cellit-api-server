@@ -9,6 +9,7 @@ class AccountCell (
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var accountCellId : Long? = null,
 
+        @Column
         @Enumerated(EnumType.STRING)
         var accountCellRole : AccountCellRole? = AccountCellRole.USER,
 

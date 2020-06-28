@@ -7,8 +7,11 @@ import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.domain.AccountCellRole
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
+import me.ewan.cellit.domain.channel.dao.ChannelRepository
+import me.ewan.cellit.domain.channel.vo.domain.Channel
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.web.csrf.LazyCsrfTokenRepository
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,7 +25,8 @@ class CellService {
     @Autowired
     lateinit var accountCellRepository: AccountCellRepository
 
-
+    @Autowired
+    lateinit var channelRepository: ChannelRepository
 
     fun createCell(cellDto: CellDto, name: String): Cell {
 
@@ -33,9 +37,11 @@ class CellService {
         val savedCell = cellRepository.save(cell)
         val accountCell = AccountCell(accountCellRole = AccountCellRole.CREATOR, account = currentUser, cell = savedCell)
 
-        val savedAccountCell = accountCellRepository.save(accountCell)
+        val defaultChannel = Channel(channelName = "common", cell = savedCell)
+        channelRepository.save(defaultChannel)
+
+        accountCellRepository.save(accountCell)
 
         return savedCell
-
     }
 }

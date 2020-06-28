@@ -22,6 +22,7 @@ class ChannelService {
 
         val channel = Channel(channelName = channelDto.channelName!!, cell = cell)
         val savedChannel = channelRepository.save(channel)
+
         return savedChannel
     }
 }

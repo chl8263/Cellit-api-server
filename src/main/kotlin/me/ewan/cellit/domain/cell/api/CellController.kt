@@ -7,6 +7,7 @@ import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
 import me.ewan.cellit.global.common.ErrorToJson
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
@@ -32,6 +33,9 @@ class CellController {
     @Autowired
     private lateinit var errorToJson: ErrorToJson
 
+    @Autowired
+    lateinit var modelMapper: ModelMapper
+
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto, errors: Errors): ResponseEntity<Any> {
 
@@ -42,11 +46,11 @@ class CellController {
 
         val auth = SecurityContextHolder.getContext().authentication
 
-
         val savedCell = cellService.createCell(cellDto, auth.name)
 
         val entityModel = savedCell.run {
-            val cellModel = CellEntityModel(this)
+            val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)
+            val cellModel = CellEntityModel(tempCellDto)
             val selfLink = linkTo(CellController::class.java).slash(this.cellId).withSelfRel()
             cellModel.add(selfLink)
         }

@@ -76,7 +76,7 @@ class AccountController{
     @GetMapping("/{accountId}/cells")
     fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellEntityModel>> {
 
-        val cells = accountService.getCellsWithAccountId(accountId)
+        val cells = accountService.getCellDtosWithAccountId(accountId)
 
         val entityModel = cells.map {
             val cellModel = CellEntityModel(it)

@@ -22,10 +22,9 @@ class CellService {
     @Autowired
     lateinit var accountCellRepository: AccountCellRepository
 
-    @Autowired
-    lateinit var modelMapper: ModelMapper
 
-    fun createCell(cellDto: CellDto, name: String): CellDto {
+
+    fun createCell(cellDto: CellDto, name: String): Cell {
 
         val currentUser = accountService.getAccount(name)
 
@@ -36,6 +35,7 @@ class CellService {
 
         val savedAccountCell = accountCellRepository.save(accountCell)
 
-        return modelMapper.map(savedCell, CellDto::class.java)
+        return savedCell
+
     }
 }

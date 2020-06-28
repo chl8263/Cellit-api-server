@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.context.WebApplicationContext
 
 /**
@@ -125,6 +126,11 @@ class CellAPiTest : BaseControllerTest() {
 
         //then
                 .andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("_embedded.channelEntityModelList[0].channelName").value("common"))
+                .andExpect(jsonPath("_embedded.channelEntityModelList[1].channelName").value("common1"))
+                .andExpect(jsonPath("_embedded.channelEntityModelList[2].channelName").value("common2"))
+                .andExpect(jsonPath("_links.self").exists())
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

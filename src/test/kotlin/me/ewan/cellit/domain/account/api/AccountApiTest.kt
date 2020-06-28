@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.context.WebApplicationContext
 
 class AccountApiTest : BaseControllerTest() {
@@ -142,9 +143,9 @@ class AccountApiTest : BaseControllerTest() {
         )
 
         //then
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk) // 201 created
-                .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
+                .andDo(print())
+                .andExpect(status().isOk) // 201 created
+                .andExpect(jsonPath("_links.self").exists())
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

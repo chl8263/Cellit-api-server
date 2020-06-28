@@ -9,8 +9,11 @@ class CellEntityModel : RepresentationModel<CellEntityModel> {
     @JsonUnwrapped
     var cell: CellDto
 
-    constructor(cell: CellDto){
+    var role: String
+
+    constructor(cell: CellDto, role: String){
         this.cell = cell
+        this.role = role
     }
 
 }

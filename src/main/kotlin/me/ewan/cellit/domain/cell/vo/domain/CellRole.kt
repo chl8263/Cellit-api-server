@@ -1,5 +1,5 @@
 package me.ewan.cellit.domain.cell.vo.domain
 
-enum class AccountCellRole {
+enum class CellRole {
     CREATOR, ADMIN, USER
 }

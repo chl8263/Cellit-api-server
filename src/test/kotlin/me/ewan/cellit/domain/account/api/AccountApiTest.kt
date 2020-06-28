@@ -10,6 +10,7 @@ import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.global.security.dtos.JwtAuthenticationDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -133,7 +134,7 @@ class AccountApiTest : BaseControllerTest() {
         val cellName = "IT team"
         val savedCell = createCell(cellName)
 
-        val accountCell = AccountCell(account = savedAccount, cell = savedCell)
+        val accountCell = AccountCell(account = savedAccount, cell = savedCell, cellRole = CellRole.CREATOR)
         accountCellRepository.save(accountCell)
 
         //when

@@ -7,6 +7,7 @@ import me.ewan.cellit.domain.account.vo.dto.AccountDto
 import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
 import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
 import me.ewan.cellit.domain.cell.api.CellController
+import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.global.common.ErrorToJson
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,11 +77,12 @@ class AccountController{
     @GetMapping("/{accountId}/cells")
     fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellEntityModel>> {
 
-        val cells = accountService.getCellDtosWithAccountId(accountId)
+        val accountCells = accountService.getAccountCellsWithAccountId(accountId)
 
-        val cellsEntityModel = cells.map {
-            val cellModel = CellEntityModel(it)
-            val selfLink = linkTo(CellController::class.java).slash(it.cellName)
+        val cellsEntityModel = accountCells.map {
+            val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName)
+            val cellModel = CellEntityModel(tempCellDto, it.cellRole.name)
+            val selfLink = linkTo(CellController::class.java).slash(it.cell.cellId)
                     .withSelfRel()
             cellModel.add(selfLink)
         }

@@ -11,7 +11,7 @@ class AccountCell (
 
         @Column
         @Enumerated(EnumType.STRING)
-        var accountCellRole : AccountCellRole? = AccountCellRole.USER,
+        var cellRole : CellRole = CellRole.USER,
 
         // default fetch type = EAGER
         @ManyToOne

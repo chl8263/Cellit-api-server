@@ -5,6 +5,7 @@ import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.Cell
+import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
 import me.ewan.cellit.domain.channel.api.ChannelController
 import me.ewan.cellit.domain.channel.service.ChannelService
@@ -59,7 +60,7 @@ class CellController {
 
         val entityModel = savedCell.run {
             val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)
-            val cellModel = CellEntityModel(tempCellDto)
+            val cellModel = CellEntityModel(tempCellDto, CellRole.CREATOR.name)
             val selfLink = linkTo(CellController::class.java).slash(this.cellId).withSelfRel()
             cellModel.add(selfLink)
         }

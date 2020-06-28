@@ -9,6 +9,10 @@ import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.common.BaseControllerTest
+import me.ewan.cellit.domain.cell.service.CellService
+import me.ewan.cellit.domain.channel.dao.ChannelRepository
+import me.ewan.cellit.domain.channel.vo.domain.Channel
+import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.global.security.dtos.JwtAuthenticationDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -41,10 +45,16 @@ class CellAPiTest : BaseControllerTest() {
     lateinit var accountService: AccountService
 
     @Autowired
+    lateinit var cellService: CellService
+
+    @Autowired
     lateinit var accountRepository: AccountRepository
 
     @Autowired
     private lateinit var cellRepository: CellRepository
+
+    @Autowired
+    private lateinit var channelRepository: ChannelRepository
 
     @Autowired
     private lateinit var accountCellRepository: AccountCellRepository
@@ -86,21 +96,35 @@ class CellAPiTest : BaseControllerTest() {
 
     }
 
-    private fun getJwtToken(username: String, pw: String): String{
-        val authenticationDto = JwtAuthenticationDto(username,pw)
+    @Test
+    fun `Get Channels with CellId`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName1 = "common1"
+        val channel1 = Channel(channelName = channelName1, cell = savedCell)
+        channelRepository.save(channel1)
+
+        val channelName2 = "common2"
+        val channel2 = Channel(channelName = channelName2, cell = savedCell)
+        channelRepository.save(channel2)
 
         //when
-        val perform: ResultActions = this.mockMvc.perform(MockMvcRequestBuilders.post("/auth")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationDto))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/cells/${savedCell.cellId}/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
         )
 
-        val response: MockHttpServletResponse = perform.andReturn().response
-        val resultString = response.contentAsString
-
-        val parser = Jackson2JsonParser()
-        return parser.parseMap(resultString)["token"].toString()
+        //then
+                .andDo(print())
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -37,7 +38,6 @@ internal class ChannelControllerTest : BaseControllerTest() {
     @Test
     fun `Create Channel`(){
         //given
-
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
         createAccount(name = name, pw = pw)
@@ -65,23 +65,6 @@ internal class ChannelControllerTest : BaseControllerTest() {
                 .andExpect(MockMvcResultMatchers.jsonPath("channelId").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("channelName").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
-    }
-
-    private fun getJwtToken(username: String, pw: String): String{
-        val authenticationDto = JwtAuthenticationDto(username,pw)
-
-        //when
-        val perform: ResultActions = this.mockMvc.perform(MockMvcRequestBuilders.post("/auth")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationDto))
-        )
-
-        val response: MockHttpServletResponse = perform.andReturn().response
-        val resultString = response.contentAsString
-
-        val parser = Jackson2JsonParser()
-        return parser.parseMap(resultString)["token"].toString()
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

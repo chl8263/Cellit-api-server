@@ -147,23 +147,6 @@ class AccountApiTest : BaseControllerTest() {
                 .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
     }
 
-    private fun getJwtToken(username: String, pw: String): String{
-        val authenticationDto = JwtAuthenticationDto(username,pw)
-
-        //when
-        val perform: ResultActions = this.mockMvc.perform(MockMvcRequestBuilders.post("/auth")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationDto))
-        )
-
-        val response: MockHttpServletResponse = perform.andReturn().response
-        val resultString = response.contentAsString
-
-        val parser = Jackson2JsonParser()
-        return parser.parseMap(resultString)["token"].toString()
-    }
-
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)
 

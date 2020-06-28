@@ -6,11 +6,17 @@ import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
+import me.ewan.cellit.domain.channel.api.ChannelController
+import me.ewan.cellit.domain.channel.service.ChannelService
+import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
+import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.global.common.ErrorToJson
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.Errors
@@ -26,6 +32,9 @@ class CellController {
 
     @Autowired
     private lateinit var accountService: AccountService
+
+    @Autowired
+    private lateinit var channelService: ChannelService
 
     @Autowired
     private lateinit var cellDtoValidator: CellDtoValidator
@@ -59,5 +68,21 @@ class CellController {
         val createdUri = linkBuilder.toUri()
 
         return ResponseEntity.created(createdUri).body(entityModel)
+    }
+
+    @GetMapping("/{cellId}/channels")
+    fun getChannelsWithCellId(@PathVariable cellId: Long): ResponseEntity<CollectionModel<ChannelEntityModel>>{
+        val channels = channelService.getChannelDtosWithCellId(cellId)
+
+        val channelsEntityModel = channels.map{
+            val channelModel = ChannelEntityModel(modelMapper.map(it, ChannelDto::class.java))
+            val selfLink = linkTo(ChannelController::class.java).slash(it.channelId).withSelfRel()
+            channelModel.add(selfLink)
+        }
+
+        val selfLink = linkTo(methodOn(CellController::class.java).getChannelsWithCellId(cellId)).withSelfRel()
+        val resultEntityModel = CollectionModel(channelsEntityModel, selfLink)
+
+        return ResponseEntity.ok(resultEntityModel)
     }
 }

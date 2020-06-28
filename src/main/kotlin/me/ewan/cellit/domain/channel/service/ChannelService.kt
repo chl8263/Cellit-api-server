@@ -25,4 +25,9 @@ class ChannelService {
 
         return savedChannel
     }
+
+    fun getChannelDtosWithCellId(cellId: Long): List<Channel> {
+        val cell = cellRepository.getOne(cellId)
+        return cell.channels
+    }
 }

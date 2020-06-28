@@ -78,7 +78,7 @@ class AccountController{
 
         val cells = accountService.getCellDtosWithAccountId(accountId)
 
-        val entityModel = cells.map {
+        val cellsEntityModel = cells.map {
             val cellModel = CellEntityModel(it)
             val selfLink = linkTo(CellController::class.java).slash(it.cellName)
                     .withSelfRel()
@@ -86,7 +86,7 @@ class AccountController{
         }
 
         val selfLink = linkTo(methodOn(AccountController::class.java).getCellsFromAccountId(accountId)).withSelfRel()
-        val resultEntityModel = CollectionModel(entityModel, selfLink)
+        val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
 
         return ResponseEntity.ok(resultEntityModel)
     }

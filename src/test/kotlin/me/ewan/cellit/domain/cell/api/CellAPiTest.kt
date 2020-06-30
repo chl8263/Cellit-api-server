@@ -25,6 +25,7 @@ import org.springframework.security.oauth2.common.util.Jackson2JsonParser
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -131,6 +132,45 @@ class CellAPiTest : BaseControllerTest() {
                 .andExpect(jsonPath("_embedded.channelEntityModelList[1].channelName").value("common1"))
                 .andExpect(jsonPath("_embedded.channelEntityModelList[2].channelName").value("common2"))
                 .andExpect(jsonPath("_links.self").exists())
+    }
+
+    @Test
+    fun `Get Cells list with search name`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, name)
+
+        val cellName2 = "Cell_test2"
+        val cellDto2 = CellDto(cellName = cellName2)
+        val savedCell2 = cellService.createCell(cellDto2, name)
+
+        val cellName3 = "Cell_test3"
+        val cellDto3 = CellDto(cellName = cellName3)
+        val savedCell3 = cellService.createCell(cellDto3, name)
+
+        val cellName4 = "Cell_test4"
+        val cellDto4 = CellDto(cellName = cellName4)
+        val savedCell4 = cellService.createCell(cellDto4, name)
+
+        val findName = "Cell"
+
+        //when
+        ///api/cells?q=name%3D$findName,id%3D123
+        mockMvc.perform(get("/api/cells?query=cellName%3D$findName")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+        //then
+                .andDo(print())
+                .andExpect(status().isOk)
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

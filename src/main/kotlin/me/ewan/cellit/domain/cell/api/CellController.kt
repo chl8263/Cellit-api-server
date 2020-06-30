@@ -46,6 +46,13 @@ class CellController {
     @Autowired
     lateinit var modelMapper: ModelMapper
 
+    @GetMapping
+    fun getCells(@RequestParam query: String?): String{
+        if(query == null){
+            return "nulllllllllllll"
+        }else return query
+    }
+
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto, errors: Errors): ResponseEntity<Any> {
 

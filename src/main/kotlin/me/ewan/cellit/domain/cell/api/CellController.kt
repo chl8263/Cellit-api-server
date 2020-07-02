@@ -7,10 +7,12 @@ import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
+import me.ewan.cellit.domain.cell.vo.query.CellQuery
 import me.ewan.cellit.domain.channel.api.ChannelController
 import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
+import me.ewan.cellit.global.common.ConvertQueryToClass
 import me.ewan.cellit.global.common.ErrorToJson
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +52,11 @@ class CellController {
     fun getCells(@RequestParam query: String?): String{
         if(query == null){
             return "nulllllllllllll"
-        }else return query
+        }else {
+            val a = ConvertQueryToClass.convert<CellQuery>(query)
+            println(a.toString())
+            return query
+        }
     }
 
     @PostMapping

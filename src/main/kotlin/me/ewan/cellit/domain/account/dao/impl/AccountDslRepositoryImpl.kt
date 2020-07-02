@@ -11,7 +11,6 @@ class AccountDslRepositoryImpl() : QuerydslRepositorySupport(Account::class.java
     override fun findAccountFetch(accountId: Long): Account {
         val account = QAccount.account
         val accountCell = QAccountCell.accountCell
-
         // @Query("SELECT a FROM Account a  JOIN FETCH a.accountCells WHERE a.accountId = :accountId")
         return from(account)
                 .leftJoin(account.accountCells, accountCell).fetchJoin()

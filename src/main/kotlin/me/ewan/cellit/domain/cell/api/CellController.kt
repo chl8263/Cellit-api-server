@@ -49,21 +49,26 @@ class CellController {
     @Autowired
     lateinit var modelMapper: ModelMapper
 
-//    @GetMapping
-//    fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
-//
-//        if(query == null){
-//            return "nulllllllllllll"
-//        }else {
-//            try{
-//                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
-//            }catch (e: Exception){
-//                return ResponseEntity.badRequest().body(e.message)
-//            }
-//
-//            return query
-//        }
-//    }
+    @GetMapping
+    fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
+
+        if(query == null){
+            println("????")
+            return ResponseEntity.badRequest().body("aaa")
+        }else {
+            try{
+                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
+                val cells = cellService.getCellsWithQuery(convertedQuery)
+                println("!!!!!!!!!!!!")
+                cells.forEach { println("${it.cellId} ${it.cellName}") }
+            }catch (e: Exception){
+                println(e.printStackTrace())
+                return ResponseEntity.badRequest().body(e.message)
+            }
+
+            return ResponseEntity.badRequest().body("aaa")
+        }
+    }
 
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto, errors: Errors): ResponseEntity<Any> {

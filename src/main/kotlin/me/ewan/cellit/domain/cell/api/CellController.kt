@@ -53,7 +53,7 @@ class CellController {
     fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
 
         if(query == null){
-            println("????")
+            // TODO
             return ResponseEntity.badRequest().body("aaa")
         }else {
             try{

@@ -59,14 +59,22 @@ class CellController {
             try{
                 val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
                 val cells = cellService.getCellsWithQuery(convertedQuery)
-                println("!!!!!!!!!!!!")
-                cells.forEach { println("${it.cellId} ${it.cellName}") }
+
+                val cellsEntityModel = cells.map {
+                    val tempCellDto = modelMapper.map(it, CellDto::class.java)
+                    val cellModel = CellEntityModel(tempCellDto, "")
+                    val selfLink = linkTo(CellController::class.java).slash(it.cellId).withSelfRel()
+                    cellModel.add(selfLink)
+                }
+
+                val selfLink = linkTo(CellController::class.java).withSelfRel()
+                val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
+
+                return ResponseEntity.ok(resultEntityModel)
+
             }catch (e: Exception){
-                println(e.printStackTrace())
                 return ResponseEntity.badRequest().body(e.message)
             }
-
-            return ResponseEntity.badRequest().body("aaa")
         }
     }
 

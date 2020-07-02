@@ -16,5 +16,19 @@ internal class ConvertQueryToClassTest{
 
         //then
         assertThat(convertedQuery.cellName).isEqualTo("Accounting")
+        assertThat(convertedQuery.cellId).isEqualTo(null)
+    }
+
+    @Test
+    fun `Convert success query to class with when parameter more than one`(){
+        //given
+        val query = "cellId%3D3,cellName%3DAccounting"
+
+        //when
+        val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
+
+        //then
+        assertThat(convertedQuery.cellId).isEqualTo("3")
+        assertThat(convertedQuery.cellName).isEqualTo("Accounting")
     }
 }

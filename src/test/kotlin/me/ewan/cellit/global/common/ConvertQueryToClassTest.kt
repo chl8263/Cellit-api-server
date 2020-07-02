@@ -28,7 +28,7 @@ internal class ConvertQueryToClassTest{
         val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
 
         //then
-        assertThat(convertedQuery.cellId).isEqualTo("3")
+        assertThat(convertedQuery.cellId).isEqualTo(3L)
         assertThat(convertedQuery.cellName).isEqualTo("Accounting")
     }
 }

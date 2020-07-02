@@ -31,12 +31,15 @@ class ConvertQueryToClass {
 
             val split = query.split(",")
             println("!!!!!!!!!!!!!!")
-            split.forEach {
+            split.forEachIndexed { i, it ->
                 if(!it.contains(COLON)) throw Exception()
                 val colonSplit = it.split(COLON)
                 sb.append("\"${colonSplit[0]}\"")
                 sb.append(":")
                 sb.append("\"${colonSplit[1]}\"")
+                if(i != split.size-1){
+                    sb.append(",")
+                }
             }
             sb.append("}")
             return sb.toString()

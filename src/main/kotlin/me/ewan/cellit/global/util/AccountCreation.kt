@@ -4,9 +4,7 @@ import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.global.common.AppProperties
-import org.h2.tools.Server
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component

@@ -3,6 +3,7 @@ package me.ewan.cellit.domain.account.service
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.global.security.AccountContext
 import mu.KLogging
@@ -41,12 +42,10 @@ class AccountService : UserDetailsService {
     fun getAccount(accountId: Long): Account = accountRepository.findByAccountId(accountId)
     fun getAccount(username: String): Account = accountRepository.findByAccountname(username)
 
-    fun getCellsWithAccountId (accountId: Long): List<CellDto> {
+    fun getAccountCellsWithAccountId (accountId: Long): List<AccountCell> {
         val account = accountRepository.findAccountFetch(accountId)
 
-        val cellDtos = account.accountCells.map {
-            CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName)
-        }
-        return cellDtos
+
+        return account.accountCells
     }
 }

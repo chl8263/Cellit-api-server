@@ -1,7 +1,6 @@
 package me.ewan.cellit.domain.account.service
 
 import me.ewan.cellit.domain.account.vo.domain.Account
-import me.ewan.cellit.domain.account.service.AccountService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

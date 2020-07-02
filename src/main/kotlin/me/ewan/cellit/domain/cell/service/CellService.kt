@@ -5,9 +5,11 @@ import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
-import me.ewan.cellit.domain.cell.vo.model.AccountCellRole
+import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
-import org.modelmapper.ModelMapper
+import me.ewan.cellit.domain.cell.vo.query.CellQuery
+import me.ewan.cellit.domain.channel.dao.ChannelRepository
+import me.ewan.cellit.domain.channel.vo.domain.Channel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -23,18 +25,27 @@ class CellService {
     lateinit var accountCellRepository: AccountCellRepository
 
     @Autowired
-    lateinit var modelMapper: ModelMapper
+    lateinit var channelRepository: ChannelRepository
 
-    fun createCell(cellDto: CellDto, name: String): CellDto {
+    fun createCell(cellDto: CellDto, name: String): Cell {
 
         val currentUser = accountService.getAccount(name)
 
-        val cell = modelMapper.map(cellDto, Cell::class.java)
+        val cell = Cell(cellName = cellDto.cellName!!.trim())
+        //val cell = modelMapper.map(cellDto, Cell::class.java)
         val savedCell = cellRepository.save(cell)
-        val accountCell = AccountCell(accountCellRole = AccountCellRole.ADMIN, account = currentUser, cell = savedCell)
+        val accountCell = AccountCell(cellRole = CellRole.CREATOR, account = currentUser, cell = savedCell)
 
-        val savedAccountCell = accountCellRepository.save(accountCell)
+        val defaultChannel = Channel(channelName = "common", cell = savedCell)
+        channelRepository.save(defaultChannel)
 
-        return modelMapper.map(cell, CellDto::class.java)
+        accountCellRepository.save(accountCell)
+
+        return savedCell
+    }
+
+    fun getCellsWithQuery(cellQuery: CellQuery): List<Cell> {
+        val cells = cellRepository.findCellsWithQuery(cellQuery)
+        return cells
     }
 }

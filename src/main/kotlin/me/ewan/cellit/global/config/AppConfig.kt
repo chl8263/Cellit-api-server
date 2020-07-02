@@ -1,6 +1,7 @@
 package me.ewan.cellit.global.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import net.minidev.json.parser.JSONParser
 import org.modelmapper.ModelMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,7 +17,5 @@ class AppConfig {
     fun objectMapper(): ObjectMapper = ObjectMapper()
 
     @Bean
-    fun modelMapper(): ModelMapper? {
-        return ModelMapper()
-    }
+    fun modelMapper(): ModelMapper = ModelMapper()
 }

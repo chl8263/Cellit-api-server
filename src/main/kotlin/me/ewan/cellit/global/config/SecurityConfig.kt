@@ -97,7 +97,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), extractor, decoder))
                 .authorizeRequests()
                 .mvcMatchers("/", "/signUp", "/login**", "/mainBoard").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/api/account").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/api/accounts").permitAll()
                 .mvcMatchers("/admin**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
         http.cors()

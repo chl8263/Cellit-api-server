@@ -10,6 +10,7 @@ import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.global.security.dtos.JwtAuthenticationDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.context.WebApplicationContext
 
 class AccountApiTest : BaseControllerTest() {
@@ -59,7 +61,7 @@ class AccountApiTest : BaseControllerTest() {
         val account = AccountDto(accountname = name, password = pw)
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/account")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(account))
@@ -68,9 +70,55 @@ class AccountApiTest : BaseControllerTest() {
         //then
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated)
+                .andExpect(jsonPath("accountId").exists())
                 .andExpect(jsonPath("accountName").value(name))
                 .andExpect(jsonPath("role").value(AccountRole.ROLE_USER.name))
                 .andExpect(jsonPath("_links.self").exists())
+    }
+
+    @Test
+    fun `Create new user with wrong value and return Bad Request`(){
+        //given
+        val name = "ewan_test_test"
+        val pw = "123123"
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(
+                        """
+                            {
+                                "accountname": "$name",
+                                "password": "$pw",
+                                "role": "admin"
+                            }
+                        """.trimIndent()
+                )
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    fun `Create new user with empty value and return Bad Request`(){
+        //given
+        val name = "   "
+        val pw = "   "
+        val account = AccountDto(accountname = name, password = pw)
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(account))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
@@ -86,36 +134,19 @@ class AccountApiTest : BaseControllerTest() {
         val cellName = "IT team"
         val savedCell = createCell(cellName)
 
-        val accountCell = AccountCell(account = savedAccount, cell = savedCell)
+        val accountCell = AccountCell(account = savedAccount, cell = savedCell, cellRole = CellRole.CREATOR)
         accountCellRepository.save(accountCell)
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/account/${savedAccount.accountId}/cells")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/cells")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )
 
         //then
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk) // 201 created
-                .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
-    }
-
-    private fun getJwtToken(username: String, pw: String): String{
-        val authenticationDto = JwtAuthenticationDto(username,pw)
-
-        //when
-        val perform: ResultActions = this.mockMvc.perform(MockMvcRequestBuilders.post("/auth")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationDto))
-        )
-
-        val response: MockHttpServletResponse = perform.andReturn().response
-        val resultString = response.contentAsString
-
-        val parser = Jackson2JsonParser()
-        return parser.parseMap(resultString)["token"].toString()
+                .andDo(print())
+                .andExpect(status().isOk) // 201 created
+                .andExpect(jsonPath("_links.self").exists())
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

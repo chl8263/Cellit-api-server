@@ -1,6 +1,5 @@
 package me.ewan.cellit.domain.account.repository
 
-import me.ewan.cellit.TestConfiguration
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
@@ -15,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 import org.assertj.core.api.Assertions.assertThat
-import org.springframework.context.annotation.Import
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest

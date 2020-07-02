@@ -1,13 +1,10 @@
-package me.ewan.cellit.domain.cell.vo.dto
+package me.ewan.cellit.domain.cell.vo.query
 
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
-data class CellDto(
-
+data class CellQuery(
         var cellId: Long? = null,
 
-        @NotEmpty
-        @NotNull
         var cellName: String? = null
 )

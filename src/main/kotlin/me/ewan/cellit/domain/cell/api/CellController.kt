@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
+import java.lang.Exception
 import javax.validation.Valid
 
 @RestController
@@ -48,16 +49,21 @@ class CellController {
     @Autowired
     lateinit var modelMapper: ModelMapper
 
-    @GetMapping
-    fun getCells(@RequestParam query: String?): String{
-        if(query == null){
-            return "nulllllllllllll"
-        }else {
-            val a = ConvertQueryToClass.convert<CellQuery>(query)
-            println(a.toString())
-            return query
-        }
-    }
+//    @GetMapping
+//    fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
+//
+//        if(query == null){
+//            return "nulllllllllllll"
+//        }else {
+//            try{
+//                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
+//            }catch (e: Exception){
+//                return ResponseEntity.badRequest().body(e.message)
+//            }
+//
+//            return query
+//        }
+//    }
 
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto, errors: Errors): ResponseEntity<Any> {

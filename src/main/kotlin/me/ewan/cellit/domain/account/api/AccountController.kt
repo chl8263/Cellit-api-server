@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping(value = ["/api/account"], produces = [MediaTypes.HAL_JSON_VALUE])
+@RequestMapping(value = ["/api/accounts"], produces = [MediaTypes.HAL_JSON_VALUE])
 class AccountController{
 
     @Autowired

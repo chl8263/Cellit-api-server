@@ -61,7 +61,7 @@ class AccountApiTest : BaseControllerTest() {
         val account = AccountDto(accountname = name, password = pw)
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/account")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(account))
@@ -83,7 +83,7 @@ class AccountApiTest : BaseControllerTest() {
         val pw = "123123"
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/account")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(
@@ -110,7 +110,7 @@ class AccountApiTest : BaseControllerTest() {
         val account = AccountDto(accountname = name, password = pw)
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/account")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(account))
@@ -138,7 +138,7 @@ class AccountApiTest : BaseControllerTest() {
         accountCellRepository.save(accountCell)
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/account/${savedAccount.accountId}/cells")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/cells")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )

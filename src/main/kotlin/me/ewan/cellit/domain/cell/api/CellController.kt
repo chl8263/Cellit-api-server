@@ -54,6 +54,7 @@ class CellController {
 
         if(query == null){
             // TODO
+            println("11111")
             return ResponseEntity.badRequest().body("aaa")
         }else {
             try{
@@ -73,6 +74,8 @@ class CellController {
                 return ResponseEntity.ok(resultEntityModel)
 
             }catch (e: Exception){
+                println("2")
+                println(e.message)
                 return ResponseEntity.badRequest().body(e.message)
             }
         }

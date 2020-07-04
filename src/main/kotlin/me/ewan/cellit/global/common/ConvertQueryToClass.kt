@@ -13,8 +13,8 @@ import java.lang.StringBuilder
 class ConvertQueryToClass {
 
     companion object{
-        const val INVALID_COLON_MSG = "This query hasn't valid COLON at API server."
-        const val COLON = "%3D"
+        const val INVALID_EQUAL_MSG = "This query hasn't valid Equal at API server."
+        const val EQUAL = "="
 
         inline fun <reified T> convert(query: String): T{
             try{
@@ -32,8 +32,8 @@ class ConvertQueryToClass {
 
             val split = query.split(",")
             split.forEachIndexed { i, it ->
-                if(!it.contains(COLON)) throw InvalidQueryException(INVALID_COLON_MSG)
-                val colonSplit = it.split(COLON)
+                if(!it.contains(EQUAL)) throw InvalidQueryException(INVALID_EQUAL_MSG)
+                val colonSplit = it.split("=")
                 sb.append("\"${colonSplit[0]}\"")
                 sb.append(":")
                 sb.append("\"${colonSplit[1]}\"")

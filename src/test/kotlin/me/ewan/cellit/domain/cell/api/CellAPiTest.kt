@@ -164,8 +164,10 @@ class CellAPiTest : BaseControllerTest() {
         val findName = "Cell"
 
         //when
-        ///api/cells?q=name%3D$findName,id%3D123
-        mockMvc.perform(get("/api/cells?query=cellName%3D$findName")
+        /*
+        *  When request url, must use 3%D between variable and value.
+        * */
+        mockMvc.perform(get("/api/cells?query=cellName=$findName")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )
@@ -206,7 +208,7 @@ class CellAPiTest : BaseControllerTest() {
 
         //when
         ///api/cells?q=name%3D$findName,id%3D123
-        val result = mockMvc.perform(get("/api/cells?query=cellName%6D$findName")
+        val result = mockMvc.perform(get("/api/cells?query=cellName-$findName")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )
@@ -216,7 +218,7 @@ class CellAPiTest : BaseControllerTest() {
                 .andExpect(status().isBadRequest)
                 .andReturn()
 
-        assertThat(result.response.getContentAsString()).isEqualTo(ConvertQueryToClass.INVALID_COLON_MSG)
+        assertThat(result.response.getContentAsString()).isEqualTo(ConvertQueryToClass.INVALID_EQUAL_MSG)
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

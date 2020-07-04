@@ -39,14 +39,14 @@ internal class ConvertQueryToClassTest{
     @Test
     fun `Fail convert query with invalid colon`(){
         //given
-        val query = "cellId%5D3"
+        val query = "cellId-D3"
 
         //when
         val convertQueryToClass =assertThrows(InvalidQueryException::class.java){ConvertQueryToClass.convert<CellQuery>(query)}
         val errorMsg = convertQueryToClass.message
 
         //then
-        assertThat(errorMsg).isEqualTo(ConvertQueryToClass.INVALID_COLON_MSG)
+        assertThat(errorMsg).isEqualTo(ConvertQueryToClass.INVALID_EQUAL_MSG)
     }
 
     @Test

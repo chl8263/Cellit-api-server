@@ -9,5 +9,7 @@ data class CellDto(
 
         @NotEmpty
         @NotNull
-        var cellName: String? = null
+        var cellName: String? = null,
+
+        var cellDescription: String = ""
 )

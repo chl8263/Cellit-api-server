@@ -13,8 +13,11 @@ class Cell(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var cellId: Long? = null,
 
-        @Column
+        @Column(unique = true)
         var cellName: String,
+
+        @Column
+        var cellDescription: String = "",
 
         // default fetch type = LAZY
         @JsonIgnore // prevent infinity loop when trans JSON

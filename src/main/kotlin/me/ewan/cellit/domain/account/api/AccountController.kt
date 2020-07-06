@@ -80,7 +80,7 @@ class AccountController{
         val accountCells = accountService.getAccountCellsWithAccountId(accountId)
 
         val cellsEntityModel = accountCells.map {
-            val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName)
+            val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName, cellDescription = it.cell.cellDescription)
             val cellModel = CellEntityModel(tempCellDto, it.cellRole.name)
             val selfLink = linkTo(CellController::class.java).slash(it.cell.cellId)
                     .withSelfRel()

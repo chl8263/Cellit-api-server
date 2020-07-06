@@ -31,7 +31,7 @@ class CellService {
 
         val currentUser = accountService.getAccount(name)
 
-        val cell = Cell(cellName = cellDto.cellName!!.trim())
+        val cell = Cell(cellName = cellDto.cellName!!.trim(), cellDescription = cellDto.cellDescription)
         //val cell = modelMapper.map(cellDto, Cell::class.java)
         val savedCell = cellRepository.save(cell)
         val accountCell = AccountCell(cellRole = CellRole.CREATOR, account = currentUser, cell = savedCell)

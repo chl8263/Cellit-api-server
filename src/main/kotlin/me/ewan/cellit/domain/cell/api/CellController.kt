@@ -84,10 +84,12 @@ class CellController {
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto, errors: Errors): ResponseEntity<Any> {
 
+        // s: validator
         cellDtoValidator.validate(cellDto, errors)
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().body(errorToJson.convert(errors))
         }
+        // e: validator
 
         val auth = SecurityContextHolder.getContext().authentication
 

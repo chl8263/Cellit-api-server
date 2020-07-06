@@ -81,7 +81,8 @@ class CellAPiTest : BaseControllerTest() {
         val jwtToken = getJwtToken(name, pw)
 
         val cellName = "Accounting"
-        val cellDto = CellDto(cellName = cellName)
+        val cellDescription = ""
+        val cellDto = CellDto(cellName = cellName, cellDescription = cellDescription)
 
         //when
         mockMvc.perform(post("/api/cells")
@@ -96,6 +97,7 @@ class CellAPiTest : BaseControllerTest() {
                 .andExpect(MockMvcResultMatchers.status().isCreated)
                 .andExpect(jsonPath("cellId").exists())
                 .andExpect(jsonPath("cellName").exists())
+                .andExpect(jsonPath("cellDescription").exists())
                 .andExpect(jsonPath("_links.self").exists())
 
     }
@@ -146,7 +148,7 @@ class CellAPiTest : BaseControllerTest() {
         val jwtToken = getJwtToken(name, pw)
 
         val cellName1 = "Cell_test1"
-        val cellDto1 = CellDto(cellName = cellName1)
+        val cellDto1 = CellDto(cellName = cellName1, cellDescription = "Let's talk about Accounting")
         val savedCell1 = cellService.createCell(cellDto1, name)
 
         val cellName2 = "Cell_test2"

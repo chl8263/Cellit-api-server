@@ -11,5 +11,7 @@ data class CellDto(
         @NotNull
         var cellName: String? = null,
 
-        var cellDescription: String = ""
+        var cellDescription: String = "",
+
+        var createDate: String = ""
 )

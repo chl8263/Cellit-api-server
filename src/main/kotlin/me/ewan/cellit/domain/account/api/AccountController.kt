@@ -62,7 +62,7 @@ class AccountController{
     @GetMapping("/{accountName}")
     fun getAccountWithUserName(@PathVariable accountName: String): ResponseEntity<Any>{
 
-        val account = accountService.getAccount(accountName)
+        val account = accountService.getAccountWithName(accountName)
 
         val accountEntityModel = account.run {
             val accountModel = AccountEntityModel(this)

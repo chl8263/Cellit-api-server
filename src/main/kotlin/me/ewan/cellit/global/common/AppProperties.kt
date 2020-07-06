@@ -22,4 +22,6 @@ class AppProperties{
         lateinit var testAdminPassword: String
         lateinit var testUserAccountname: String
         lateinit var testUserPassword: String
+        lateinit var testUserAccountname2: String
+        lateinit var testUserPassword2: String
 }

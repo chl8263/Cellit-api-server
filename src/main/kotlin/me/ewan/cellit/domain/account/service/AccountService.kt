@@ -39,8 +39,8 @@ class AccountService : UserDetailsService {
         return savedAccount
     }
 
-    fun getAccount(accountId: Long): Account = accountRepository.findByAccountId(accountId)
-    fun getAccount(username: String): Account = accountRepository.findByAccountname(username)
+    fun getAccountWithId(accountId: Long): Account = accountRepository.findByAccountId(accountId)
+    fun getAccountWithName(username: String): Account = accountRepository.findByAccountname(username)
 
     fun getAccountCellsWithAccountId (accountId: Long): List<AccountCell> {
         val account = accountRepository.findAccountFetch(accountId)

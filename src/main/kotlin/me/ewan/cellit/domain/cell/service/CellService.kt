@@ -27,9 +27,11 @@ class CellService {
     @Autowired
     lateinit var channelRepository: ChannelRepository
 
+    fun getCellWithId(cellId: Long) = cellRepository.getOne(cellId)
+
     fun createCell(cellDto: CellDto, name: String): Cell {
 
-        val currentUser = accountService.getAccount(name)
+        val currentUser = accountService.getAccountWithName(name)
 
         val cell = Cell(cellName = cellDto.cellName!!.trim(), cellDescription = cellDto.cellDescription)
         //val cell = modelMapper.map(cellDto, Cell::class.java)

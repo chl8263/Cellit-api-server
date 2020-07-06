@@ -7,9 +7,9 @@ import org.springframework.hateoas.RepresentationModel
 class CellEntityModel : RepresentationModel<CellEntityModel> {
 
     @JsonUnwrapped
-    var cell: CellDto
+    val cell: CellDto
 
-    var role: String
+    val role: String
 
     constructor(cell: CellDto, role: String){
         this.cell = cell

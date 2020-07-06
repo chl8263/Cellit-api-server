@@ -4,9 +4,11 @@ import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.domain.cell.service.CellService
-import me.ewan.cellit.domain.cell.vo.domain.Cell
+import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
+import me.ewan.cellit.domain.cell.vo.dto.CellRequestDto
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
+import me.ewan.cellit.domain.cell.vo.entityModel.CellRequestEntityModel
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
 import me.ewan.cellit.domain.channel.api.ChannelController
 import me.ewan.cellit.domain.channel.service.ChannelService
@@ -122,5 +124,26 @@ class CellController {
         val resultEntityModel = CollectionModel(channelsEntityModel, selfLink)
 
         return ResponseEntity.ok(resultEntityModel)
+    }
+
+    @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
+    fun createCellRequestsWithAccountIdAtCell(@PathVariable cellId: Long, @PathVariable accountId: Long): ResponseEntity<Any>{
+
+        val cell = cellService.getCellWithId(cellId = cellId)
+        val requestAccount = accountService.getAccountWithId(accountId)
+        val cellRequest = CellRequest(cell = cell, accountId = accountId)
+        cell.cellRequests.add(cellRequest)
+
+        val entityModel = cellRequest.run {
+            val cellRequesDto = CellRequestDto(cellRequestId = cellRequest.cellRequestId, cellId = cell.cellId, accountId = accountId, createDate = cellRequest.createDate)
+            val cellRequestModel = CellRequestEntityModel(cellRequesDto)
+            val selfLink = linkTo(CellController::class.java).slash(cellId).slash("cellRequests").slash(this.accountId).withSelfRel()
+            cellRequestModel.add(selfLink)
+        }
+
+        val linkBuilder = linkTo(methodOn(CellController::class.java).createCellRequestsWithAccountIdAtCell(cellId, accountId)).withSelfRel()
+        val createdUri = linkBuilder.toUri()
+
+        return ResponseEntity.created(createdUri).body(entityModel)
     }
 }

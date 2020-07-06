@@ -7,15 +7,18 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-class CellRequest (
+class CellRequest(
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var cellRequestId: Long? = null,
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var cellRequestId: Long? = null,
 
-    @ManyToOne
-    @JoinColumn(name = "cellId")
-    var cell: Cell,
+        @ManyToOne
+        @JoinColumn(name = "cellId")
+        var cell: Cell,
 
-    @Temporal(TemporalType.TIMESTAMP)
-    var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date())
+        @Column
+        var accountId: Long? = null,
+
+        @Temporal(TemporalType.TIMESTAMP)
+        var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date())
 )

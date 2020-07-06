@@ -11,6 +11,8 @@ my-app:
   testAdminPassword: 123
   testUserAccountname: test_ewan_user
   testUserPassword: 123
+  testUserAccountname2: test_ewan_user2
+  testUserPassword2: 123
 
 #  jpa:
 #    hibernate:

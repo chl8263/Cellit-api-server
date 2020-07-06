@@ -16,7 +16,7 @@ class CellRequest(
         @JoinColumn(name = "cellId")
         var cell: Cell,
 
-        @Column
+        @Column(unique = true)
         var accountId: Long? = null,
 
         @Temporal(TemporalType.TIMESTAMP)

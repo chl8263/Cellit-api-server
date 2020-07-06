@@ -1,6 +1,7 @@
 package me.ewan.cellit.domain.cell.api
 
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.domain.cell.service.CellService
@@ -38,6 +39,9 @@ class CellController {
 
     @Autowired
     private lateinit var accountService: AccountService
+
+    @Autowired
+    private lateinit var cellRequestService: CellRequestService
 
     @Autowired
     private lateinit var channelService: ChannelService
@@ -129,10 +133,20 @@ class CellController {
     @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun createCellRequestsWithAccountIdAtCell(@PathVariable cellId: Long, @PathVariable accountId: Long): ResponseEntity<Any>{
 
+        try{
+            val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
+            if(foundCellRequest != null){
+                return ResponseEntity.badRequest().body("This account already joined this cell.")
+            }
+        }catch (e: Exception){
+            println(e.message)
+        }
+
         val cell = cellService.getCellWithId(cellId = cellId)
         val requestAccount = accountService.getAccountWithId(accountId)
         val cellRequest = CellRequest(cell = cell, accountId = accountId)
-        cell.cellRequests.add(cellRequest)
+
+        cellRequestService.createCellRequest(cellRequest)
 
         val entityModel = cellRequest.run {
             val cellRequesDto = CellRequestDto(cellRequestId = cellRequest.cellRequestId, cellId = cell.cellId, accountId = accountId, createDate = cellRequest.createDate)

@@ -27,6 +27,9 @@ class Cell(
         @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
         var channels: MutableList<Channel> = mutableListOf(),
 
+        @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
+        var cellRequests: MutableList<CellRequest> = mutableListOf(),
+
         //@CreationTimestamp
         @Column
         @Temporal(TemporalType.TIMESTAMP)

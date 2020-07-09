@@ -7,9 +7,12 @@ import me.ewan.cellit.domain.account.vo.dto.AccountDto
 import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
 import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
 import me.ewan.cellit.domain.cell.api.CellController
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
-import me.ewan.cellit.global.common.ErrorToJson
+import me.ewan.cellit.global.error.ErrorAttributes
+import me.ewan.cellit.global.error.ErrorToJson
+import me.ewan.cellit.global.error.vo.ErrorVo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
@@ -18,6 +21,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.ServletWebRequest
 import javax.validation.Valid
 
 @RestController
@@ -33,14 +37,22 @@ class AccountController{
     @Autowired
     private lateinit var errorToJson: ErrorToJson
 
+    @Autowired
+    private lateinit var errorAttributes: ErrorAttributes
+
     @PostMapping
-    fun createAccount(@RequestBody @Valid accountDto: AccountDto, errors: Errors): ResponseEntity<Any>{
+    fun createAccount(@RequestBody @Valid accountDto: AccountDto,
+                      errors: Errors,
+                      request: ServletWebRequest): ResponseEntity<Any>{
 //        if(errors.hasErrors()){
 //            return ResponseEntity.badRequest().build()
 //        }
-        accountDtoValidator.validate(accountDto, errors)
-        if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errorToJson.convert(errors))
+        val errorList = accountDtoValidator.validate(accountDto)
+        if(errorList.isNotEmpty()){
+            //val body = errorAttributes.getErrorAttributes(request, true)
+            val body = errorAttributes.getErrorAttributes2(errorList)
+            return ResponseEntity.badRequest().body(body)
+            //return ResponseEntity.badRequest().body(errorToJson.convert(errors))
         }
 
         val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
@@ -77,7 +89,7 @@ class AccountController{
     @GetMapping("/{accountId}/cells")
     fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellEntityModel>> {
 
-        val accountCells = accountService.getAccountCellsWithAccountId(accountId)
+        val accountCells = accountService.getAccountCellsWithAccountId(accountId)?: ArrayList<AccountCell>()
 
         val cellsEntityModel = accountCells.map {
             val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName, cellDescription = it.cell.cellDescription, createDate = it.cell.createDate)

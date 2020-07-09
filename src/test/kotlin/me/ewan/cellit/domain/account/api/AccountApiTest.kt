@@ -118,11 +118,11 @@ class AccountApiTest : BaseControllerTest() {
 
                 //then
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(status().isBadRequest)
     }
 
     @Test
-    fun `Get cells list with account id`() {
+    fun `Get cell list with account id`() {
 
         //given
         val name = appProperties.testUserAccountname

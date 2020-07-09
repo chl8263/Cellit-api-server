@@ -1,4 +1,4 @@
-package me.ewan.cellit.global.common
+package me.ewan.cellit.global.error
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule

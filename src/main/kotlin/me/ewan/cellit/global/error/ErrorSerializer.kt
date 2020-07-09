@@ -1,9 +1,8 @@
-package me.ewan.cellit.global.common
+package me.ewan.cellit.global.error
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import org.springframework.boot.jackson.JsonComponent
 import org.springframework.validation.Errors
 import java.io.IOException
 

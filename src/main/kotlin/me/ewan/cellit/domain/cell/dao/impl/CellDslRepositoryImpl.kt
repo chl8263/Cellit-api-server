@@ -26,7 +26,8 @@ class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), Cel
         if(cellQuery.cellName != null){
             builder.and(cell.cellName.contains(cellQuery.cellName))
         }
-        query.where(builder)
+        query.where(builder
+                .and(cell.active.eq(1)))
 
         return query.fetch()
     }

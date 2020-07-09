@@ -9,7 +9,9 @@ import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.common.BaseControllerTest
+import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.service.CellService
+import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.channel.dao.ChannelRepository
 import me.ewan.cellit.domain.channel.vo.domain.Channel
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
@@ -50,6 +52,9 @@ class CellAPiTest : BaseControllerTest() {
 
     @Autowired
     lateinit var cellService: CellService
+
+    @Autowired
+    lateinit var cellRequestService: CellRequestService
 
     @Autowired
     lateinit var accountRepository: AccountRepository
@@ -224,7 +229,7 @@ class CellAPiTest : BaseControllerTest() {
     }
 
     @Test
-    fun `Create Cell Request with cell id and account id`(){
+    fun `Create CellRequest with cell id and account id`(){
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
@@ -252,9 +257,39 @@ class CellAPiTest : BaseControllerTest() {
     }
 
     //TODO: Create test code about already joined this cell and already requested this cellRequest
+    @Test
+    fun `Fail to Create CellRequest list with cell id and account id that already requested`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val name2 = appProperties.testUserAccountname2
+        val pw2 = appProperties.testUserPassword2
+        val testAccount1 = createAccount(name = name, pw = pw)
+        val testAccount2 = createAccount(name = name2, pw = pw2)
+
+        val jwtToken = getJwtToken(name2, pw2)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
+
+        val cellRequest = CellRequest(cell = savedCell1, accountId = testAccount2.accountId)
+        cellRequestService.createCellRequest(cellRequest)
+
+        //when
+        val result = mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isBadRequest)
+                .andReturn()
+    }
 
     @Test
-    fun `Fail to Create Cell Request list with cell id and account id that already joined`(){
+    fun `Fail to Create CellRequest list with cell id and account id that already joined in cell`(){
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword

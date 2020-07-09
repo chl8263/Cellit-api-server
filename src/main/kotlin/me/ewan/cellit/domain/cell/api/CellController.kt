@@ -16,7 +16,7 @@ import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.global.common.ConvertQueryToClass
-import me.ewan.cellit.global.common.ErrorToJson
+import me.ewan.cellit.global.error.ErrorToJson
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
@@ -88,7 +88,8 @@ class CellController {
     }
 
     @PostMapping
-    fun createCell(@RequestBody @Valid cellDto: CellDto, errors: Errors): ResponseEntity<Any> {
+    fun createCell(@RequestBody @Valid cellDto: CellDto,
+                   errors: Errors): ResponseEntity<Any> {
 
         // s: validator
         cellDtoValidator.validate(cellDto, errors)
@@ -131,8 +132,10 @@ class CellController {
     }
 
     @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
-    fun createCellRequestsWithAccountIdAtCell(@PathVariable cellId: Long, @PathVariable accountId: Long): ResponseEntity<Any>{
+    fun createCellRequests(@PathVariable cellId: Long,
+                           @PathVariable accountId: Long): ResponseEntity<Any>{
 
+        // s: validator
         try{
             val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
             if(foundCellRequest != null){
@@ -142,12 +145,10 @@ class CellController {
             if(foundJoinedCell != null){
                 return ResponseEntity.badRequest().body("This account already joined this cell.")
             }
-            println("!!!!!!!!!!!")
-            println(foundJoinedCell?.accountId)
         }catch (e: Exception){
-            println("eeeeeeeeeeee")
             println(e.message)
         }
+        // e: validator
 
         val cell = cellService.getCellWithId(cellId = cellId)
         val requestAccount = accountService.getAccountWithId(accountId)
@@ -162,7 +163,7 @@ class CellController {
             cellRequestModel.add(selfLink)
         }
 
-        val linkBuilder = linkTo(methodOn(CellController::class.java).createCellRequestsWithAccountIdAtCell(cellId, accountId)).withSelfRel()
+        val linkBuilder = linkTo(methodOn(CellController::class.java).createCellRequests(cellId, accountId)).withSelfRel()
         val createdUri = linkBuilder.toUri()
 
         return ResponseEntity.created(createdUri).body(entityModel)

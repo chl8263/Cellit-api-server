@@ -80,11 +80,11 @@ open class CellJpaTest : BaseControllerTest(){
         val reCallAccount = accountRepository.findAccountFetch(savedAccount.accountId!!)
         //val reCallAccount = accountRepository.findByAccountIdFetch(savedAccount.accountId!!)
 
-        Hibernate.initialize(reCallAccount.accountCells)
-        val list = reCallAccount.accountCells
+        Hibernate.initialize(reCallAccount?.accountCells)
+        val list = reCallAccount?.accountCells
 
         //then
-        assertThat(savedAccount.accountname).isEqualTo(reCallAccount.accountCells[0].account.accountname)
+        assertThat(savedAccount.accountname).isEqualTo(reCallAccount!!.accountCells[0].account.accountname)
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

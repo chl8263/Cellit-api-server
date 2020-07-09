@@ -1,6 +1,7 @@
 package me.ewan.cellit.domain.cell.service
 
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
@@ -49,5 +50,10 @@ class CellService {
     fun getCellsWithQuery(cellQuery: CellQuery): List<Cell> {
         val cells = cellRepository.findCellsWithQuery(cellQuery)
         return cells
+    }
+
+    fun findAccountInCell(cellId: Long, accountId: Long): Account? {
+        val account = cellRepository.findAccountInCell(cellId, accountId)
+        return account
     }
 }

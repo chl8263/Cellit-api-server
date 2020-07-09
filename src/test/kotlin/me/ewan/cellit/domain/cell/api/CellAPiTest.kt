@@ -224,7 +224,7 @@ class CellAPiTest : BaseControllerTest() {
     }
 
     @Test
-    fun `Get Cell Request list with cell id`(){
+    fun `Create Cell Request with cell id and account id`(){
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
@@ -250,6 +250,37 @@ class CellAPiTest : BaseControllerTest() {
                 .andExpect(status().isCreated)
                 .andReturn()
     }
+
+    //TODO: Create test code about already joined this cell and already requested this cellRequest
+
+    @Test
+    fun `Fail to Create Cell Request list with cell id and account id that already joined`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val name2 = appProperties.testUserAccountname2
+        val pw2 = appProperties.testUserPassword2
+        val testAccount1 = createAccount(name = name, pw = pw)
+        val testAccount2 = createAccount(name = name2, pw = pw2)
+
+        val jwtToken = getJwtToken(name2, pw2)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
+
+        //when
+        val result = mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount1.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isBadRequest)
+                .andReturn()
+    }
+
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)

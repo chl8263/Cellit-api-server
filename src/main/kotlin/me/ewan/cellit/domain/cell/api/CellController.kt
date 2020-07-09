@@ -136,9 +136,16 @@ class CellController {
         try{
             val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
             if(foundCellRequest != null){
+                return ResponseEntity.badRequest().body("This account already required this cell.")
+            }
+            val foundJoinedCell = cellService.findAccountInCell(cellId, accountId)
+            if(foundJoinedCell != null){
                 return ResponseEntity.badRequest().body("This account already joined this cell.")
             }
+            println("!!!!!!!!!!!")
+            println(foundJoinedCell?.accountId)
         }catch (e: Exception){
+            println("eeeeeeeeeeee")
             println(e.message)
         }
 

@@ -21,7 +21,10 @@ class AccountCell (
         // default fetch type = EAGER
         @ManyToOne
         @JoinColumn(name = "cellId")
-        var cell: Cell
+        var cell: Cell,
+
+        @Column
+        var active: Int = 1
 
 )
 //{

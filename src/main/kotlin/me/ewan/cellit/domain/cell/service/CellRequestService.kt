@@ -15,7 +15,7 @@ class CellRequestService {
 
     fun createCellRequest(cellRequest: CellRequest) = cellRequestRepository.save(cellRequest)
 
-    fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest{
+    fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest?{
         return cellRequestRepository.findCellRequestsWithCellIdAndAccountId(cellId, accountId)
     }
 }

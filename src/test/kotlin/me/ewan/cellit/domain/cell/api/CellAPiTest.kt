@@ -104,7 +104,6 @@ class CellAPiTest : BaseControllerTest() {
                 .andExpect(jsonPath("cellName").exists())
                 .andExpect(jsonPath("cellDescription").exists())
                 .andExpect(jsonPath("_links.self").exists())
-
     }
 
     @Test

@@ -10,16 +10,14 @@ import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
-import me.ewan.cellit.global.error.ErrorAttributes
+import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.ErrorToJson
-import me.ewan.cellit.global.error.vo.ErrorVo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.ServletWebRequest
 import javax.validation.Valid
@@ -38,25 +36,21 @@ class AccountController{
     private lateinit var errorToJson: ErrorToJson
 
     @Autowired
-    private lateinit var errorAttributes: ErrorAttributes
+    private lateinit var errorHelper: ErrorHelper
 
     @PostMapping
     fun createAccount(@RequestBody @Valid accountDto: AccountDto,
-                      errors: Errors,
                       request: ServletWebRequest): ResponseEntity<Any>{
-//        if(errors.hasErrors()){
-//            return ResponseEntity.badRequest().build()
-//        }
+
+        // s: validator
         val errorList = accountDtoValidator.validate(accountDto)
         if(errorList.isNotEmpty()){
-            //val body = errorAttributes.getErrorAttributes(request, true)
-            val body = errorAttributes.getErrorAttributes2(errorList)
+            val body = errorHelper.getErrorAttributes(errorList)
             return ResponseEntity.badRequest().body(body)
-            //return ResponseEntity.badRequest().body(errorToJson.convert(errors))
         }
+        // 3: validator
 
         val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
-        //account.role = AccountRole.ROLE_USER
         val savedAccount = accountService.createAccount(account)
 
         val accountEntityModel = savedAccount.run {

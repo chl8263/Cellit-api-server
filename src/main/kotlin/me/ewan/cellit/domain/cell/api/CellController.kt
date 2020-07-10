@@ -16,7 +16,10 @@ import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.global.common.ConvertQueryToClass
+import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.ErrorToJson
+import me.ewan.cellit.global.error.vo.ErrorVo
+import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
@@ -25,7 +28,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
 import java.lang.Exception
 import javax.validation.Valid
@@ -53,7 +55,10 @@ class CellController {
     private lateinit var errorToJson: ErrorToJson
 
     @Autowired
-    lateinit var modelMapper: ModelMapper
+    private lateinit var modelMapper: ModelMapper
+
+    @Autowired
+    private lateinit var errorHelper: ErrorHelper
 
     @GetMapping
     fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
@@ -88,13 +93,13 @@ class CellController {
     }
 
     @PostMapping
-    fun createCell(@RequestBody @Valid cellDto: CellDto,
-                   errors: Errors): ResponseEntity<Any> {
+    fun createCell(@RequestBody @Valid cellDto: CellDto): ResponseEntity<Any> {
 
         // s: validator
-        cellDtoValidator.validate(cellDto, errors)
-        if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errorToJson.convert(errors))
+        val errorList = cellDtoValidator.validate(cellDto)
+        if(errorList.isNotEmpty()){
+            val body = errorHelper.getErrorAttributes(errorList)
+            return ResponseEntity.badRequest().body(body)
         }
         // e: validator
 
@@ -137,14 +142,17 @@ class CellController {
 
         // s: validator
         try{
+            var errorList = ArrayList<ErrorVo>()
             val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
             if(foundCellRequest != null){
-                return ResponseEntity.badRequest().body("This account already required this cell.")
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already required this cell.", errorList = errorList)
             }
             val foundJoinedCell = cellService.findAccountInCell(cellId, accountId)
             if(foundJoinedCell != null){
-                return ResponseEntity.badRequest().body("This account already joined this cell.")
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already joined this cell.",  errorList = errorList)
             }
+            val body = errorHelper.getErrorAttributes(errorList)
+            return ResponseEntity.badRequest().body(body)
         }catch (e: Exception){
             println(e.message)
         }

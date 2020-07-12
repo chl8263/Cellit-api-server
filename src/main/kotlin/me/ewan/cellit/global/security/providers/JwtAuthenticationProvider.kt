@@ -29,8 +29,8 @@ class JwtAuthenticationProvider: AuthenticationProvider {
 
         val account = accountService.getAccountWithName(username)
 
-        if(isCorrectPassword(password, account)){
-            return PostAuthorizationToken.getTokenFromAccountContext(AccountContext.fromAccountModel(account))
+        if(isCorrectPassword(password, account!!)){
+            return PostAuthorizationToken.getTokenFromAccountContext(AccountContext.fromAccountModel(account!!))
         }
 
         throw NoSuchElementException("Authentication information is now correct.")

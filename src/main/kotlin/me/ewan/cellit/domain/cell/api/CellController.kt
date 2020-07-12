@@ -52,9 +52,6 @@ class CellController {
     private lateinit var cellDtoValidator: CellDtoValidator
 
     @Autowired
-    private lateinit var errorToJson: ErrorToJson
-
-    @Autowired
     private lateinit var modelMapper: ModelMapper
 
     @Autowired
@@ -63,116 +60,138 @@ class CellController {
     @GetMapping
     fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
 
-        if(query == null){
-            // TODO
-            println("11111")
-            return ResponseEntity.badRequest().body("aaa")
-        }else {
-            try{
-                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
-                val cells = cellService.getCellsWithQuery(convertedQuery)
+        try {
+            if (query == null) {
+                // TODO
+                println("11111")
+                return ResponseEntity.badRequest().body("aaa")
+            } else {
+                try {
+                    val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
+                    val cells = cellService.getCellsWithQuery(convertedQuery)
 
-                val cellsEntityModel = cells.map {
-                    val tempCellDto = modelMapper.map(it, CellDto::class.java)
-                    val cellModel = CellEntityModel(tempCellDto, "")
-                    val selfLink = linkTo(CellController::class.java).slash(it.cellId).withSelfRel()
-                    cellModel.add(selfLink)
+                    val cellsEntityModel = cells.map {
+                        val tempCellDto = modelMapper.map(it, CellDto::class.java)
+                        val cellModel = CellEntityModel(tempCellDto, "")
+                        val selfLink = linkTo(CellController::class.java).slash(it.cellId).withSelfRel()
+                        cellModel.add(selfLink)
+                    }
+
+                    val selfLink = linkTo(CellController::class.java).withSelfRel()
+                    val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
+
+                    return ResponseEntity.ok(resultEntityModel)
+
+                } catch (e: Exception) {
+                    val body = errorHelper.getUnexpectError(e.message ?: "")
+                    return ResponseEntity.badRequest().body(body)
                 }
-
-                val selfLink = linkTo(CellController::class.java).withSelfRel()
-                val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
-
-                return ResponseEntity.ok(resultEntityModel)
-
-            }catch (e: Exception){
-                val body = errorHelper.getUnexpectError(e.message?: "")
-                return ResponseEntity.badRequest().body(body)
             }
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
         }
     }
 
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto): ResponseEntity<Any> {
 
-        // s: validator
-        val errorList = cellDtoValidator.validate(cellDto)
-        if(errorList.isNotEmpty()){
-            val body = errorHelper.getErrorAttributes(errorList)
+        try {
+            // s: validator
+            val errorList = cellDtoValidator.validate(cellDto)
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val auth = SecurityContextHolder.getContext().authentication
+
+            cellService.getCellWithName(cellDto.cellName!!)?.let {
+                val body = errorHelper.getUnexpectError("This cell already exit, Please try another one.")
+                return ResponseEntity.badRequest().body(body)
+            }
+
+            val savedCell = cellService.createCell(cellDto, auth.name)
+
+            val entityModel = savedCell.run {
+                val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)
+                val cellModel = CellEntityModel(tempCellDto, CellRole.CREATOR.name)
+                val selfLink = linkTo(CellController::class.java).slash(this.cellId).withSelfRel()
+                cellModel.add(selfLink)
+            }
+
+            val linkBuilder = linkTo(CellController::class.java)
+            val createdUri = linkBuilder.toUri()
+
+            return ResponseEntity.created(createdUri).body(entityModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
-        // e: validator
-
-        val auth = SecurityContextHolder.getContext().authentication
-
-        val savedCell = cellService.createCell(cellDto, auth.name)
-
-        val entityModel = savedCell.run {
-            val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)
-            val cellModel = CellEntityModel(tempCellDto, CellRole.CREATOR.name)
-            val selfLink = linkTo(CellController::class.java).slash(this.cellId).withSelfRel()
-            cellModel.add(selfLink)
-        }
-
-        val linkBuilder = linkTo(CellController::class.java)
-        val createdUri = linkBuilder.toUri()
-
-        return ResponseEntity.created(createdUri).body(entityModel)
     }
 
     @GetMapping("/{cellId}/channels")
-    fun getChannelsWithCellId(@PathVariable cellId: Long): ResponseEntity<CollectionModel<ChannelEntityModel>>{
-        val channels = channelService.getChannelDtosWithCellId(cellId)
+    fun getChannelsWithCellId(@PathVariable cellId: Long): ResponseEntity<Any>{
 
-        val channelsEntityModel = channels.map{
-            val channelModel = ChannelEntityModel(modelMapper.map(it, ChannelDto::class.java))
-            val selfLink = linkTo(ChannelController::class.java).slash(it.channelId).withSelfRel()
-            channelModel.add(selfLink)
+        try {
+            val channels = channelService.getChannelDtosWithCellId(cellId)
+
+            val channelsEntityModel = channels.map {
+                val channelModel = ChannelEntityModel(modelMapper.map(it, ChannelDto::class.java))
+                val selfLink = linkTo(ChannelController::class.java).slash(it.channelId).withSelfRel()
+                channelModel.add(selfLink)
+            }
+
+            val selfLink = linkTo(methodOn(CellController::class.java).getChannelsWithCellId(cellId)).withSelfRel()
+            val resultEntityModel = CollectionModel(channelsEntityModel, selfLink)
+
+            return ResponseEntity.ok(resultEntityModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
         }
-
-        val selfLink = linkTo(methodOn(CellController::class.java).getChannelsWithCellId(cellId)).withSelfRel()
-        val resultEntityModel = CollectionModel(channelsEntityModel, selfLink)
-
-        return ResponseEntity.ok(resultEntityModel)
     }
 
     @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun createCellRequests(@PathVariable cellId: Long,
                            @PathVariable accountId: Long): ResponseEntity<Any>{
 
-        // s: validator
-        try{
+        try {
+            // s: validator
             var errorList = ArrayList<ErrorVo>()
             val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
-            if(foundCellRequest != null){
+            if (foundCellRequest != null) {
                 errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already required this cell.", errorList = errorList)
             }
             val foundJoinedCell = cellService.findAccountInCell(cellId, accountId)
-            if(foundJoinedCell != null){
-                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already joined this cell.",  errorList = errorList)
+            if (foundJoinedCell != null) {
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already joined this cell.", errorList = errorList)
             }
             val body = errorHelper.getErrorAttributes(errorList)
             return ResponseEntity.badRequest().body(body)
+            // e: validator
+
+            val cell = cellService.getCellWithId(cellId = cellId)
+            val requestAccount = accountService.getAccountWithId(accountId)
+            val cellRequest = CellRequest(cell = cell, accountId = accountId)
+
+            cellRequestService.createCellRequest(cellRequest)
+
+            val entityModel = cellRequest.run {
+                val cellRequesDto = CellRequestDto(cellRequestId = cellRequest.cellRequestId, cellId = cell.cellId, accountId = accountId, createDate = cellRequest.createDate)
+                val cellRequestModel = CellRequestEntityModel(cellRequesDto)
+                val selfLink = linkTo(CellController::class.java).slash(cellId).slash("cellRequests").slash(this.accountId).withSelfRel()
+                cellRequestModel.add(selfLink)
+            }
+
+            val linkBuilder = linkTo(methodOn(CellController::class.java).createCellRequests(cellId, accountId)).withSelfRel()
+            val createdUri = linkBuilder.toUri()
+
+            return ResponseEntity.created(createdUri).body(entityModel)
         }catch (e: Exception){
-            println(e.message)
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
         }
-        // e: validator
-
-        val cell = cellService.getCellWithId(cellId = cellId)
-        val requestAccount = accountService.getAccountWithId(accountId)
-        val cellRequest = CellRequest(cell = cell, accountId = accountId)
-
-        cellRequestService.createCellRequest(cellRequest)
-
-        val entityModel = cellRequest.run {
-            val cellRequesDto = CellRequestDto(cellRequestId = cellRequest.cellRequestId, cellId = cell.cellId, accountId = accountId, createDate = cellRequest.createDate)
-            val cellRequestModel = CellRequestEntityModel(cellRequesDto)
-            val selfLink = linkTo(CellController::class.java).slash(cellId).slash("cellRequests").slash(this.accountId).withSelfRel()
-            cellRequestModel.add(selfLink)
-        }
-
-        val linkBuilder = linkTo(methodOn(CellController::class.java).createCellRequests(cellId, accountId)).withSelfRel()
-        val createdUri = linkBuilder.toUri()
-
-        return ResponseEntity.created(createdUri).body(entityModel)
     }
 }

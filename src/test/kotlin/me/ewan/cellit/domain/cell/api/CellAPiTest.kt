@@ -9,6 +9,7 @@ import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.common.BaseControllerTest
+import me.ewan.cellit.domain.cell.dao.CellRequestRepository
 import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.CellRequest
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 
 /**
@@ -66,13 +68,18 @@ class CellAPiTest : BaseControllerTest() {
     private lateinit var channelRepository: ChannelRepository
 
     @Autowired
+    private lateinit var cellRequestRepository: CellRequestRepository
+
+    @Autowired
     private lateinit var accountCellRepository: AccountCellRepository
 
     @BeforeEach
     fun setUp() {
-        accountRepository.deleteAll()
-        cellRepository.deleteAll()
-        accountCellRepository.deleteAll()
+        this.accountCellRepository.deleteAll()
+        this.accountRepository.deleteAll()
+        this.channelRepository.deleteAll()
+        this.cellRequestRepository.deleteAll()
+        this.cellRepository.deleteAll()
     }
 
     @Test
@@ -144,11 +151,12 @@ class CellAPiTest : BaseControllerTest() {
 
     @Test
     fun `Get Cells list with search name`(){
+        println(111111)
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
         createAccount(name = name, pw = pw)
-
+        println(222222)
         val jwtToken = getJwtToken(name, pw)
 
         val cellName1 = "Cell_test1"
@@ -223,8 +231,6 @@ class CellAPiTest : BaseControllerTest() {
                 .andDo(print())
                 .andExpect(status().isBadRequest)
                 .andReturn()
-
-        assertThat(result.response.getContentAsString()).isEqualTo(ConvertQueryToClass.INVALID_EQUAL_MSG)
     }
 
     @Test

@@ -33,9 +33,6 @@ class AccountController{
     private lateinit var accountDtoValidator: AccountDtoValidator
 
     @Autowired
-    private lateinit var errorToJson: ErrorToJson
-
-    @Autowired
     private lateinit var errorHelper: ErrorHelper
 
     @PostMapping
@@ -55,6 +52,7 @@ class AccountController{
                 val body = errorHelper.getUnexpectError("This account already exit, Please try another one.")
                 return ResponseEntity.badRequest().body(body)
             }
+
             val savedAccount = accountService.createAccount(account)
 
             val accountEntityModel = savedAccount.run {
@@ -76,35 +74,42 @@ class AccountController{
 
     @GetMapping("/{accountName}")
     fun getAccountWithUserName(@PathVariable accountName: String): ResponseEntity<Any>{
-
-        val account = accountService.getAccountWithName(accountName)
-
-        val accountEntityModel = account.run {
-            val accountModel = AccountEntityModel(this)
-            val selfLink = linkTo(AccountController::class.java).slash(account.accountId).withSelfRel()
-            accountModel.add(selfLink)
+        try {
+            val account = accountService.getAccountWithName(accountName)?.let {
+                val accountModel = AccountEntityModel(it)
+                val selfLink = linkTo(AccountController::class.java).slash(it.accountId).withSelfRel()
+                accountModel.add(selfLink)
+                return ResponseEntity.ok(accountModel)
+            }
+            val body = errorHelper.getUnexpectError("This account doesn't exist.")
+            return ResponseEntity.badRequest().body(body)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
         }
-
-        return ResponseEntity.ok(accountEntityModel)
     }
 
 
     @GetMapping("/{accountId}/cells")
-    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<CollectionModel<CellEntityModel>> {
+    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<Any> {
+        try {
+            val accountCells = accountService.getAccountCellsWithAccountId(accountId) ?: ArrayList<AccountCell>()
 
-        val accountCells = accountService.getAccountCellsWithAccountId(accountId)?: ArrayList<AccountCell>()
+            val cellsEntityModel = accountCells.map {
+                val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName, cellDescription = it.cell.cellDescription, createDate = it.cell.createDate)
+                val cellModel = CellEntityModel(tempCellDto, it.cellRole.name)
+                val selfLink = linkTo(CellController::class.java).slash(it.cell.cellId)
+                        .withSelfRel()
+                cellModel.add(selfLink)
+            }
 
-        val cellsEntityModel = accountCells.map {
-            val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName, cellDescription = it.cell.cellDescription, createDate = it.cell.createDate)
-            val cellModel = CellEntityModel(tempCellDto, it.cellRole.name)
-            val selfLink = linkTo(CellController::class.java).slash(it.cell.cellId)
-                    .withSelfRel()
-            cellModel.add(selfLink)
+            val selfLink = linkTo(methodOn(AccountController::class.java).getCellsFromAccountId(accountId)).withSelfRel()
+            val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
+
+            return ResponseEntity.ok(resultEntityModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
         }
-
-        val selfLink = linkTo(methodOn(AccountController::class.java).getCellsFromAccountId(accountId)).withSelfRel()
-        val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
-
-        return ResponseEntity.ok(resultEntityModel)
     }
 }

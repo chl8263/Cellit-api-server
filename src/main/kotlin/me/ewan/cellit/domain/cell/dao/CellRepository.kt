@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface CellRepository : JpaRepository<Cell, Long>, CellDslRepository{
     override fun findCellsWithQuery(cellQuery: CellQuery): List<Cell>
+    fun findByCellName(cellName: String): Cell?
 }

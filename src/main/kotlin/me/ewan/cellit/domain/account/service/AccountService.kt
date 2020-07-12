@@ -26,9 +26,7 @@ class AccountService : UserDetailsService {
 
     override fun loadUserByUsername(username: String?): UserDetails {
         val account = accountRepository.findByAccountname(username)
-        //TODO NoSuchElementException
-
-        return getAccountContext(account)
+        return getAccountContext(account!!)
     }
 
     private fun getAccountContext(account: Account): AccountContext = AccountContext.fromAccountModel(account)
@@ -39,8 +37,10 @@ class AccountService : UserDetailsService {
         return savedAccount
     }
 
-    fun getAccountWithId(accountId: Long): Account = accountRepository.findByAccountId(accountId)
-    fun getAccountWithName(username: String): Account = accountRepository.findByAccountname(username)
+    fun getAccountWithId(accountId: Long): Account? = accountRepository.findByAccountId(accountId)
+    fun getAccountWithName(username: String): Account? = accountRepository.findByAccountname(username)
+//        return accountRepository.findByAccountname(username)?: throw NoSuchElementException("Cannot find this account.")
+//    }
 
     fun getAccountCellsWithAccountId (accountId: Long): List<AccountCell>? {
         val account = accountRepository.findAccountFetch(accountId)

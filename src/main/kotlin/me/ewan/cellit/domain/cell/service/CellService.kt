@@ -29,10 +29,11 @@ class CellService {
     lateinit var channelRepository: ChannelRepository
 
     fun getCellWithId(cellId: Long) = cellRepository.getOne(cellId)
+    fun getCellWithName(cellName: String) = cellRepository.findByCellName(cellName)
 
     fun createCell(cellDto: CellDto, name: String): Cell {
 
-        val currentUser = accountService.getAccountWithName(name)
+        val currentUser = accountService.getAccountWithName(name) ?: throw NoSuchElementException("Cannot find this account for create cell")
 
         val cell = Cell(cellName = cellDto.cellName!!.trim(), cellDescription = cellDto.cellDescription)
         //val cell = modelMapper.map(cellDto, Cell::class.java)

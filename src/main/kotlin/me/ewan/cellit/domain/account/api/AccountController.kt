@@ -48,7 +48,7 @@ class AccountController{
             val body = errorHelper.getErrorAttributes(errorList)
             return ResponseEntity.badRequest().body(body)
         }
-        // 3: validator
+        // e: validator
 
         val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
         val savedAccount = accountService.createAccount(account)

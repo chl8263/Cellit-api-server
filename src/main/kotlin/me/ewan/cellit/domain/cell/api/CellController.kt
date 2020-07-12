@@ -85,9 +85,8 @@ class CellController {
                 return ResponseEntity.ok(resultEntityModel)
 
             }catch (e: Exception){
-                println("2")
-                println(e.message)
-                return ResponseEntity.badRequest().body(e.message)
+                val body = errorHelper.getUnexpectError(e.message?: "")
+                return ResponseEntity.badRequest().body(body)
             }
         }
     }

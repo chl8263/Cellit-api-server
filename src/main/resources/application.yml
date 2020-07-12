@@ -50,6 +50,8 @@ my-app:
   adminPassword: 123
   userAccountName: ewan
   userPassword: 123
+  userAccountName2: ewan1
+  userPassword2: 123
 #  testAdminUsername: test_ewan_admin
 #  testAdminPassword: 123
 #  testUserUsername: test_ewan_user

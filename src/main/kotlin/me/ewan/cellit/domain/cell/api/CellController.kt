@@ -168,8 +168,10 @@ class CellController {
             if (foundJoinedCell != null) {
                 errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already joined this cell.", errorList = errorList)
             }
-            val body = errorHelper.getErrorAttributes(errorList)
-            return ResponseEntity.badRequest().body(body)
+            if(errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
             // e: validator
 
             val cell = cellService.getCellWithId(cellId = cellId)

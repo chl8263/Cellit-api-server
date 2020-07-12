@@ -23,6 +23,7 @@ class AccountCreation : ApplicationRunner {
 
 
         accountService.createAccount(Account(accountname = appProperties.userAccountName, password = appProperties.userPassword))
+        accountService.createAccount(Account(accountname = appProperties.userAccountName2, password = appProperties.userPassword2))
         accountService.createAccount(Account(accountname = appProperties.adminAccountname, password = appProperties.adminPassword, role = AccountRole.ROLE_ADMIN))
     }
 }

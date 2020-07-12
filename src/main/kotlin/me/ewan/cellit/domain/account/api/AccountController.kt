@@ -41,28 +41,37 @@ class AccountController{
     @PostMapping
     fun createAccount(@RequestBody @Valid accountDto: AccountDto,
                       request: ServletWebRequest): ResponseEntity<Any>{
+        try {
+            // s: validator
+            val errorList = accountDtoValidator.validate(accountDto)
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
 
-        // s: validator
-        val errorList = accountDtoValidator.validate(accountDto)
-        if(errorList.isNotEmpty()){
-            val body = errorHelper.getErrorAttributes(errorList)
+            val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
+            accountService.getAccountWithName(accountDto.accountname!!)?.let {
+                val body = errorHelper.getUnexpectError("This account already exit, Please try another one.")
+                return ResponseEntity.badRequest().body(body)
+            }
+            val savedAccount = accountService.createAccount(account)
+
+            val accountEntityModel = savedAccount.run {
+                val accountModel = AccountEntityModel(this)
+                val selfLink = linkTo(AccountController::class.java).slash(savedAccount.accountId).withSelfRel()
+                accountModel.add(selfLink)
+            }
+
+            val linkBuilder = linkTo(AccountController::class.java)
+            val createdUri = linkBuilder.toUri()
+
+            return ResponseEntity.created(createdUri).body(accountEntityModel)
+
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
-        // e: validator
-
-        val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
-        val savedAccount = accountService.createAccount(account)
-
-        val accountEntityModel = savedAccount.run {
-            val accountModel = AccountEntityModel(this)
-            val selfLink = linkTo(AccountController::class.java).slash(savedAccount.accountId).withSelfRel()
-            accountModel.add(selfLink)
-        }
-
-        val linkBuilder = linkTo(AccountController::class.java)
-        val createdUri = linkBuilder.toUri()
-
-        return ResponseEntity.created(createdUri).body(accountEntityModel)
     }
 
     @GetMapping("/{accountName}")

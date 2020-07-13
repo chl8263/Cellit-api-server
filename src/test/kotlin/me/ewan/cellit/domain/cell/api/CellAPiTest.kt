@@ -12,7 +12,9 @@ import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.domain.cell.dao.CellRequestRepository
 import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.service.CellService
+import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.CellRequest
+import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.channel.dao.ChannelRepository
 import me.ewan.cellit.domain.channel.vo.domain.Channel
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
@@ -318,6 +320,40 @@ class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isBadRequest)
+                .andReturn()
+    }
+
+    @Test
+    fun `Get to CellRequest with cell id`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val name2 = appProperties.testUserAccountname2
+        val pw2 = appProperties.testUserPassword2
+        createAccount(name = name, pw = pw)
+        val testAccount2 = createAccount(name = name2, pw = pw2)
+
+        val jwtToken = getJwtToken(name2, pw2)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, name)
+
+        //when
+        mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+        //when
+        val result = mockMvc.perform(get("/api/cells/${savedCell1.cellId}/cellRequests")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
                 .andReturn()
     }
 

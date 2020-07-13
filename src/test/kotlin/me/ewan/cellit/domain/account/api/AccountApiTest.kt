@@ -123,7 +123,6 @@ class AccountApiTest : BaseControllerTest() {
 
     @Test
     fun `Get cell list with account id`() {
-
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword

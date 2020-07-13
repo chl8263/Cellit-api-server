@@ -14,5 +14,7 @@ data class CellRequestDto(
 
         var accountId: Long? = null,
 
-        var createDate: String? = null
+        var accountName: String = "",
+
+        var createDate: String = ""
 )

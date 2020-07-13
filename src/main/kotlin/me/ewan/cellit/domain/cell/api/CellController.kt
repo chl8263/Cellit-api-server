@@ -1,6 +1,8 @@
 package me.ewan.cellit.domain.cell.api
 
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.domain.Account
+import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
@@ -66,26 +68,20 @@ class CellController {
                 println("11111")
                 return ResponseEntity.badRequest().body("aaa")
             } else {
-                try {
-                    val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
-                    val cells = cellService.getCellsWithQuery(convertedQuery)
+                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
+                val cells = cellService.getCellsWithQuery(convertedQuery)
 
-                    val cellsEntityModel = cells.map {
-                        val tempCellDto = modelMapper.map(it, CellDto::class.java)
-                        val cellModel = CellEntityModel(tempCellDto, "")
-                        val selfLink = linkTo(CellController::class.java).slash(it.cellId).withSelfRel()
-                        cellModel.add(selfLink)
-                    }
-
-                    val selfLink = linkTo(CellController::class.java).withSelfRel()
-                    val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
-
-                    return ResponseEntity.ok(resultEntityModel)
-
-                } catch (e: Exception) {
-                    val body = errorHelper.getUnexpectError(e.message ?: "")
-                    return ResponseEntity.badRequest().body(body)
+                val cellsEntityModel = cells.map {
+                    val tempCellDto = modelMapper.map(it, CellDto::class.java)
+                    val cellModel = CellEntityModel(tempCellDto, "")
+                    val selfLink = linkTo(CellController::class.java).slash(it.cellId).withSelfRel()
+                    cellModel.add(selfLink)
                 }
+
+                val selfLink = linkTo(CellController::class.java).withSelfRel()
+                val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
+
+                return ResponseEntity.ok(resultEntityModel)
             }
         }catch (e: Exception){
             val body = errorHelper.getUnexpectError("Please try again..")
@@ -153,6 +149,38 @@ class CellController {
         }
     }
 
+    @GetMapping("/{cellId}/cellRequests")
+    fun getCellRequests(@PathVariable cellId: Long): ResponseEntity<Any>{
+        try{
+            // s: validator
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                val body = errorHelper.getUnexpectError("Not exits this cell.")
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val cellRequest = cellRequestService.getCellRequestsWithCell(foundCell.cellId!!)
+
+            val cellsRequestEntityModel = cellRequest.map {
+                val tempCellRequestDto = CellRequestDto(cellRequestId = it.cellRequestId, cellId = it.cell.cellId, accountId = it.accountId, accountName = it.accountName!!, createDate = it.createDate)
+                val cellModel = CellRequestEntityModel(tempCellRequestDto)
+                val selfLink = linkTo(CellController::class.java).slash(foundCell.cellId).slash("cellRequest").slash(it.cellRequestId).withSelfRel()
+                cellModel.add(selfLink)
+            }
+
+            val selfLink = linkTo(methodOn(CellController::class.java).getCellRequests(cellId)).withSelfRel()
+            val resultEntityModel = CollectionModel(cellsRequestEntityModel, selfLink)
+
+            return ResponseEntity.ok(resultEntityModel)
+
+        }catch (e: Exception){
+            println(e.message)
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
     @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun createCellRequests(@PathVariable cellId: Long,
                            @PathVariable accountId: Long): ResponseEntity<Any>{
@@ -176,7 +204,7 @@ class CellController {
 
             val cell = cellService.getCellWithId(cellId = cellId)
             val requestAccount = accountService.getAccountWithId(accountId)
-            val cellRequest = CellRequest(cell = cell, accountId = accountId)
+            val cellRequest = CellRequest(cell = cell!!, accountId = requestAccount?.accountId, accountName = requestAccount?.accountname)
 
             cellRequestService.createCellRequest(cellRequest)
 

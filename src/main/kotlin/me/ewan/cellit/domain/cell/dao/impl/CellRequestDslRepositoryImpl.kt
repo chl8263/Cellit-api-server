@@ -33,4 +33,14 @@ class CellRequestDslRepositoryImpl : QuerydslRepositorySupport(CellRequest::clas
 //                        .and(cellRequest.accountId.eq(accountId)))
 //                .fetchOne()
     }
+
+    override fun findByCellIdOrderByCreateDate(cellId: Long): List<CellRequest> {
+        val cellRequest = QCellRequest.cellRequest
+        val cell = QCell.cell
+
+        return from(cellRequest)
+                .where(cell.cellId.eq(cellId))
+                .orderBy(cellRequest.createDate.desc())
+                .fetch()
+    }
 }

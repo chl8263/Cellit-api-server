@@ -18,6 +18,8 @@ class CellRequest(
 
         var accountId: Long? = null,
 
+        var accountName: String? = null,
+
         @Temporal(TemporalType.TIMESTAMP)
         var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date())
 )

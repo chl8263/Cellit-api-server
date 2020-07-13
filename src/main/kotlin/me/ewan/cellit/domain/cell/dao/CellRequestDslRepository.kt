@@ -6,4 +6,5 @@ import me.ewan.cellit.domain.cell.vo.query.CellQuery
 
 interface CellRequestDslRepository {
     fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest?
+    fun findByCellIdOrderByCreateDate(cellId: Long): List<CellRequest>
 }

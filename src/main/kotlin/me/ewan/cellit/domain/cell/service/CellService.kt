@@ -4,8 +4,10 @@ import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
+import me.ewan.cellit.domain.cell.dao.CellRequestRepository
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
+import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
@@ -28,8 +30,11 @@ class CellService {
     @Autowired
     lateinit var channelRepository: ChannelRepository
 
-    fun getCellWithId(cellId: Long) = cellRepository.getOne(cellId)
-    fun getCellWithName(cellName: String) = cellRepository.findByCellName(cellName)
+    @Autowired
+    lateinit var cellRequestRepository: CellRequestRepository
+
+    fun getCellWithId(cellId: Long): Cell? = cellRepository.getOne(cellId)
+    fun getCellWithName(cellName: String): Cell? = cellRepository.findByCellName(cellName)
 
     fun createCell(cellDto: CellDto, name: String): Cell {
 
@@ -52,6 +57,8 @@ class CellService {
         val cells = cellRepository.findCellsWithQuery(cellQuery)
         return cells
     }
+
+
 
     fun findAccountInCell(cellId: Long, accountId: Long): Account? {
         val account = cellRepository.findAccountInCell(cellId, accountId)

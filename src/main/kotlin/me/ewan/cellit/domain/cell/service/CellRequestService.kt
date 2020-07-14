@@ -24,4 +24,8 @@ class CellRequestService {
     fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest?{
         return cellRequestRepository.findCellRequestsWithCellIdAndAccountId(cellId, accountId)
     }
+
+    fun deleteCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): Long {
+        return cellRequestRepository.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId)
+    }
 }

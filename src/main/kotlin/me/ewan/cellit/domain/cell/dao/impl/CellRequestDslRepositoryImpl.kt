@@ -6,6 +6,7 @@ import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.domain.QCell
 import me.ewan.cellit.domain.cell.vo.domain.QCellRequest
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
+import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 import javax.persistence.EntityManagerFactory
 import javax.persistence.PersistenceContext
@@ -42,5 +43,16 @@ class CellRequestDslRepositoryImpl : QuerydslRepositorySupport(CellRequest::clas
                 .where(cell.cellId.eq(cellId))
                 .orderBy(cellRequest.createDate.desc())
                 .fetch()
+    }
+
+    @Transactional
+    override fun deleteCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): Long {
+        val cellRequest = QCellRequest.cellRequest
+        val cell = QCell.cell
+
+        return delete(cellRequest)
+                .where(cell.cellId.eq(cellId)
+                        .and(cellRequest.accountId.eq(accountId)))
+                .execute()
     }
 }

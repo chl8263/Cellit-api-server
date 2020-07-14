@@ -132,11 +132,14 @@ class CellController {
             val errorList = ArrayList<ErrorVo>()
             val foundCell = cellService.getCellWithId(cellId)
             if(foundCell == null){
-                val body = errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
+                errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
             }
             val foundAccount = accountService.getAccountWithId(accountId)
             if(foundAccount == null){
-                val body = errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
+                errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
+            }
+            if(cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId) != 1L){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Cannot remove request..", errorList)
             }
             if(errorList.isNotEmpty()) {
                 val body = errorHelper.getErrorAttributes(errorList)

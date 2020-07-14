@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 
-open class CellJpaTest : BaseControllerTest(){
+class CellRepositoryTest : BaseControllerTest(){
 
     @Autowired
     private lateinit var accountService: AccountService

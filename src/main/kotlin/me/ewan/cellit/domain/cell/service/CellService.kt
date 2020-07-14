@@ -52,12 +52,10 @@ class CellService {
         return savedCell
     }
 
-    fun insertAccountAtCell(foundAccount: Account?, foundCell: Cell?) {
-        if(foundAccount != null && foundCell != null) {
-            val accountCell = AccountCell(cellRole = CellRole.USER, account = foundAccount, cell = foundCell)
-        }else {
-            throw NullPointerException("Account, Cell domains are null.")
-        }
+    fun insertAccountAtCell(foundAccount: Account, foundCell: Cell): AccountCell {
+        val accountCell = AccountCell(cellRole = CellRole.USER, account = foundAccount, cell = foundCell)
+        accountCellRepository.save(accountCell)
+        return accountCell
     }
 
     fun getCellsWithQuery(cellQuery: CellQuery): List<Cell> {

@@ -7,8 +7,10 @@ import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
+import me.ewan.cellit.domain.cell.vo.dto.AccountCellDto
 import me.ewan.cellit.domain.cell.vo.dto.CellRequestDto
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
+import me.ewan.cellit.domain.cell.vo.entityModel.AccountCellEntityModel
 import me.ewan.cellit.domain.cell.vo.entityModel.CellRequestEntityModel
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
 import me.ewan.cellit.domain.channel.api.ChannelController
@@ -142,16 +144,20 @@ class CellController {
             }
             // e: validator
 
-            val savedCell = cellService.insertAccountAtCell(foundAccount, foundCell)
+            val savedAccountCell = cellService.insertAccountAtCell(foundAccount!!, foundCell!!)
 
-            val entityModel = savedCell.run {
-                val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)
-                val cellModel = CellEntityModel(tempCellDto, CellRole.CREATOR.name)
-                val selfLink = linkTo(CellController::class.java).slash(this.cellId).withSelfRel()
+            val entityModel = savedAccountCell.run {
+                val tempAccountCellDto = AccountCellDto(accountCellId = this.accountCellId,
+                                                        accountId = accountId,
+                                                        cellId = cellId,
+                                                        createDate = this.createDate,
+                                                        cellRole = this.cellRole)
+                val cellModel = AccountCellEntityModel(tempAccountCellDto)
+                val selfLink = linkTo(CellController::class.java).slash(cellId).slash("accountCells").withSelfRel()
                 cellModel.add(selfLink)
             }
 
-            val linkBuilder = linkTo(CellController::class.java)
+            val linkBuilder = linkTo(methodOn(CellController::class.java).insertAccountAtCell(cellId ,accountId)).withSelfRel()
             val createdUri = linkBuilder.toUri()
 
             return ResponseEntity.created(createdUri).body(entityModel)

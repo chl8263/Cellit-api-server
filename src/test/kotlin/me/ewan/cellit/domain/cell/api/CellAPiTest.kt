@@ -120,13 +120,13 @@ class CellAPiTest : BaseControllerTest() {
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        createAccount(name = name, pw = pw)
+        val testAccount1 = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
         val cellName = "Accounting"
         val cellDto = CellDto(cellName = cellName)
-        val savedCell = cellService.createCell(cellDto, name)
+        val savedCell = cellService.createCell(cellDto, testAccount1.accountname)
 
         val channelName1 = "common1"
         val channel1 = Channel(channelName = channelName1, cell = savedCell)
@@ -153,29 +153,27 @@ class CellAPiTest : BaseControllerTest() {
 
     @Test
     fun `Get Cells list with search name`(){
-        println(111111)
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        createAccount(name = name, pw = pw)
-        println(222222)
+        val testAccount1 = createAccount(name = name, pw = pw)
         val jwtToken = getJwtToken(name, pw)
 
         val cellName1 = "Cell_test1"
         val cellDto1 = CellDto(cellName = cellName1, cellDescription = "Let's talk about Accounting")
-        val savedCell1 = cellService.createCell(cellDto1, name)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
 
         val cellName2 = "Cell_test2"
         val cellDto2 = CellDto(cellName = cellName2)
-        val savedCell2 = cellService.createCell(cellDto2, name)
+        val savedCell2 = cellService.createCell(cellDto2, testAccount1.accountname)
 
         val cellName3 = "Cell_test3"
         val cellDto3 = CellDto(cellName = cellName3)
-        val savedCell3 = cellService.createCell(cellDto3, name)
+        val savedCell3 = cellService.createCell(cellDto3, testAccount1.accountname)
 
         val cellName4 = "Cell_test4"
         val cellDto4 = CellDto(cellName = cellName4)
-        val savedCell4 = cellService.createCell(cellDto4, name)
+        val savedCell4 = cellService.createCell(cellDto4, testAccount1.accountname)
 
         val findName = "Cell"
 
@@ -200,25 +198,25 @@ class CellAPiTest : BaseControllerTest() {
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        createAccount(name = name, pw = pw)
+        val testAccount1 = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
         val cellName1 = "Cell_test1"
         val cellDto1 = CellDto(cellName = cellName1)
-        val savedCell1 = cellService.createCell(cellDto1, name)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
 
         val cellName2 = "Cell_test2"
         val cellDto2 = CellDto(cellName = cellName2)
-        val savedCell2 = cellService.createCell(cellDto2, name)
+        val savedCell2 = cellService.createCell(cellDto2, testAccount1.accountname)
 
         val cellName3 = "Cell_test3"
         val cellDto3 = CellDto(cellName = cellName3)
-        val savedCell3 = cellService.createCell(cellDto3, name)
+        val savedCell3 = cellService.createCell(cellDto3, testAccount1.accountname)
 
         val cellName4 = "Cell_test4"
         val cellDto4 = CellDto(cellName = cellName4)
-        val savedCell4 = cellService.createCell(cellDto4, name)
+        val savedCell4 = cellService.createCell(cellDto4, testAccount1.accountname)
 
         val findName = "Cell"
 
@@ -236,20 +234,48 @@ class CellAPiTest : BaseControllerTest() {
     }
 
     @Test
-    fun `Create CellRequest with cell id and account id`(){
+    fun `Insert account in specific cell`(){
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
         val name2 = appProperties.testUserAccountname2
         val pw2 = appProperties.testUserPassword2
-        createAccount(name = name, pw = pw)
+        val testAccount1 =createAccount(name = name, pw = pw)
         val testAccount2 = createAccount(name = name2, pw = pw2)
 
         val jwtToken = getJwtToken(name2, pw2)
 
         val cellName1 = "Cell_test1"
         val cellDto1 = CellDto(cellName = cellName1)
-        val savedCell1 = cellService.createCell(cellDto1, name)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
+
+        //when
+        val result = mockMvc.perform(post("/api/cells/${savedCell1.cellId}/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andReturn()
+    }
+
+    @Test
+    fun `Create CellRequest with cell id and account id`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val name2 = appProperties.testUserAccountname2
+        val pw2 = appProperties.testUserPassword2
+        val testAccount1 = createAccount(name = name, pw = pw)
+        val testAccount2 = createAccount(name = name2, pw = pw2)
+
+        val jwtToken = getJwtToken(name2, pw2)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
 
         //when
         val result = mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
@@ -263,7 +289,6 @@ class CellAPiTest : BaseControllerTest() {
                 .andReturn()
     }
 
-    //TODO: Create test code about already joined this cell and already requested this cellRequest
     @Test
     fun `Fail to Create CellRequest list with cell id and account id that already requested`(){
         //given
@@ -320,7 +345,6 @@ class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isBadRequest)
-                .andReturn()
     }
 
     @Test
@@ -330,14 +354,14 @@ class CellAPiTest : BaseControllerTest() {
         val pw = appProperties.testUserPassword
         val name2 = appProperties.testUserAccountname2
         val pw2 = appProperties.testUserPassword2
-        createAccount(name = name, pw = pw)
+        val testAccount1 = createAccount(name = name, pw = pw)
         val testAccount2 = createAccount(name = name2, pw = pw2)
 
         val jwtToken = getJwtToken(name2, pw2)
 
         val cellName1 = "Cell_test1"
         val cellDto1 = CellDto(cellName = cellName1)
-        val savedCell1 = cellService.createCell(cellDto1, name)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
 
         //when
         mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
@@ -354,7 +378,6 @@ class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
-                .andReturn()
     }
 
 

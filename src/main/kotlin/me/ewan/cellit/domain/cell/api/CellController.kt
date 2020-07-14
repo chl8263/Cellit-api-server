@@ -1,8 +1,6 @@
 package me.ewan.cellit.domain.cell.api
 
 import me.ewan.cellit.domain.account.service.AccountService
-import me.ewan.cellit.domain.account.vo.domain.Account
-import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
@@ -19,7 +17,6 @@ import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.global.common.ConvertQueryToClass
 import me.ewan.cellit.global.error.ErrorHelper
-import me.ewan.cellit.global.error.ErrorToJson
 import me.ewan.cellit.global.error.vo.ErrorVo
 import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
 import org.modelmapper.ModelMapper
@@ -99,16 +96,53 @@ class CellController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
 
             val auth = SecurityContextHolder.getContext().authentication
-
             cellService.getCellWithName(cellDto.cellName!!)?.let {
                 val body = errorHelper.getUnexpectError("This cell already exit, Please try another one.")
                 return ResponseEntity.badRequest().body(body)
             }
+            // e: validator
 
             val savedCell = cellService.createCell(cellDto, auth.name)
+
+            val entityModel = savedCell.run {
+                val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)
+                val cellModel = CellEntityModel(tempCellDto, CellRole.CREATOR.name)
+                val selfLink = linkTo(CellController::class.java).slash(this.cellId).withSelfRel()
+                cellModel.add(selfLink)
+            }
+
+            val linkBuilder = linkTo(CellController::class.java)
+            val createdUri = linkBuilder.toUri()
+
+            return ResponseEntity.created(createdUri).body(entityModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
+    @PostMapping("/{cellId}/accounts/{accountId}")
+    fun insertAccountAtCell(@PathVariable cellId: Long, @PathVariable accountId: Long): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = ArrayList<ErrorVo>()
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                val body = errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
+            }
+            val foundAccount = accountService.getAccountWithId(accountId)
+            if(foundAccount == null){
+                val body = errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
+            }
+            if(errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val savedCell = cellService.insertAccountAtCell(foundAccount, foundCell)
 
             val entityModel = savedCell.run {
                 val tempCellDto = modelMapper.map(savedCell, CellDto::class.java)

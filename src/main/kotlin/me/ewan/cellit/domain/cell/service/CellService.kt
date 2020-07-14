@@ -7,7 +7,6 @@ import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.cell.dao.CellRequestRepository
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
-import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
@@ -53,12 +52,18 @@ class CellService {
         return savedCell
     }
 
+    fun insertAccountAtCell(foundAccount: Account?, foundCell: Cell?) {
+        if(foundAccount != null && foundCell != null) {
+            val accountCell = AccountCell(cellRole = CellRole.USER, account = foundAccount, cell = foundCell)
+        }else {
+            throw NullPointerException("Account, Cell domains are null.")
+        }
+    }
+
     fun getCellsWithQuery(cellQuery: CellQuery): List<Cell> {
         val cells = cellRepository.findCellsWithQuery(cellQuery)
         return cells
     }
-
-
 
     fun findAccountInCell(cellId: Long, accountId: Long): Account? {
         val account = cellRepository.findAccountInCell(cellId, accountId)

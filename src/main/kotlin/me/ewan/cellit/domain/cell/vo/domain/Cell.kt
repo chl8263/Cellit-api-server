@@ -24,9 +24,13 @@ class Cell(
         @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
         var accounts: MutableList<AccountCell> = mutableListOf(),
 
+        // default fetch type = LAZY
+        @JsonIgnore // prevent infinity loop when trans JSON
         @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
         var channels: MutableList<Channel> = mutableListOf(),
 
+        // default fetch type = LAZY
+        @JsonIgnore // prevent infinity loop when trans JSON
         @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
         var cellRequests: MutableList<CellRequest> = mutableListOf(),
 

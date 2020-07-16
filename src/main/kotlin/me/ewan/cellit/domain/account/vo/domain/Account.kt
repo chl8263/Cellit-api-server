@@ -31,6 +31,11 @@ class Account(
         @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
         var accountCells: MutableList<AccountCell> = mutableListOf(),
 
+        // default fetch type = LAZY
+        @JsonIgnore // prevent infinity loop when trans JSON
+        @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+        var accountNotification: MutableList<AccountNotification> = mutableListOf(),
+
         //@CreationTimestamp
         @Column
         @Temporal(TemporalType.TIMESTAMP)

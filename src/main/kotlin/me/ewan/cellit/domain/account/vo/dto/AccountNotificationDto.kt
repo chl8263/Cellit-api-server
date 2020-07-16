@@ -6,5 +6,5 @@ import javax.validation.constraints.NotNull
 data class AccountNotificationDto (
         @NotEmpty
         @NotNull
-        var message: String? = null
+        var message: String= ""
 )

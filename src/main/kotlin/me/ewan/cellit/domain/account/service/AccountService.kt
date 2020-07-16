@@ -1,7 +1,9 @@
 package me.ewan.cellit.domain.account.service
 
+import me.ewan.cellit.domain.account.dao.AccountNotificationRepository
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
+import me.ewan.cellit.domain.account.vo.domain.AccountNotification
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
@@ -20,6 +22,9 @@ class AccountService : UserDetailsService {
 
     @Autowired
     private lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    private lateinit var accountNotificationRepository: AccountNotificationRepository
 
     @Autowired
     private lateinit var passWordEncoder: PasswordEncoder
@@ -47,4 +52,10 @@ class AccountService : UserDetailsService {
 
         return account?.accountCells
     }
+
+    fun createAccountNotification(accountNotification: AccountNotification): AccountNotification {
+        val accountNotification = accountNotificationRepository.save(accountNotification)
+        return accountNotification
+    }
+
 }

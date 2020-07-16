@@ -160,14 +160,15 @@ class AccountApiTest : BaseControllerTest() {
         val pw = appProperties.testUserPassword
         val savedAccount = createAccount(name = name, pw = pw)
 
-        val notiMessage = ""
-        val account = AccountNotificationDto(message = "")
+        val notiMessage = "Create Cell successfully."
+        val account = AccountNotificationDto(message = notiMessage)
 
         val jwtToken = getJwtToken(name, pw)
 
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/accounts/${savedAccount.accountId}/accountNotifications")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(account))
         )

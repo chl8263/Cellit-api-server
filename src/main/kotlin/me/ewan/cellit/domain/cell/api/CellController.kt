@@ -231,6 +231,14 @@ class CellController {
         try {
             // s: validator
             var errorList = ArrayList<ErrorVo>()
+            val foundAccount = accountService.getAccountWithId(accountId)
+            if(foundAccount == null){
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits this account.", errorList = errorList)
+            }
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits this cell.", errorList = errorList)
+            }
             val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
             if (foundCellRequest != null) {
                 errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "This account already required this cell.", errorList = errorList)

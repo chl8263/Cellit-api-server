@@ -2,16 +2,21 @@ package me.ewan.cellit.domain.account.api
 
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.domain.AccountNotification
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
+import me.ewan.cellit.domain.account.vo.dto.AccountNotificationDto
 import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
 import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
+import me.ewan.cellit.domain.account.vo.entityModel.AccountNotificationEntityModel
 import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.ErrorToJson
+import me.ewan.cellit.global.error.vo.ErrorVo
+import me.ewan.cellit.global.error.vo.HTTP_STATUS
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
@@ -114,7 +119,33 @@ class AccountController{
     }
 
     @PostMapping("/{accountId}/accountNotifications")
-    fun createAccountNotifications(@PathVariable accountId: Long,){
+    fun createAccountNotifications(@PathVariable accountId: Long,
+                                   @RequestBody @Valid accountNotificationDto: AccountNotificationDto): ResponseEntity<Any> {
+        try{
+            // s: validator
+            val foundAccount = accountService.getAccountWithId(accountId)
+            if(foundAccount == null){
+                val body = errorHelper.getUnexpectError("Not exits this account.")
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
 
+            val accountNotification = AccountNotification(account = foundAccount, message = accountNotificationDto.message)
+            val savedAccountNotification = accountService.createAccountNotification(accountNotification)
+
+            val accountNotificationEntityModel = savedAccountNotification.run {
+                val accountNotificationModel = AccountNotificationEntityModel(foundAccount.accountId!!, savedAccountNotification.message)
+                val selfLink = linkTo(AccountController::class.java).slash(foundAccount.accountId).slash("accountNotifications").slash(savedAccountNotification.accountNotificationId).withSelfRel()
+                accountNotificationModel.add(selfLink)
+            }
+
+            val linkBuilder = linkTo(methodOn(AccountController::class.java).createAccountNotifications(accountId, accountNotificationDto)).withSelfRel()
+            val createdUri = linkBuilder.toUri()
+
+            return ResponseEntity.created(createdUri).body(accountNotificationEntityModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
     }
 }

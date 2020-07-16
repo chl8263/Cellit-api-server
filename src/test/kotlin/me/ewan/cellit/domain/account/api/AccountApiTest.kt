@@ -10,9 +10,11 @@ import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.domain.account.dao.AccountNotificationRepository
+import me.ewan.cellit.domain.account.vo.domain.AccountNotification
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
 import me.ewan.cellit.domain.account.vo.dto.AccountNotificationDto
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
+import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.global.security.dtos.JwtAuthenticationDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -151,6 +153,40 @@ class AccountApiTest : BaseControllerTest() {
                 .andDo(print())
                 .andExpect(status().isOk) // 201 created
                 .andExpect(jsonPath("_links.self").exists())
+    }
+
+    @Test
+    fun `Get AccountNotification with query recent 5 item`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val savedAccount = createAccount(name = name, pw = pw)
+
+        val accountNotification1 = AccountNotification(account = savedAccount, message = "message1")
+        accountService.createAccountNotification(accountNotification1)
+        val accountNotification2 = AccountNotification(account = savedAccount, message = "message2")
+        accountService.createAccountNotification(accountNotification2)
+        val accountNotification3 = AccountNotification(account = savedAccount, message = "message3")
+        accountService.createAccountNotification(accountNotification3)
+        val accountNotification4 = AccountNotification(account = savedAccount, message = "message4")
+        accountService.createAccountNotification(accountNotification4)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        //when
+        /*
+        *  When request url, must use 3%D between variable and value.
+        * */
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/accountNotifications?query=recent=5")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("_embedded.cellEntityModelList").exists())
+        //.andExpect(jsonPath("_embedded.channelEntityModelList[0].channelName").value("common"))
     }
 
     @Test

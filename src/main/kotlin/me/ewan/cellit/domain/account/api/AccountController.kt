@@ -112,4 +112,9 @@ class AccountController{
             return ResponseEntity.badRequest().body(body)
         }
     }
+
+    @PostMapping("/{accountId}/accountNotifications")
+    fun createAccountNotifications(@PathVariable accountId: Long,){
+
+    }
 }

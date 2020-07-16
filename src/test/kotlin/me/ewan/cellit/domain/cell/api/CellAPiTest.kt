@@ -317,7 +317,6 @@ class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isBadRequest)
-                .andReturn()
     }
 
     @Test

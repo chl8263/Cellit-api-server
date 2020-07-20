@@ -16,17 +16,18 @@ class ConvertQueryToClass {
         const val INVALID_EQUAL_MSG = "This query hasn't valid Equal at API server."
         const val EQUAL = "="
 
-        inline fun <reified T> convert(query: String): T{
+        inline fun <reified T> convert(query: String, offset: Int? = null, limit: Int? = null): T{
             try{
-                val json = convertToJson(query)
-                val formLoginDto = ObjectMapper().readValue(json, T::class.java)
-                return formLoginDto
+                val json = convertToJson(query, offset, limit)
+                println(json)
+                val convertedClass = ObjectMapper().readValue(json, T::class.java)
+                return convertedClass
             }catch (e: Exception){
                 throw e
             }
         }
 
-        fun convertToJson(query: String): String{
+        fun convertToJson(query: String, offset: Int?, limit: Int?): String{
             val sb = StringBuilder()
             sb.append("{")
 
@@ -40,6 +41,20 @@ class ConvertQueryToClass {
                 if(i != split.size-1){
                     sb.append(",")
                 }
+            }
+            println(offset)
+            println(limit)
+            offset?.let {
+                sb.append(",")
+                sb.append("\"offset\"")
+                sb.append(":")
+                sb.append("\"$offset\"")
+            }
+            limit?.let {
+                sb.append(",")
+                sb.append("\"limit\"")
+                sb.append(":")
+                sb.append("\"$limit\"")
             }
             sb.append("}")
             return sb.toString()

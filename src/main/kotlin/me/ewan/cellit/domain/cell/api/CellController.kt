@@ -59,7 +59,9 @@ class CellController {
     private lateinit var errorHelper: ErrorHelper
 
     @GetMapping
-    fun getCells(@RequestParam query: String?): ResponseEntity<Any>{
+    fun getCells(@RequestParam query: String?,
+                 @RequestParam offset: Int?,
+                 @RequestParam limit: Int?): ResponseEntity<Any>{
 
         try {
             if (query == null) {
@@ -67,8 +69,8 @@ class CellController {
                 println("11111")
                 return ResponseEntity.badRequest().body("aaa")
             } else {
-                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
-                val cells = cellService.getCellsWithQuery(convertedQuery)
+                val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query, offset, limit)
+                val cells = cellService.getCellsWithQuery(convertedQuery as CellQuery)
 
                 val cellsEntityModel = cells.map {
                     val tempCellDto = modelMapper.map(it, CellDto::class.java)

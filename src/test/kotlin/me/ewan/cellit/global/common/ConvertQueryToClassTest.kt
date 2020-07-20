@@ -13,23 +13,29 @@ internal class ConvertQueryToClassTest{
     @Test
     fun `Convert success query to class`(){
         //given
-        val query = "cellName%3DAccounting"
+        /*
+        *  When request url, must use 3%D between variable and value.
+        * */
+        val query = "cellName=Accounting"
 
         //when
         val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
 
         //then
-        assertThat(convertedQuery.cellName).isEqualTo("Accounting")
+        assertThat(convertedQuery.cellName).isEqualTo("Accounting", 1, 1)
         assertThat(convertedQuery.cellId).isEqualTo(null)
     }
 
     @Test
     fun `Convert success query to class with when parameter more than one`(){
         //given
-        val query = "cellId%3D3,cellName%3DAccounting"
+        /*
+        *  When request url, must use 3%D between variable and value.
+        * */
+        val query = "cellId=3,cellName=Accounting"
 
         //when
-        val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query)
+        val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query, 1, 1)
 
         //then
         assertThat(convertedQuery.cellId).isEqualTo(3L)
@@ -39,7 +45,10 @@ internal class ConvertQueryToClassTest{
     @Test
     fun `Fail convert query with invalid colon`(){
         //given
-        val query = "cellId-D3"
+        /*
+        *  When request url, must use 3%D between variable and value.
+        * */
+        val query = "cellId-3"
 
         //when
         val convertQueryToClass =assertThrows(InvalidQueryException::class.java){ConvertQueryToClass.convert<CellQuery>(query)}
@@ -52,7 +61,10 @@ internal class ConvertQueryToClassTest{
     @Test
     fun `Fail convert query with invalid query class member`(){
         //given
-        val query = "cellIDDD%3D3"
+        /*
+        *  When request url, must use 3%D between variable and value.
+        * */
+        val query = "cellIDD=3D3"
 
         //when
         val convertQueryToClass = assertThrows(UnrecognizedPropertyException::class.java){ConvertQueryToClass.convert<CellQuery>(query)}

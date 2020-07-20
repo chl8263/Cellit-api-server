@@ -9,10 +9,13 @@ import me.ewan.cellit.domain.account.vo.dto.AccountNotificationDto
 import me.ewan.cellit.domain.account.vo.dto.validator.AccountDtoValidator
 import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
 import me.ewan.cellit.domain.account.vo.entityModel.AccountNotificationEntityModel
+import me.ewan.cellit.domain.account.vo.query.AccountNotificationQuery
 import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
+import me.ewan.cellit.domain.cell.vo.query.CellQuery
+import me.ewan.cellit.global.common.ConvertQueryToClass
 import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.ErrorToJson
 import me.ewan.cellit.global.error.vo.ErrorVo
@@ -113,6 +116,26 @@ class AccountController{
 
             return ResponseEntity.ok(resultEntityModel)
         }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
+    @GetMapping("/{accountId}/accountNotifications?query=recent=5")
+    fun getAccountNotifications(@PathVariable accountId: Long?,
+                                @RequestParam query: String?,
+                                @RequestParam offset: Int?,
+                                @RequestParam limit: Int?): ResponseEntity<Any>{
+        try{
+            if(query == null){
+                //TODO
+                return ResponseEntity.ok("aa")
+            }else {
+                val convertedQuery = ConvertQueryToClass.convert<AccountNotificationQuery>(query, offset, limit)
+                //val cells = cellService.getCellsWithQuery(convertedQuery)
+                return ResponseEntity.ok("aa")
+            }
+        }catch (e: java.lang.Exception){
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }

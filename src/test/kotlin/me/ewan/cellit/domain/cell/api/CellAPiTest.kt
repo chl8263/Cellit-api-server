@@ -46,7 +46,7 @@ import org.springframework.web.context.WebApplicationContext
  *
  * @author Ewan
  */
-class CellAPiTest : BaseControllerTest() {
+internal class CellAPiTest : BaseControllerTest() {
 
     @Autowired
     lateinit var context: WebApplicationContext
@@ -248,6 +248,11 @@ class CellAPiTest : BaseControllerTest() {
         val cellName1 = "Cell_test1"
         val cellDto1 = CellDto(cellName = cellName1)
         val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
+
+        mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
 
         //when
         val result = mockMvc.perform(post("/api/cells/${savedCell1.cellId}/accounts/${testAccount2.accountId}")

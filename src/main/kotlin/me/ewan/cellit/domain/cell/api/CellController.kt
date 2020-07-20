@@ -140,12 +140,7 @@ class CellController {
             if(foundAccount == null){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
             }
-//            val asx = cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId)
-////            println("!!!!!!!!")
-////            println(asx)
-            if(cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId) != 1L){
-                errorHelper.addErrorAttributes(BAD_REQUEST, "Cannot remove request..", errorList)
-            }
+
             if(errorList.isNotEmpty()) {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
@@ -310,7 +305,6 @@ class CellController {
                 val body = errorHelper.getUnexpectError("Cannot delete cell request.")
                 return ResponseEntity.badRequest().body(body)
             }
-
 
             val tempCellRequestDto = CellRequestDto(cellRequestId = foundCellRequest!!.cellRequestId, cellId = cellId, accountId = foundCellRequest.accountId, accountName = foundCellRequest.accountName!!, createDate = foundCellRequest.createDate)
             val cellModel = CellRequestEntityModel(tempCellRequestDto)

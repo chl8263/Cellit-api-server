@@ -19,7 +19,7 @@ class AccountNotificationDslRepositoryImpl : QuerydslRepositorySupport(AccountNo
         val query = from(accountNotification)
         val builder = BooleanBuilder()
 
-        builder.and(accountNotification.account.accountId.eq(account.accountId))
+        builder.and(accountNotification.account.accountId.eq(accountId))
 
         if(accountNotificationQuery.accountNotificationId != null){
             builder.and(accountNotification.accountNotificationId.eq(accountNotificationQuery.accountNotificationId))

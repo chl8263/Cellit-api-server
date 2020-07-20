@@ -140,6 +140,9 @@ class CellController {
             if(foundAccount == null){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
             }
+//            val asx = cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId)
+////            println("!!!!!!!!")
+////            println(asx)
             if(cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId) != 1L){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Cannot remove request..", errorList)
             }
@@ -277,4 +280,48 @@ class CellController {
             return ResponseEntity.badRequest().body(body)
         }
     }
+
+    @DeleteMapping("/{cellId}/cellRequests/accounts/{accountId}")
+    fun deleteCellRequests(@PathVariable cellId: Long,
+                           @PathVariable accountId: Long): ResponseEntity<Any>{
+
+        try {
+            // s: validator
+            var errorList = ArrayList<ErrorVo>()
+            val foundAccount = accountService.getAccountWithId(accountId)
+            if(foundAccount == null){
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits this account.", errorList = errorList)
+            }
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits this cell.", errorList = errorList)
+            }
+            val foundCellRequest = cellRequestService.findCellRequestsWithCellIdAndAccountId(cellId = cellId, accountId = accountId)
+            if (foundCellRequest == null) {
+                errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits cell request of this information.", errorList = errorList)
+            }
+            if(errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            if(cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId) != 1L){
+                val body = errorHelper.getUnexpectError("Cannot delete cell request.")
+                return ResponseEntity.badRequest().body(body)
+            }
+
+
+            val tempCellRequestDto = CellRequestDto(cellRequestId = foundCellRequest!!.cellRequestId, cellId = cellId, accountId = foundCellRequest.accountId, accountName = foundCellRequest.accountName!!, createDate = foundCellRequest.createDate)
+            val cellModel = CellRequestEntityModel(tempCellRequestDto)
+            val selfLink = linkTo(methodOn(CellController::class.java).deleteCellRequests(cellId, accountId)).withSelfRel()
+            cellModel.add(selfLink)
+
+            return ResponseEntity.ok(cellModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
 }

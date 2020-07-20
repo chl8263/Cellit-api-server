@@ -6,5 +6,6 @@ object HTTP_STATUS {
     const val ACCEPTED = 202
     const val BAD_REQUEST = 400
     const val UNAUTHORIZED = 401
+    const val METHOD_NOT_ALLOW = 403
     const val NOT_FOUND = 404
 }

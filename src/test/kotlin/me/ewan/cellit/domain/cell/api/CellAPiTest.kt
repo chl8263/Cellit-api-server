@@ -32,8 +32,7 @@ import org.springframework.security.oauth2.common.util.Jackson2JsonParser
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -230,7 +229,6 @@ internal class CellAPiTest : BaseControllerTest() {
         //then
                 .andDo(print())
                 .andExpect(status().isBadRequest)
-                .andReturn()
     }
 
     @Test
@@ -263,7 +261,7 @@ internal class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isCreated)
-                .andReturn()
+                .andExpect(jsonPath("_links.self").exists())
     }
 
     @Test
@@ -291,7 +289,7 @@ internal class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isCreated)
-                .andReturn()
+                .andExpect(jsonPath("_links.self").exists())
     }
 
     @Test
@@ -382,6 +380,42 @@ internal class CellAPiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
+                .andExpect(jsonPath("_links.self").exists())
+    }
+
+    @Test
+    fun `Delete Cell request`() {
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val name2 = appProperties.testUserAccountname2
+        val pw2 = appProperties.testUserPassword2
+        val testAccount1 = createAccount(name = name, pw = pw)
+        val testAccount2 = createAccount(name = name2, pw = pw2)
+
+        val jwtToken = getJwtToken(name2, pw2)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
+
+        mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+        //when
+        val result = mockMvc.perform(delete("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("accountId").value(testAccount2.accountId!!))
+                .andExpect(jsonPath("accountName").value(testAccount2.accountname))
+                .andExpect(jsonPath("_links.self").exists())
     }
 
 

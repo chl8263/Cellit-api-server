@@ -140,7 +140,7 @@ class AccountController{
             val accountNotifications = accountService.getAccountNotificationWithQuery(accountId!!, convertedQuery)
 
             val accountNotificationEntityModel = accountNotifications.map {
-                val AccountNotificationModel = AccountNotificationEntityModel(it.account.accountId!!, it.message, it.status)
+                val AccountNotificationModel = AccountNotificationEntityModel(it.accountNotificationId!!, it.account.accountId!!, it.message, it.status)
                 val selfLink = linkTo(AccountController::class.java).slash(it.account.accountId!!).slash("accountNotifications").slash(it.accountNotificationId).withSelfRel()
                 AccountNotificationModel.add(selfLink)
             }
@@ -171,7 +171,7 @@ class AccountController{
             val savedAccountNotification = accountService.createAccountNotification(accountNotification)
 
             val accountNotificationEntityModel = savedAccountNotification.run {
-                val accountNotificationModel = AccountNotificationEntityModel(foundAccount.accountId!!, savedAccountNotification.message, savedAccountNotification.status)
+                val accountNotificationModel = AccountNotificationEntityModel(savedAccountNotification.accountNotificationId!!, foundAccount.accountId!!, savedAccountNotification.message, savedAccountNotification.status)
                 val selfLink = linkTo(AccountController::class.java).slash(foundAccount.accountId).slash("accountNotifications").slash(savedAccountNotification.accountNotificationId).withSelfRel()
                 accountNotificationModel.add(selfLink)
             }

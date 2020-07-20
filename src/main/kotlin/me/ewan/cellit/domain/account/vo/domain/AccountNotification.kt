@@ -18,6 +18,9 @@ class AccountNotification(
         @Column
         var message: String = "",
 
+        @Column
+        var status: String = AccountNotificationStatus.APPROVE,
+
         @ManyToOne
         @JoinColumn(name = "accountId")
         var account: Account,
@@ -27,3 +30,9 @@ class AccountNotification(
         @Temporal(TemporalType.TIMESTAMP)
         var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date())
 )
+
+object AccountNotificationStatus {
+        const val APPROVE = "APPROVE"
+        const val UPDATE = "UPDATE"
+        const val REJECT = "REJECT"
+}

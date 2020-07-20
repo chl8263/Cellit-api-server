@@ -9,8 +9,8 @@ data class CellQuery(
 
         var cellName: String? = null,
 
-        override var offset: Int? = null,
+        override var offset: Long? = null,
 
-        override var limit: Int? = null
+        override var limit: Long? = null
 
 ) : Query(offset, limit)

@@ -11,6 +11,7 @@ import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.common.BaseControllerTest
 import me.ewan.cellit.domain.account.dao.AccountNotificationRepository
 import me.ewan.cellit.domain.account.vo.domain.AccountNotification
+import me.ewan.cellit.domain.account.vo.domain.AccountNotificationStatus
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
 import me.ewan.cellit.domain.account.vo.dto.AccountNotificationDto
 import me.ewan.cellit.domain.cell.vo.domain.CellRole
@@ -33,7 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.context.WebApplicationContext
 
-class AccountApiTest : BaseControllerTest() {
+internal class AccountApiTest : BaseControllerTest() {
 
     @Autowired
     lateinit var context: WebApplicationContext
@@ -162,14 +163,18 @@ class AccountApiTest : BaseControllerTest() {
         val pw = appProperties.testUserPassword
         val savedAccount = createAccount(name = name, pw = pw)
 
-        val accountNotification1 = AccountNotification(account = savedAccount, message = "message1")
+        val accountNotification1 = AccountNotification(account = savedAccount, message = "message1", status = AccountNotificationStatus.REJECT)
         accountService.createAccountNotification(accountNotification1)
         val accountNotification2 = AccountNotification(account = savedAccount, message = "message2")
         accountService.createAccountNotification(accountNotification2)
-        val accountNotification3 = AccountNotification(account = savedAccount, message = "message3")
+        val accountNotification3 = AccountNotification(account = savedAccount, message = "message3", status = AccountNotificationStatus.UPDATE)
         accountService.createAccountNotification(accountNotification3)
         val accountNotification4 = AccountNotification(account = savedAccount, message = "message4")
         accountService.createAccountNotification(accountNotification4)
+        val accountNotification5 = AccountNotification(account = savedAccount, message = "message5")
+        accountService.createAccountNotification(accountNotification5)
+        val accountNotification6 = AccountNotification(account = savedAccount, message = "message6")
+        accountService.createAccountNotification(accountNotification6)
 
         val jwtToken = getJwtToken(name, pw)
 
@@ -177,7 +182,7 @@ class AccountApiTest : BaseControllerTest() {
         /*
         *  When request url, must use 3%D between variable and value.
         * */
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/accountNotifications?offset=1,limit=5")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/accountNotifications?offset=0&limit=5")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )
@@ -185,8 +190,7 @@ class AccountApiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("_embedded.cellEntityModelList").exists())
-        //.andExpect(jsonPath("_embedded.channelEntityModelList[0].channelName").value("common"))
+                .andExpect(jsonPath("_embedded.accountNotificationEntityModelList").exists())
     }
 
     @Test
@@ -212,6 +216,8 @@ class AccountApiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isCreated) // 201 created
+                .andExpect(jsonPath("message").value(notiMessage))
+                .andExpect(jsonPath("status").value(AccountNotificationStatus.APPROVE))
                 .andExpect(jsonPath("_links.self").exists())
     }
 

@@ -16,7 +16,7 @@ class ConvertQueryToClass {
         const val INVALID_EQUAL_MSG = "This query hasn't valid Equal at API server."
         const val EQUAL = "="
 
-        inline fun <reified T> convert(query: String?, offset: Int?, limit: Int?): T{
+        inline fun <reified T> convert(query: String? = null, offset: Int? = null, limit: Int? = null): T{
             try{
                 val json = convertToJson(query, offset, limit)
                 println(json)

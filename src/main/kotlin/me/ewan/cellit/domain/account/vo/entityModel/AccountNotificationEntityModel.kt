@@ -10,9 +10,12 @@ class AccountNotificationEntityModel : RepresentationModel<AccountNotificationEn
     val accountId: Long
     @JsonUnwrapped
     val message: String
+    @JsonUnwrapped
+    val status: String
 
-    constructor(accountId: Long, message: String){
+    constructor(accountId: Long, message: String, status: String){
         this.accountId = accountId
         this.message = message
+        this.status = status
     }
 }

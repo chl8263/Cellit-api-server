@@ -5,6 +5,7 @@ import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.vo.domain.AccountNotification
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
+import me.ewan.cellit.domain.account.vo.query.AccountNotificationQuery
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.global.security.AccountContext
@@ -56,6 +57,11 @@ class AccountService : UserDetailsService {
     fun createAccountNotification(accountNotification: AccountNotification): AccountNotification {
         val accountNotification = accountNotificationRepository.save(accountNotification)
         return accountNotification
+    }
+
+    fun getAccountNotificationWithQuery(accountId: Long, convertedQuery: AccountNotificationQuery): List<AccountNotification> {
+        val accountNotifications = accountNotificationRepository.findAccountNotificationWithQuery(accountId, convertedQuery)
+        return accountNotifications
     }
 
 }

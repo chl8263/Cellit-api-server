@@ -20,6 +20,7 @@ import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.ErrorToJson
 import me.ewan.cellit.global.error.vo.ErrorVo
 import me.ewan.cellit.global.error.vo.HTTP_STATUS
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
@@ -39,6 +40,9 @@ class AccountController{
 
     @Autowired
     private lateinit var accountDtoValidator: AccountDtoValidator
+
+    @Autowired
+    private lateinit var modelMapper: ModelMapper
 
     @Autowired
     private lateinit var errorHelper: ErrorHelper
@@ -129,12 +133,22 @@ class AccountController{
         try{
             if(query == null){
                 //TODO
-                return ResponseEntity.ok("aa")
             }else {
-                val convertedQuery = ConvertQueryToClass.convert<AccountNotificationQuery>(query, offset, limit)
-                //val cells = cellService.getCellsWithQuery(convertedQuery)
-                return ResponseEntity.ok("aa")
+
             }
+            val convertedQuery = ConvertQueryToClass.convert<AccountNotificationQuery>(query, offset, limit)
+            val accountNotifications = accountService.getAccountNotificationWithQuery(accountId!!, convertedQuery)
+
+            val accountNotificationEntityModel = accountNotifications.map {
+                val AccountNotificationModel = AccountNotificationEntityModel(it.account.accountId!!, it.message, it.status)
+                val selfLink = linkTo(AccountController::class.java).slash(it.account.accountId!!).slash("accountNotifications").slash(it.accountNotificationId).withSelfRel()
+                AccountNotificationModel.add(selfLink)
+            }
+
+            val selfLink = linkTo(methodOn(AccountController::class.java).getAccountNotifications(accountId, query, offset, limit)).withSelfRel()
+            val resultEntityModel = CollectionModel(accountNotificationEntityModel, selfLink)
+
+            return ResponseEntity.ok(resultEntityModel)
         }catch (e: java.lang.Exception){
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
@@ -153,11 +167,11 @@ class AccountController{
             }
             // e: validator
 
-            val accountNotification = AccountNotification(account = foundAccount, message = accountNotificationDto.message)
+            val accountNotification = AccountNotification(account = foundAccount, message = accountNotificationDto.message, status = accountNotificationDto.status)
             val savedAccountNotification = accountService.createAccountNotification(accountNotification)
 
             val accountNotificationEntityModel = savedAccountNotification.run {
-                val accountNotificationModel = AccountNotificationEntityModel(foundAccount.accountId!!, savedAccountNotification.message)
+                val accountNotificationModel = AccountNotificationEntityModel(foundAccount.accountId!!, savedAccountNotification.message, savedAccountNotification.status)
                 val selfLink = linkTo(AccountController::class.java).slash(foundAccount.accountId).slash("accountNotifications").slash(savedAccountNotification.accountNotificationId).withSelfRel()
                 accountNotificationModel.add(selfLink)
             }

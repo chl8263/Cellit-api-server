@@ -177,7 +177,7 @@ class AccountApiTest : BaseControllerTest() {
         /*
         *  When request url, must use 3%D between variable and value.
         * */
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/accountNotifications?query=recent=5")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accounts/${savedAccount.accountId}/accountNotifications?offset=1,limit=5")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )

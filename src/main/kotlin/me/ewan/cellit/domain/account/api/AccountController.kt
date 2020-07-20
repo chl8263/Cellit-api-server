@@ -121,7 +121,7 @@ class AccountController{
         }
     }
 
-    @GetMapping("/{accountId}/accountNotifications?query=recent=5")
+    @GetMapping("/{accountId}/accountNotifications")
     fun getAccountNotifications(@PathVariable accountId: Long?,
                                 @RequestParam query: String?,
                                 @RequestParam offset: Int?,

@@ -1,6 +1,7 @@
 package me.ewan.cellit.domain.channel.vo.domain
 
 import me.ewan.cellit.domain.cell.vo.domain.Cell
+import org.codehaus.jackson.annotate.JsonIgnore
 import org.springframework.data.jpa.repository.Temporal
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,6 +19,11 @@ class Channel (
     @ManyToOne
     @JoinColumn(name = "cellId")
     var cell: Cell,
+
+    // default fetch type = LAZY
+    @JsonIgnore // prevent infinity loop when trans JSON
+    @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY)
+    var channelPosts: MutableList<ChannelPost> = mutableListOf(),
 
     @Temporal(TemporalType.TIMESTAMP)
     var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),

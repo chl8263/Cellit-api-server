@@ -59,7 +59,10 @@ class AccountController{
             }
             // e: validator
 
-            val account = Account(accountname = accountDto.accountname!!, password = accountDto.password!!, role = AccountRole.ROLE_USER)
+            val account = Account(accountname = accountDto.accountname!!,
+                    password = accountDto.password!!,
+                    role = AccountRole.ROLE_USER)
+
             accountService.getAccountWithName(accountDto.accountname!!)?.let {
                 val body = errorHelper.getUnexpectError("This account already exit, Please try another one.")
                 return ResponseEntity.badRequest().body(body)

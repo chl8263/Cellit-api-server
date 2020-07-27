@@ -20,7 +20,10 @@ class ChannelPost (
         var channelPostContent: String,
 
         @Column
-        var accountId: Long? = null,
+        var accountId: Long,
+
+        @Column
+        var accountName: String,
 
         @ManyToOne
         @JoinColumn(name = "channelId")

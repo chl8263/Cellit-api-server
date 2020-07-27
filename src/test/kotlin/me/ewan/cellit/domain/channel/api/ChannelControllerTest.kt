@@ -10,16 +10,13 @@ import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
-import me.ewan.cellit.global.security.dtos.JwtAuthenticationDto
+import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser
-import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -72,7 +69,7 @@ internal class ChannelControllerTest : BaseControllerTest() {
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        createAccount(name = name, pw = pw)
+        val saveduser = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
@@ -98,15 +95,35 @@ internal class ChannelControllerTest : BaseControllerTest() {
                 .andExpect(MockMvcResultMatchers.jsonPath("channelName").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
 
-        println(result)
+        //given
+        val response: MockHttpServletResponse = result.andReturn().response
+        val responseBody = response.contentAsString
+        val parser = Jackson2JsonParser()
+        val channelId = parser.parseMap(responseBody)["channelId"].toString()
+        val cellId = parser.parseMap(responseBody)["cellId"].toString()
 
-//        //when
-//        mockMvc.perform(post("/api/channels")
-//                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaTypes.HAL_JSON)
-//                .content(objectMapper.writeValueAsString(channelDto))
-//        )
+        val channelPostName = "Test new post"
+        val channelPostContent = "<p>Hello World!</p>\n" +
+                "    <p>Some initial <strong>bold</strong> text</p>\n" +
+                "    <p>\n" +
+                "        <br/>\n" +
+                "    </p>"
+        println("!@@@#@@#@#@")
+        println(saveduser.accountId)
+        val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
+                channelPostContent = channelPostContent,
+                accountId = saveduser.accountId!!,
+                accountName = saveduser.accountname!!)
+
+        //when
+        mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelPostDto))
+        )
+                //then
+                .andDo(MockMvcResultHandlers.print())
     }
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {

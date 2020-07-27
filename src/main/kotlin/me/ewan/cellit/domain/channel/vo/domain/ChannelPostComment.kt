@@ -8,29 +8,20 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-class ChannelPost (
+class ChannelPostComment (
 
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var channelPostId: Long? = null,
+        var channelPostCommentId: Long? = null,
 
         @Column
-        var channelPostName: String,
-
-        @Column
-        var channelPostContent: String,
+        var channelPostComment: String,
 
         @Column
         var accountId: Long? = null,
 
         @ManyToOne
-        @JoinColumn(name = "channelId")
-        var channel: Channel,
-
-        // default fetch type = LAZY
-        @JsonIgnore // prevent infinity loop when trans JSON
-        @OneToMany(mappedBy = "channelPost", fetch = FetchType.LAZY)
-        var channelPostComments: MutableList<ChannelPostComment> = mutableListOf(),
-
+        @JoinColumn(name = "channelPostId")
+        var channelPost: ChannelPost,
 
         @Temporal(TemporalType.TIMESTAMP)
         var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),

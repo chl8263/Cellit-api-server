@@ -67,6 +67,48 @@ internal class ChannelControllerTest : BaseControllerTest() {
                 .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
     }
 
+    @Test
+    fun `Create Channel Post`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName = "common"
+        val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
+
+        //when
+        val result = mockMvc.perform(post("/api/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelDto))
+        )
+
+                //then
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isCreated)
+                .andExpect(MockMvcResultMatchers.jsonPath("channelId").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("channelName").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("_links.self").exists())
+
+        println(result)
+
+//        //when
+//        mockMvc.perform(post("/api/channels")
+//                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaTypes.HAL_JSON)
+//                .content(objectMapper.writeValueAsString(channelDto))
+//        )
+    }
+
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)
 

@@ -8,6 +8,9 @@ import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostEntityModel
 import me.ewan.cellit.global.error.ErrorHelper
+import me.ewan.cellit.global.error.vo.ErrorVo
+import me.ewan.cellit.global.error.vo.HTTP_STATUS
+import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
@@ -62,19 +65,23 @@ class ChannelController {
                            @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any>{
         try {
             // s: validator
-            val errorList = channelPostDtoValidator.validate(channelPostDto)
+            val errorList = ArrayList<ErrorVo>()
+
+            val foundedChannel = channelService.getChannelWithChannelId(channelId)
+            if(foundedChannel == null){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
+            }
             if (errorList.isNotEmpty()) {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
             // e: validator
 
-            val foundedChannel = channelService.getChannelWithChannelId(channelId)
             val channelPost = ChannelPost(channelPostName = channelPostDto.channelPostName!!,
                     channelPostContent = channelPostDto.channelPostContent!!,
                     accountId = channelPostDto.accountId!!,
                     accountName = channelPostDto.accountName!!,
-                    channel = foundedChannel
+                    channel = foundedChannel!!
                     )
 
             val savedChannelPost = channelService.saveChannelPost(channelPost)

@@ -10,6 +10,8 @@ import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostEntityModel
 import me.ewan.cellit.global.error.ErrorHelper
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
@@ -77,8 +79,8 @@ class ChannelController {
             val savedChannelPost = channelService.saveChannelPost(channelPost)
 
             val entityModel = savedChannelPost.run {
-                val tempChannelPostDto = modelMapper.map(this, ChannelPostDto::class.java)
-                val channelPostEntityModel = ChannelPostEntityModel(tempChannelPostDto)
+                //val tempChannelPostDto = modelMapper.map(this, ChannelPostDto::class.java)
+                val channelPostEntityModel = ChannelPostEntityModel(this)
                 val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPost").slash(this.channelPostId).withSelfRel()
                 channelPostEntityModel.add(selfLink)
             }
@@ -91,5 +93,16 @@ class ChannelController {
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
+    }
+
+    @GetMapping("{channelId}/channelPosts")
+    fun getChannelPost(@PathVariable channelId: Long, pageable: Pageable, assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any>{
+        val page = this.channelService.getChannelPosts(channelId, pageable)
+        val pageEntityModel = assembler.toModel(page){entity: ChannelPost ->
+            val channelPostEntityModel = ChannelPostEntityModel(entity)
+            val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPosts").slash(entity.channelPostId).withSelfRel()
+            channelPostEntityModel.add(selfLink)
+        }
+        return ResponseEntity.ok(pageEntityModel)
     }
 }

@@ -21,5 +21,7 @@ data class ChannelPostDto(
 
         @NotEmpty
         @NotNull
-        var accountName: String? = null
+        var accountName: String? = null,
+
+        var createDate: String? = null
 )

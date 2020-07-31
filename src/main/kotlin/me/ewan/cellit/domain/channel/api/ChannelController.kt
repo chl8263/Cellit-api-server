@@ -50,6 +50,7 @@ class ChannelController {
             val createUrl = linkBuilder.toUri()
 
             return ResponseEntity.created(createUrl).body(entityModel)
+
         }catch (e: Exception){
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
@@ -89,6 +90,7 @@ class ChannelController {
             val createUrl = linkBuilder.toUri()
 
             return ResponseEntity.created(createUrl).body(entityModel)
+
         }catch (e: Exception){
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
@@ -96,13 +98,30 @@ class ChannelController {
     }
 
     @GetMapping("{channelId}/channelPosts")
-    fun getChannelPost(@PathVariable channelId: Long, pageable: Pageable, assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any>{
-        val page = this.channelService.getChannelPosts(channelId, pageable)
-        val pageEntityModel = assembler.toModel(page){entity: ChannelPost ->
-            val channelPostEntityModel = ChannelPostEntityModel(entity)
-            val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPosts").slash(entity.channelPostId).withSelfRel()
-            channelPostEntityModel.add(selfLink)
+    fun getChannelPost(@PathVariable channelId: Long,
+                       pageable: Pageable,
+                       assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any>{
+        try {
+            // s: validator
+            val foundChannel = channelService.getChannelWithChannelId(channelId)
+            if(foundChannel == null){
+                val body = errorHelper.getUnexpectError("Not exits this Channel.")
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val page = this.channelService.getChannelPosts(channelId, pageable)
+            val pageEntityModel = assembler.toModel(page) { entity: ChannelPost ->
+                val channelPostEntityModel = ChannelPostEntityModel(entity)
+                val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPosts").slash(entity.channelPostId).withSelfRel()
+                channelPostEntityModel.add(selfLink)
+            }
+
+            return ResponseEntity.ok(pageEntityModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
         }
-        return ResponseEntity.ok(pageEntityModel)
+
     }
 }

@@ -33,9 +33,7 @@ class ChannelService {
         return savedChannel
     }
 
-    fun getChannelWithChannelId(channelId: Long): Channel{
-        return channelRepository.getOne(channelId)
-    }
+    fun getChannelWithChannelId(channelId: Long): Channel? = channelRepository.getOne(channelId)
 
     fun getChannelsWithCellId(cellId: Long): List<Channel> {
         val cell = cellRepository.getOne(cellId)

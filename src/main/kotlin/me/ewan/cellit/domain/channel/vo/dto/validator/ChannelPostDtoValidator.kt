@@ -19,13 +19,13 @@ class ChannelPostDtoValidator {
 
         channelPostDto.channelPostName?.let {
             if(it.isNullOrBlank()) {
-                errorList.add(ErrorVo(status = BAD_REQUEST, message = "cell name cannot become blank"))
+                errorList.add(ErrorVo(status = BAD_REQUEST, message = "Channel post name cannot become blank"))
             }
         }
 
         channelPostDto.channelPostContent?.let {
             if(it.isNullOrBlank()) {
-                errorList.add(ErrorVo(status = BAD_REQUEST, message = "cell name cannot become blank"))
+                errorList.add(ErrorVo(status = BAD_REQUEST, message = "Channel post content cannot become blank"))
             }
         }
         return errorList

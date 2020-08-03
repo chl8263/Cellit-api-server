@@ -193,7 +193,6 @@ internal class ChannelApiTest : BaseControllerTest() {
                     .andExpect(status().isCreated)
                     .andExpect(jsonPath("channelPostId").exists())
                     .andExpect(jsonPath("channelPostName").exists())
-                    .andExpect(jsonPath("channelPostContent").exists())
                     .andExpect(jsonPath("accountId").exists())
                     .andExpect(jsonPath("accountName").exists())
                     .andExpect(jsonPath("createDate").exists())
@@ -211,10 +210,92 @@ internal class ChannelApiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
+                .andExpect(jsonPath("_embedded").exists())
+                .andExpect(jsonPath("_links").exists())
                 .andExpect(jsonPath("page").exists())
-                .andExpect(jsonPath("page").exists())
-
     }
+
+    @Test
+    fun `Get channel post content`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val saveduser = createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName = "common"
+        val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
+
+        //when
+        val result = mockMvc.perform(post("/api/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelDto))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelId").exists())
+                .andExpect(jsonPath("channelName").exists())
+                .andExpect(jsonPath("_links.self").exists())
+
+        //given
+        val response: MockHttpServletResponse = result.andReturn().response
+        val responseBody = response.contentAsString
+        val parser = Jackson2JsonParser()
+        val channelId = parser.parseMap(responseBody)["channelId"].toString()
+        val cellId = parser.parseMap(responseBody)["cellId"].toString()
+
+        val channelPostName = "Test new post Subject"
+        val channelPostContent = "content test"
+        val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
+                channelPostContent = channelPostContent,
+                accountId = saveduser.accountId!!,
+                accountName = saveduser.accountname!!)
+
+        //when
+        val result2 = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelPostDto))
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelPostId").exists())
+                .andExpect(jsonPath("channelPostName").exists())
+                .andExpect(jsonPath("accountId").exists())
+                .andExpect(jsonPath("accountName").exists())
+                .andExpect(jsonPath("createDate").exists())
+                .andExpect(jsonPath("_links.self").exists())
+
+        val response2: MockHttpServletResponse = result2.andReturn().response
+        val responseBody2 = response2.contentAsString
+        val parser2 = Jackson2JsonParser()
+        val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
+
+        //when
+        mockMvc.perform(get("/api/channels/${channelId}/channelPosts/${channelPostId}/channelContent")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("channelPostId").value(channelPostId))
+                .andExpect(jsonPath("accountName").value(saveduser.accountname))
+                .andExpect(jsonPath("channelPostName").value(channelPostName))
+                .andExpect(jsonPath("channelPostContent").value(channelPostContent))
+    }
+
 
     private fun createAccount(name: String, pw: String, role: AccountRole = AccountRole.ROLE_USER): Account {
         var account = Account(accountname = name, password = pw, role = role)

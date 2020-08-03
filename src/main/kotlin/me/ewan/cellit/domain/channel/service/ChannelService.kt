@@ -38,9 +38,9 @@ class ChannelService {
         return savedChannel
     }
 
-    fun getChannelWithChannelId(channelId: Long): Channel? = channelRepository.getOne(channelId)
+    fun getChannelByChannelId(channelId: Long): Channel? = channelRepository.getOne(channelId)
 
-    fun getChannelsWithCellId(cellId: Long): List<Channel> {
+    fun getChannelsByCellId(cellId: Long): List<Channel> {
         val cell = cellRepository.getOne(cellId)
         return cell.channels
     }
@@ -56,8 +56,15 @@ class ChannelService {
         return savedChannelPost
     }
 
+    fun getChannelPostById(channelPostId: Long) = channelPostRepository.getOne(channelPostId)
+
     fun getChannelPosts(channelId: Long, pageable: Pageable): Page<ChannelPost> {
         val foundChannel = channelRepository.getOne(channelId)
         return channelPostRepository.findByChannel(foundChannel, pageable)
+    }
+
+    fun getChannelPostContent(channelPost: ChannelPost): ChannelPostContent {
+        val channelPostContentId = channelPost.channelPostContent?.channelPostContentId
+        return channelPostContentRepository.getOne(channelPostContentId!!)
     }
 }

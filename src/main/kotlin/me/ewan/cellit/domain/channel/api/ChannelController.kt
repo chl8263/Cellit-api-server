@@ -3,10 +3,11 @@ package me.ewan.cellit.domain.channel.api
 import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostDtoValidator
 import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPost
-import me.ewan.cellit.domain.channel.vo.domain.ChannelPostContent
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
+import me.ewan.cellit.domain.channel.vo.dto.ChannelPostContentDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
+import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostContentEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostEntityModel
 import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.vo.ErrorVo
@@ -70,7 +71,7 @@ class ChannelController {
             // s: validator
             val errorList = channelPostDtoValidator.validate(channelPostDto)
 
-            val foundedChannel = channelService.getChannelWithChannelId(channelId)
+            val foundedChannel = channelService.getChannelByChannelId(channelId)
             if(foundedChannel == null){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
             }
@@ -104,7 +105,6 @@ class ChannelController {
 
         }catch (e: Exception){
             log.error { e.message }
-            println(e)
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
@@ -116,7 +116,7 @@ class ChannelController {
                        assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any>{
         try {
             // s: validator
-            val foundChannel = channelService.getChannelWithChannelId(channelId)
+            val foundChannel = channelService.getChannelByChannelId(channelId)
             if(foundChannel == null){
                 val body = errorHelper.getUnexpectError("Not exits this Channel.")
                 return ResponseEntity.badRequest().body(body)
@@ -135,6 +135,47 @@ class ChannelController {
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
+    }
 
+    @GetMapping("{channelId}/channelPosts/{channelPostId}/channelContent")
+    fun getChannelPostContent(@PathVariable channelId: Long,
+                              @PathVariable channelPostId: Long): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = ArrayList<ErrorVo>()
+
+            val foundedChannel = channelService.getChannelByChannelId(channelId)
+            if(foundedChannel == null){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
+            }
+
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+            val foundChannelPost = channelService.getChannelPostById(channelPostId)
+            val foundChannelPostContent = channelService.getChannelPostContent(foundChannelPost)
+
+            val channelPostContentDto = ChannelPostContentDto(channelPostId = foundChannelPost.channelPostId,
+                    channelPostName = foundChannelPost.channelPostName,
+                    accountId = foundChannelPost.accountId,
+                    accountName = foundChannelPost.accountName,
+                    channelPostContentId = foundChannelPostContent.channelPostContentId,
+                    channelPostContent = foundChannelPostContent.channelPostContent,
+                    createDate = foundChannelPostContent.createDate,
+                    modifyDate = foundChannelPostContent.modifyDate
+            )
+            val channelPostContentEntityModel = ChannelPostContentEntityModel(channelPostContentDto)
+            val selfLink = linkTo(methodOn(ChannelController::class.java).getChannelPostContent(channelId, channelPostId)).withSelfRel()
+            channelPostContentEntityModel.add(selfLink)
+
+            return ResponseEntity.ok(channelPostContentEntityModel)
+
+        }catch (e: Exception){
+            log.error { e.message }
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
     }
 }

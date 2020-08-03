@@ -10,7 +10,6 @@ import me.ewan.cellit.domain.cell.vo.domain.CellRole
 import me.ewan.cellit.domain.cell.vo.dto.AccountCellDto
 import me.ewan.cellit.domain.cell.vo.dto.CellRequestDto
 import me.ewan.cellit.domain.cell.vo.dto.validator.CellDtoValidator
-import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostDtoValidator
 import me.ewan.cellit.domain.cell.vo.entityModel.AccountCellEntityModel
 import me.ewan.cellit.domain.cell.vo.entityModel.CellRequestEntityModel
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
@@ -175,7 +174,7 @@ class CellController {
     fun getChannelsWithCellId(@PathVariable cellId: Long): ResponseEntity<Any>{
 
         try {
-            val channels = channelService.getChannelsWithCellId(cellId)
+            val channels = channelService.getChannelsByCellId(cellId)
 
             val channelsEntityModel = channels.map {
                 val channelModel = ChannelEntityModel(modelMapper.map(it, ChannelDto::class.java))

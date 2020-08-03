@@ -29,6 +29,7 @@ class ChannelPost (
         @JoinColumn(name = "channelId")
         var channel: Channel,
 
+        @JsonIgnore // prevent infinity loop when trans JSON
         @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
         @JoinColumn(name = "channelPostContentId", nullable = false)
         var channelPostContent: ChannelPostContent? = null,

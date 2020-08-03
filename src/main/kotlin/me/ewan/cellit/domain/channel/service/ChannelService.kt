@@ -1,10 +1,12 @@
 package me.ewan.cellit.domain.channel.service
 
 import me.ewan.cellit.domain.cell.dao.CellRepository
+import me.ewan.cellit.domain.channel.dao.ChannelPostContentRepository
 import me.ewan.cellit.domain.channel.dao.ChannelPostRepository
 import me.ewan.cellit.domain.channel.dao.ChannelRepository
 import me.ewan.cellit.domain.channel.vo.domain.Channel
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPost
+import me.ewan.cellit.domain.channel.vo.domain.ChannelPostContent
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -23,6 +25,9 @@ class ChannelService {
     @Autowired
     lateinit var cellRepository: CellRepository
 
+    @Autowired
+    lateinit var channelPostContentRepository: ChannelPostContentRepository
+
     fun createChannel(channelDto: ChannelDto): Channel {
 
         val cell = cellRepository.getOne(channelDto.cellId!!)
@@ -40,8 +45,15 @@ class ChannelService {
         return cell.channels
     }
 
-    fun saveChannelPost(channelPost: ChannelPost): ChannelPost {
-        return channelPostRepository.save(channelPost)
+    fun saveChannelPost(channelPost: ChannelPost, channelPostContent: String): ChannelPost {
+
+        val channelPostContent = ChannelPostContent(channelPostContent = channelPostContent, channelPost = channelPost)
+        channelPost.channelPostContent = channelPostContent
+
+        val savedChannelPostContent = channelPostContentRepository.save(channelPostContent)
+        val savedChannelPost = channelPostRepository.save(channelPost)
+
+        return savedChannelPost
     }
 
     fun getChannelPosts(channelId: Long, pageable: Pageable): Page<ChannelPost> {

@@ -13,21 +13,11 @@ class ChannelPostContent (
         var channelPostContentId: Long? = null,
 
         @Column
-        var channelPostName: String,
-
-        @Column
-        var channelPostContent: String,
-
-        @Column
-        var accountId: Long,
-
-        @Column
-        var accountName: String,
+        var channelPostContent: String = "",
 
         @JsonIgnore // prevent infinity loop when trans JSON
-        @OneToOne
-        @JoinColumn(name = "channelPostId")
-        var channel: Channel,
+        @OneToOne(fetch = FetchType.LAZY, mappedBy = "channelPostContent", cascade = [CascadeType.ALL])
+        var channelPost: ChannelPost? = null,
 
         @Temporal(TemporalType.TIMESTAMP)
         var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),

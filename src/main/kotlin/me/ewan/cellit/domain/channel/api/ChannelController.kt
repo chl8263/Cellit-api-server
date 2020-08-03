@@ -3,14 +3,15 @@ package me.ewan.cellit.domain.channel.api
 import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostDtoValidator
 import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPost
+import me.ewan.cellit.domain.channel.vo.domain.ChannelPostContent
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostEntityModel
 import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.vo.ErrorVo
-import me.ewan.cellit.global.error.vo.HTTP_STATUS
 import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
+import mu.KotlinLogging
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(value = ["/api/channels"], produces = [MediaTypes.HAL_JSON_VALUE])
 class ChannelController {
+
+    private val log = KotlinLogging.logger {}
 
     @Autowired
     lateinit var channelService: ChannelService
@@ -65,12 +68,13 @@ class ChannelController {
                            @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any>{
         try {
             // s: validator
-            val errorList = ArrayList<ErrorVo>()
+            val errorList = channelPostDtoValidator.validate(channelPostDto)
 
             val foundedChannel = channelService.getChannelWithChannelId(channelId)
             if(foundedChannel == null){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
             }
+
             if (errorList.isNotEmpty()) {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
@@ -78,13 +82,13 @@ class ChannelController {
             // e: validator
 
             val channelPost = ChannelPost(channelPostName = channelPostDto.channelPostName!!,
-                    channelPostContent = channelPostDto.channelPostContent!!,
+                    //channelPostContent = channelPostDto.channelPostContent!!,
                     accountId = channelPostDto.accountId!!,
                     accountName = channelPostDto.accountName!!,
                     channel = foundedChannel!!
                     )
 
-            val savedChannelPost = channelService.saveChannelPost(channelPost)
+            val savedChannelPost = channelService.saveChannelPost(channelPost, channelPostDto.channelPostContent!!)
 
             val entityModel = savedChannelPost.run {
                 //val tempChannelPostDto = modelMapper.map(this, ChannelPostDto::class.java)
@@ -99,6 +103,8 @@ class ChannelController {
             return ResponseEntity.created(createUrl).body(entityModel)
 
         }catch (e: Exception){
+            log.error { e.message }
+            println(e)
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }

@@ -29,14 +29,14 @@ class ChannelPost (
         @JoinColumn(name = "channelId")
         var channel: Channel,
 
-        @OneToOne(mappedBy = "channel")
-        var channelPostContent: ChannelPostContent,
+        @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+        @JoinColumn(name = "channelPostContentId", nullable = false)
+        var channelPostContent: ChannelPostContent? = null,
 
         // default fetch type = LAZY
         @JsonIgnore // prevent infinity loop when trans JSON
         @OneToMany(mappedBy = "channelPost", fetch = FetchType.LAZY)
         var channelPostComments: MutableList<ChannelPostComment> = mutableListOf(),
-
 
         @Temporal(TemporalType.TIMESTAMP)
         var createDate: String = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date()),

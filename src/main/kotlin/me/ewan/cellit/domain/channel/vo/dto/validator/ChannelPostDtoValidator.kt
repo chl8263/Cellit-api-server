@@ -13,7 +13,7 @@ import org.springframework.validation.Errors
 @Component
 class ChannelPostDtoValidator {
 
-    fun validate(channelPostDto: ChannelPostDto): List<ErrorVo>{
+    fun validate(channelPostDto: ChannelPostDto): ArrayList<ErrorVo>{
 
         val errorList = ArrayList<ErrorVo>()
 

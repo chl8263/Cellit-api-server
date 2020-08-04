@@ -130,6 +130,7 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("channelPostContent").exists())
                 .andExpect(jsonPath("accountId").exists())
                 .andExpect(jsonPath("accountName").exists())
+                .andExpect(jsonPath("viewCount").exists())
                 .andExpect(jsonPath("createDate").exists())
                 .andExpect(jsonPath("_links.self").exists())
     }

@@ -24,6 +24,9 @@ class ChannelPost (
         @Column
         var accountName: String,
 
+        @Column
+        var viewCount: Long = 0,
+
         @JsonIgnore // prevent infinity loop when trans JSON
         @ManyToOne
         @JoinColumn(name = "channelId")

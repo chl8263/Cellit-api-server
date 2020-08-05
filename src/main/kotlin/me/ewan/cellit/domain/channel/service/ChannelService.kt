@@ -1,5 +1,6 @@
 package me.ewan.cellit.domain.channel.service
 
+import com.querydsl.core.Tuple
 import me.ewan.cellit.domain.cell.dao.CellRepository
 import me.ewan.cellit.domain.channel.dao.ChannelPostContentRepository
 import me.ewan.cellit.domain.channel.dao.ChannelPostRepository

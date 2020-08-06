@@ -42,7 +42,7 @@ class ChannelController {
     private lateinit var channelPostDtoValidator: ChannelPostDtoValidator
 
     @PostMapping
-    fun createChannel(@RequestBody channelDto: ChannelDto): ResponseEntity<Any>{
+    fun createChannel(@RequestBody channelDto: ChannelDto): ResponseEntity<Any> {
         try {
             val savedChannel = channelService.createChannel(channelDto)
 
@@ -58,7 +58,7 @@ class ChannelController {
 
             return ResponseEntity.created(createUrl).body(entityModel)
 
-        }catch (e: Exception){
+        } catch (e: Exception) {
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
@@ -66,13 +66,13 @@ class ChannelController {
 
     @PostMapping("{channelId}/channelPosts")
     fun createChannelPosts(@PathVariable channelId: Long,
-                           @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any>{
+                           @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any> {
         try {
             // s: validator
             val errorList = channelPostDtoValidator.validate(channelPostDto)
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
-            if(foundedChannel == null){
+            if (foundedChannel == null) {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
             }
 
@@ -87,7 +87,7 @@ class ChannelController {
                     accountId = channelPostDto.accountId!!,
                     accountName = channelPostDto.accountName!!,
                     channel = foundedChannel!!
-                    )
+            )
 
             val savedChannelPost = channelService.saveChannelPost(channelPost, channelPostDto.channelPostContent!!)
 
@@ -103,7 +103,7 @@ class ChannelController {
 
             return ResponseEntity.created(createUrl).body(entityModel)
 
-        }catch (e: Exception){
+        } catch (e: Exception) {
             log.error { e.message }
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
@@ -113,11 +113,11 @@ class ChannelController {
     @GetMapping("{channelId}/channelPosts")
     fun getChannelPost(@PathVariable channelId: Long,
                        pageable: Pageable,
-                       assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any>{
+                       assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any> {
         try {
             // s: validator
             val foundChannel = channelService.getChannelByChannelId(channelId)
-            if(foundChannel == null){
+            if (foundChannel == null) {
                 val body = errorHelper.getUnexpectError("Not exits this Channel.")
                 return ResponseEntity.badRequest().body(body)
             }
@@ -131,7 +131,7 @@ class ChannelController {
             }
 
             return ResponseEntity.ok(pageEntityModel)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
@@ -145,7 +145,7 @@ class ChannelController {
             val errorList = ArrayList<ErrorVo>()
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
-            if(foundedChannel == null){
+            if (foundedChannel == null) {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
             }
 
@@ -172,11 +172,63 @@ class ChannelController {
 
             return ResponseEntity.ok(channelPostContentEntityModel)
 
-        }catch (e: Exception){
+        } catch (e: Exception) {
             log.error { e.message }
             val body = errorHelper.getUnexpectError("Please try again..")
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    @PatchMapping("{channelId}/channelPosts/{channelPostId}/channelContent")
+    fun updateChannelPostContent(@PathVariable channelId: Long,
+                                 @PathVariable channelPostId: Long,
+                                 @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = channelPostDtoValidator.validate(channelPostDto)
+
+            val foundedChannel = channelService.getChannelByChannelId(channelId)
+            if (foundedChannel == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
+            }
+
+            val foundedChannelPostId = channelService.getChannelPostById(channelPostId)
+            if (foundedChannelPostId == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel Post.", errorList)
+            }
+
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val foundChannelPost = channelService.getChannelPostById(channelPostId)
+            val foundChannelPostContent = channelService.getChannelPostContent(foundChannelPost)
+            foundChannelPost.channelPostName = channelPostDto.channelPostName!!
+            foundChannelPostContent.channelPostContent = channelPostDto.channelPostContent!!
+            channelService.saveChannelPost(foundChannelPost)
+            channelService.saveChannelPostContent(foundChannelPostContent)
+
+            val channelPostContentDto = ChannelPostContentDto(channelPostId = foundChannelPost.channelPostId,
+                    channelPostName = foundChannelPost.channelPostName,
+                    accountId = foundChannelPost.accountId,
+                    accountName = foundChannelPost.accountName,
+                    channelPostContentId = foundChannelPostContent.channelPostContentId,
+                    channelPostContent = foundChannelPostContent.channelPostContent,
+                    createDate = foundChannelPostContent.createDate,
+                    modifyDate = foundChannelPostContent.modifyDate
+            )
+            val channelPostContentEntityModel = ChannelPostContentEntityModel(channelPostContentDto)
+            val selfLink = linkTo(methodOn(ChannelController::class.java).getChannelPostContent(channelId, channelPostId)).withSelfRel()
+            channelPostContentEntityModel.add(selfLink)
+
+            return ResponseEntity.ok(channelPostContentEntityModel)
+
+        } catch (e: Exception) {
+            log.error { e.message }
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
 }

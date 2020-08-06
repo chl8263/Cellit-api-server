@@ -46,6 +46,9 @@ class ChannelService {
         return cell.channels
     }
 
+    fun saveChannelPost(channelPost: ChannelPost): ChannelPost = channelPostRepository.save(channelPost)
+    fun saveChannelPostContent(channelPostContent: ChannelPostContent): ChannelPostContent = channelPostContentRepository.save(channelPostContent)
+
     fun saveChannelPost(channelPost: ChannelPost, channelPostContent: String): ChannelPost {
 
         val channelPostContent = ChannelPostContent(channelPostContent = channelPostContent, channelPost = channelPost)

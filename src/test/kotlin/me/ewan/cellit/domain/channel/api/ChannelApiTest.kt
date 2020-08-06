@@ -372,16 +372,17 @@ internal class ChannelApiTest : BaseControllerTest() {
         //when
         mockMvc.perform(patch("/api/channels/${channelId}/channelPosts/${channelPostId}/channelContent")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(modifiedChannelPostDto))
         )
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
-//                .andExpect(jsonPath("channelPostId").value(channelPostId))
-//                .andExpect(jsonPath("accountName").value(saveduser.accountname))
-//                .andExpect(jsonPath("channelPostName").value(channelPostName))
-//                .andExpect(jsonPath("channelPostContent").value(channelPostContent))
+                .andExpect(jsonPath("channelPostId").value(channelPostId))
+                .andExpect(jsonPath("accountName").value(saveduser.accountname))
+                .andExpect(jsonPath("channelPostName").value(modifiedChannelPostName))
+                .andExpect(jsonPath("channelPostContent").value(modifiedChannelPostContent))
     }
 
 

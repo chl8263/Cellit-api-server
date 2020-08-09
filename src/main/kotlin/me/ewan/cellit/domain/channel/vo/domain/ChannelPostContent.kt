@@ -12,7 +12,7 @@ class ChannelPostContent (
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var channelPostContentId: Long? = null,
 
-        @Column
+        @Column(length = 5000)
         var channelPostContent: String = "",
 
         @JsonIgnore // prevent infinity loop when trans JSON

@@ -22,6 +22,9 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 @RestController
 @RequestMapping(value = ["/api/channels"], produces = [MediaTypes.HAL_JSON_VALUE])
@@ -192,8 +195,8 @@ class ChannelController {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
             }
 
-            val foundedChannelPostId = channelService.getChannelPostById(channelPostId)
-            if (foundedChannelPostId == null) {
+            val foundedChannelPost = channelService.getChannelPostById(channelPostId)
+            if (foundedChannelPost == null) {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel Post.", errorList)
             }
 
@@ -246,8 +249,8 @@ class ChannelController {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
             }
 
-            val foundedChannelPostId = channelService.getChannelPostById(channelPostId)
-            if (foundedChannelPostId == null) {
+            val foundChannelPost = channelService.getChannelPostById(channelPostId)
+            if (foundChannelPost == null) {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel Post.", errorList)
             }
 
@@ -257,27 +260,15 @@ class ChannelController {
             }
             // e: validator
 
-//            val foundChannelPost = channelService.getChannelPostById(channelPostId)
-//            val foundChannelPostContent = channelService.getChannelPostContent(foundChannelPost)
-//            foundChannelPost.channelPostName = channelPostDto.channelPostName!!
-//            foundChannelPostContent.channelPostContent = channelPostDto.channelPostContent!!
-//            channelService.saveChannelPost(foundChannelPost)
-//            channelService.saveChannelPostContent(foundChannelPostContent)
-//
-//            val channelPostContentDto = ChannelPostContentDto(channelPostId = foundChannelPost.channelPostId,
-//                    channelPostName = foundChannelPost.channelPostName,
-//                    accountId = foundChannelPost.accountId,
-//                    accountName = foundChannelPost.accountName,
-//                    channelPostContentId = foundChannelPostContent.channelPostContentId,
-//                    channelPostContent = foundChannelPostContent.channelPostContent,
-//                    createDate = foundChannelPostContent.createDate,
-//                    modifyDate = foundChannelPostContent.modifyDate
-//            )
-//            val channelPostContentEntityModel = ChannelPostContentEntityModel(channelPostContentDto)
-//            val selfLink = linkTo(methodOn(ChannelController::class.java).getChannelPostContent(channelId, channelPostId)).withSelfRel()
-//            channelPostContentEntityModel.add(selfLink)
+            foundChannelPost.viewCount = viewCount
+            foundChannelPost.modifyDate = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date())
+            val savedChannelPost = channelService.saveChannelPost(foundChannelPost)
 
-            return ResponseEntity.ok(viewCount)
+            val channelPostEntityModel = ChannelPostEntityModel(savedChannelPost)
+            val selfLink = linkTo(methodOn(ChannelController::class.java).updateChannelPostViewCount(channelId, channelPostId, viewCount)).withSelfRel()
+            channelPostEntityModel.add(selfLink)
+
+            return ResponseEntity.ok(channelPostEntityModel)
 
         } catch (e: Exception) {
             log.error { e.message }

@@ -19,7 +19,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -71,7 +70,7 @@ internal class ChannelApiTest : BaseControllerTest() {
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        val saveduser = createAccount(name = name, pw = pw)
+        val savedUser = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
@@ -112,8 +111,8 @@ internal class ChannelApiTest : BaseControllerTest() {
                 "    </p>"
         val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
                 channelPostContent = channelPostContent,
-                accountId = saveduser.accountId!!,
-                accountName = saveduser.accountname!!)
+                accountId = savedUser.accountId!!,
+                accountName = savedUser.accountname!!)
 
         //when
         mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
@@ -136,10 +135,13 @@ internal class ChannelApiTest : BaseControllerTest() {
 
     @Test
     fun `Get page 1 of 10 channel post`(){
+        /*
+        *  s : Create Channel
+        * */
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        val saveduser = createAccount(name = name, pw = pw)
+        val savedUser = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
@@ -165,6 +167,14 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("channelName").exists())
                 .andExpect(jsonPath("_links.self").exists())
 
+        /*
+        *  e : Create Channel
+        * */
+
+        /*
+        *  s : Create Channel Post
+        * */
+
         //given
         val response: MockHttpServletResponse = result.andReturn().response
         val responseBody = response.contentAsString
@@ -178,8 +188,8 @@ internal class ChannelApiTest : BaseControllerTest() {
             val channelPostContent = "content $i"
             val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
                     channelPostContent = channelPostContent,
-                    accountId = saveduser.accountId!!,
-                    accountName = saveduser.accountname!!)
+                    accountId = savedUser.accountId!!,
+                    accountName = savedUser.accountname!!)
 
             //when
             mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
@@ -213,14 +223,21 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("_embedded").exists())
                 .andExpect(jsonPath("_links").exists())
                 .andExpect(jsonPath("page").exists())
+
+        /*
+        *  e : Create Channel Post
+        * */
     }
 
     @Test
     fun `Get channel post content`(){
+        /*
+        *  s : Create Channel
+        * */
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        val saveduser = createAccount(name = name, pw = pw)
+        val savedUser = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
@@ -245,7 +262,13 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("channelId").exists())
                 .andExpect(jsonPath("channelName").exists())
                 .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel
+        * */
 
+        /*
+        *  s : Create Channel Post
+        * */
         //given
         val response: MockHttpServletResponse = result.andReturn().response
         val responseBody = response.contentAsString
@@ -257,8 +280,8 @@ internal class ChannelApiTest : BaseControllerTest() {
         val channelPostContent = "content test"
         val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
                 channelPostContent = channelPostContent,
-                accountId = saveduser.accountId!!,
-                accountName = saveduser.accountname!!)
+                accountId = savedUser.accountId!!,
+                accountName = savedUser.accountname!!)
 
         //when
         val result2 = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
@@ -277,6 +300,13 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("createDate").exists())
                 .andExpect(jsonPath("_links.self").exists())
 
+        /*
+        *  e : Create Channel Post
+        * */
+
+        /*
+        *  s : Get Channel Post Content
+        * */
         val response2: MockHttpServletResponse = result2.andReturn().response
         val responseBody2 = response2.contentAsString
         val parser2 = Jackson2JsonParser()
@@ -291,17 +321,24 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("channelPostId").value(channelPostId))
-                .andExpect(jsonPath("accountName").value(saveduser.accountname))
+                .andExpect(jsonPath("accountName").value(savedUser.accountname))
                 .andExpect(jsonPath("channelPostName").value(channelPostName))
                 .andExpect(jsonPath("channelPostContent").value(channelPostContent))
+
+        /*
+        *  e : Get Channel Post Content
+        * */
     }
 
     @Test
     fun `Update Channel Content`(){
+        /*
+        *  s : Create Channel
+        * */
         //given
         val name = appProperties.testUserAccountname
         val pw = appProperties.testUserPassword
-        val saveduser = createAccount(name = name, pw = pw)
+        val savedUser = createAccount(name = name, pw = pw)
 
         val jwtToken = getJwtToken(name, pw)
 
@@ -326,7 +363,13 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("channelId").exists())
                 .andExpect(jsonPath("channelName").exists())
                 .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel
+        * */
 
+        /*
+        *  s : Create Channel Post
+        * */
         //given
         val response: MockHttpServletResponse = result.andReturn().response
         val responseBody = response.contentAsString
@@ -338,8 +381,8 @@ internal class ChannelApiTest : BaseControllerTest() {
         val channelPostContent = "content test"
         val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
                 channelPostContent = channelPostContent,
-                accountId = saveduser.accountId!!,
-                accountName = saveduser.accountname!!)
+                accountId = savedUser.accountId!!,
+                accountName = savedUser.accountname!!)
 
         //when
         val result2 = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
@@ -357,15 +400,21 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("accountName").exists())
                 .andExpect(jsonPath("createDate").exists())
                 .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel Post
+        * */
 
+        /*
+        *  s : Update Channel Content
+        * */
         val response2: MockHttpServletResponse = result2.andReturn().response
         val responseBody2 = response2.contentAsString
         val parser2 = Jackson2JsonParser()
         val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
 
         //given
-        val modifiedChannelPostName = "Test new post Subject222222"
-        val modifiedChannelPostContent = "content test222222222"
+        val modifiedChannelPostName = "Test new post Subject 2"
+        val modifiedChannelPostContent = "content test 2"
         val modifiedChannelPostDto = ChannelPostDto(channelPostName = modifiedChannelPostName,
                 channelPostContent = modifiedChannelPostContent)
 
@@ -380,9 +429,121 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("channelPostId").value(channelPostId))
-                .andExpect(jsonPath("accountName").value(saveduser.accountname))
+                .andExpect(jsonPath("accountName").value(savedUser.accountname))
                 .andExpect(jsonPath("channelPostName").value(modifiedChannelPostName))
                 .andExpect(jsonPath("channelPostContent").value(modifiedChannelPostContent))
+        /*
+        *  e : Update Channel Content
+        * */
+    }
+
+    @Test
+    fun `Update Channel Post view Count`(){
+        /*
+        *  s : Create Channel
+        * */
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val savedUser = createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName = "common"
+        val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
+
+        //when
+        val result = mockMvc.perform(post("/api/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelDto))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelId").exists())
+                .andExpect(jsonPath("channelName").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel
+        * */
+
+        /*
+        *  s : Create Channel Post
+        * */
+        //given
+        val response: MockHttpServletResponse = result.andReturn().response
+        val responseBody = response.contentAsString
+        val parser = Jackson2JsonParser()
+        val channelId = parser.parseMap(responseBody)["channelId"].toString()
+        val cellId = parser.parseMap(responseBody)["cellId"].toString()
+
+        val channelPostName = "Test new post Subject"
+        val channelPostContent = "content test"
+        val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
+                channelPostContent = channelPostContent,
+                accountId = savedUser.accountId!!,
+                accountName = savedUser.accountname!!)
+
+        //when
+        val result2 = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelPostDto))
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelPostId").exists())
+                .andExpect(jsonPath("channelPostName").exists())
+                .andExpect(jsonPath("accountId").exists())
+                .andExpect(jsonPath("accountName").exists())
+                .andExpect(jsonPath("createDate").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel Post
+        * */
+
+        /*
+        *  s : Update Channel Post view Count
+        * */
+        val response2: MockHttpServletResponse = result2.andReturn().response
+        val responseBody2 = response2.contentAsString
+        val parser2 = Jackson2JsonParser()
+        val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
+
+        //given
+        val modifiedChannelPostName = "Test new post Subject 2"
+        val modifiedChannelPostContent = "content test 2"
+        val modifiedChannelPostDto = ChannelPostDto(channelPostName = modifiedChannelPostName,
+                channelPostContent = modifiedChannelPostContent)
+
+        val viewCount = 1
+
+        //when
+        mockMvc.perform(patch("/api/channels/${channelId}/channelPosts/${channelPostId}/viewCount")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content("$viewCount")
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+//                .andExpect(jsonPath("channelPostId").value(channelPostId))
+//                .andExpect(jsonPath("accountName").value(savedUser.accountname))
+//                .andExpect(jsonPath("channelPostName").value(modifiedChannelPostName))
+//                .andExpect(jsonPath("channelPostContent").value(modifiedChannelPostContent))
+        /*
+        *  e : Update Channel Content
+        * */
     }
 
 

@@ -115,6 +115,7 @@ class ChannelController {
 
     @GetMapping("{channelId}/channelPosts")
     fun getChannelPost(@PathVariable channelId: Long,
+                       postNameToSearch: String,
                        pageable: Pageable,
                        assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any> {
         try {
@@ -126,7 +127,7 @@ class ChannelController {
             }
             // e: validator
 
-            val page = this.channelService.getChannelPosts(channelId, pageable)
+            val page = this.channelService.getChannelPosts(channelId, postNameToSearch, pageable)
             val pageEntityModel = assembler.toModel(page) { entity: ChannelPost ->
                 val channelPostEntityModel = ChannelPostEntityModel(entity)
                 val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPosts").slash(entity.channelPostId).withSelfRel()

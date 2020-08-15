@@ -183,9 +183,14 @@ internal class ChannelApiTest : BaseControllerTest() {
         val cellId = parser.parseMap(responseBody)["cellId"].toString()
 
 
-        for(i in 0..27){
-            val channelPostName = "Test new post Subject $i"
-            val channelPostContent = "content $i"
+        val nameList = arrayListOf("Test one", "Test two", "Account report", "Account report2", "Supply Chain report",
+                "Test one 2", "Test two 2", "Account report 2", "Account report2 2", "Supply Chain report 2", "Supply Chain report 3",
+        "Test one 4", "Test two 4", "Account report 4", "Account report2 5", "Supply Chain report 5", "Supply Chain report 5")
+
+        //for(name in nameList){
+        for(name in nameList){
+            val channelPostName = "$name"
+            val channelPostContent = "content $name"
             val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
                     channelPostContent = channelPostContent,
                     accountId = savedUser.accountId!!,
@@ -211,6 +216,7 @@ internal class ChannelApiTest : BaseControllerTest() {
 
         //when
         mockMvc.perform(get("/api/channels/${channelId}/channelPosts")
+                .param("postNameToSearch", "report") //Spring hateoas page start index is 0
                 .param("page", "1") //Spring hateoas page start index is 0
                 .param("size", "10")
                 .param("sort", "createDate,DESC")
@@ -519,11 +525,11 @@ internal class ChannelApiTest : BaseControllerTest() {
         val parser2 = Jackson2JsonParser()
         val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
 
-        //given
-        val modifiedChannelPostName = "Test new post Subject 2"
-        val modifiedChannelPostContent = "content test 2"
-        val modifiedChannelPostDto = ChannelPostDto(channelPostName = modifiedChannelPostName,
-                channelPostContent = modifiedChannelPostContent)
+//        //given
+//        val modifiedChannelPostName = "Test new post Subject 2"
+//        val modifiedChannelPostContent = "content test 2"
+//        val modifiedChannelPostDto = ChannelPostDto(channelPostName = modifiedChannelPostName,
+//                channelPostContent = modifiedChannelPostContent)
 
         val viewCount = 1
 
@@ -537,10 +543,10 @@ internal class ChannelApiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
-//                .andExpect(jsonPath("channelPostId").value(channelPostId))
-//                .andExpect(jsonPath("accountName").value(savedUser.accountname))
-//                .andExpect(jsonPath("channelPostName").value(modifiedChannelPostName))
-//                .andExpect(jsonPath("channelPostContent").value(modifiedChannelPostContent))
+                .andExpect(jsonPath("channelPostId").value(channelPostId))
+                .andExpect(jsonPath("accountName").value(savedUser.accountname))
+                .andExpect(jsonPath("channelPostName").value(channelPostName))
+                .andExpect(jsonPath("viewCount").value(viewCount))
         /*
         *  e : Update Channel Content
         * */

@@ -62,9 +62,10 @@ class ChannelService {
 
     fun getChannelPostById(channelPostId: Long) = channelPostRepository.getOne(channelPostId)
 
-    fun getChannelPosts(channelId: Long, pageable: Pageable): Page<ChannelPost> {
+    fun getChannelPosts(channelId: Long, postNameToSearch: String, pageable: Pageable): Page<ChannelPost> {
         val foundChannel = channelRepository.getOne(channelId)
-        return channelPostRepository.findByChannel(foundChannel, pageable)
+        //return channelPostRepository.findByChannel(foundChannel, pageable)
+        return channelPostRepository.findByChannelAndChannelPostNameContaining(foundChannel, postNameToSearch, pageable)
     }
 
     fun getChannelPostContent(channelPost: ChannelPost): ChannelPostContent {

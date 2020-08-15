@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface ChannelPostRepository : JpaRepository<ChannelPost, Long> {
 
     fun findByChannel(channel: Channel, pageable: Pageable): Page<ChannelPost>
+
+    fun findByChannelAndChannelPostNameContaining(channel: Channel, channelPostName: String, pageable: Pageable): Page<ChannelPost>
 }

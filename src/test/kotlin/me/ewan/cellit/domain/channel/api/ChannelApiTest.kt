@@ -2,15 +2,24 @@ package me.ewan.cellit.domain.channel.api
 
 import com.google.common.net.HttpHeaders
 import me.ewan.cellit.common.BaseControllerTest
+import me.ewan.cellit.domain.account.dao.AccountRepository
 import me.ewan.cellit.domain.account.service.AccountService
 import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
+import me.ewan.cellit.domain.cell.dao.AccountCellRepository
 import me.ewan.cellit.domain.cell.dao.CellRepository
+import me.ewan.cellit.domain.cell.dao.CellRequestRepository
 import me.ewan.cellit.domain.cell.service.CellService
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
+import me.ewan.cellit.domain.channel.dao.ChannelPostCommentRepository
+import me.ewan.cellit.domain.channel.dao.ChannelPostContentRepository
+import me.ewan.cellit.domain.channel.dao.ChannelPostRepository
+import me.ewan.cellit.domain.channel.dao.ChannelRepository
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
+import me.ewan.cellit.domain.channel.vo.dto.ChannelPostCommentDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.MediaTypes
@@ -31,7 +40,40 @@ internal class ChannelApiTest : BaseControllerTest() {
     lateinit var cellService: CellService
 
     @Autowired
-    lateinit var cellRepository: CellRepository
+    lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    private lateinit var cellRepository: CellRepository
+
+    @Autowired
+    private lateinit var channelRepository: ChannelRepository
+
+    @Autowired
+    private lateinit var cellRequestRepository: CellRequestRepository
+
+    @Autowired
+    private lateinit var channelPostContentRepository: ChannelPostContentRepository
+
+    @Autowired
+    private lateinit var channelPostCommentRepository: ChannelPostCommentRepository
+
+    @Autowired
+    private lateinit var channelPostRepository: ChannelPostRepository
+
+
+
+    @Autowired
+    private lateinit var accountCellRepository: AccountCellRepository
+
+
+    @BeforeEach
+    fun setUp() {
+        this.accountCellRepository.deleteAll()
+        this.accountRepository.deleteAll()
+        this.channelRepository.deleteAll()
+        this.cellRequestRepository.deleteAll()
+        this.cellRepository.deleteAll()
+    }
 
     @Test
     fun `Create Channel`(){
@@ -463,7 +505,7 @@ internal class ChannelApiTest : BaseControllerTest() {
         val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
 
         //when
-        val result = mockMvc.perform(post("/api/channels")
+        val resultOfCreateChannel = mockMvc.perform(post("/api/channels")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
@@ -484,8 +526,8 @@ internal class ChannelApiTest : BaseControllerTest() {
         *  s : Create Channel Post
         * */
         //given
-        val response: MockHttpServletResponse = result.andReturn().response
-        val responseBody = response.contentAsString
+        val responseOfCreateChannel: MockHttpServletResponse = resultOfCreateChannel.andReturn().response
+        val responseBody = responseOfCreateChannel.contentAsString
         val parser = Jackson2JsonParser()
         val channelId = parser.parseMap(responseBody)["channelId"].toString()
         val cellId = parser.parseMap(responseBody)["cellId"].toString()
@@ -498,7 +540,7 @@ internal class ChannelApiTest : BaseControllerTest() {
                 accountName = savedUser.accountname!!)
 
         //when
-        val result2 = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
+        val resultOfCreateChannelPost = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
@@ -520,8 +562,8 @@ internal class ChannelApiTest : BaseControllerTest() {
         /*
         *  s : Update Channel Post view Count
         * */
-        val response2: MockHttpServletResponse = result2.andReturn().response
-        val responseBody2 = response2.contentAsString
+        val responseOfUpdateChannelPostViewCount: MockHttpServletResponse = resultOfCreateChannelPost.andReturn().response
+        val responseBody2 = responseOfUpdateChannelPostViewCount.contentAsString
         val parser2 = Jackson2JsonParser()
         val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
 
@@ -547,6 +589,116 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("accountName").value(savedUser.accountname))
                 .andExpect(jsonPath("channelPostName").value(channelPostName))
                 .andExpect(jsonPath("viewCount").value(viewCount))
+        /*
+        *  e : Update Channel Content
+        * */
+    }
+
+    @Test
+    fun `Create Channel Post Comment`(){
+        /*
+        *  s : Create Channel
+        * */
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val savedUser = createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName = "common"
+        val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
+
+        //when
+        val resultOfCreateChannel = mockMvc.perform(post("/api/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelDto))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelId").exists())
+                .andExpect(jsonPath("channelName").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel
+        * */
+
+        /*
+        *  s : Create Channel Post
+        * */
+        //given
+        val responseOfCreateChannel: MockHttpServletResponse = resultOfCreateChannel.andReturn().response
+        val responseBody = responseOfCreateChannel.contentAsString
+        val parser = Jackson2JsonParser()
+        val channelId = parser.parseMap(responseBody)["channelId"].toString()
+        val cellId = parser.parseMap(responseBody)["cellId"].toString()
+
+        val channelPostName = "Test new post Subject"
+        val channelPostContent = "content test"
+        val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
+                channelPostContent = channelPostContent,
+                accountId = savedUser.accountId!!,
+                accountName = savedUser.accountname!!)
+
+        //when
+        val resultOfCreateChannelPost = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelPostDto))
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelPostId").exists())
+                .andExpect(jsonPath("channelPostName").exists())
+                .andExpect(jsonPath("accountId").exists())
+                .andExpect(jsonPath("accountName").exists())
+                .andExpect(jsonPath("createDate").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel Post
+        * */
+
+        /*
+        *  s : Update Channel Post view Count
+        * */
+        val responseOfChannelPost: MockHttpServletResponse = resultOfCreateChannelPost.andReturn().response
+        val responseBody2 = responseOfChannelPost.contentAsString
+        val parser2 = Jackson2JsonParser()
+        val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
+
+//        //given
+//        val modifiedChannelPostName = "Test new post Subject 2"
+//        val modifiedChannelPostContent = "content test 2"
+//        val modifiedChannelPostDto = ChannelPostDto(channelPostName = modifiedChannelPostName,
+//                channelPostContent = modifiedChannelPostContent)
+
+        val channelComment = "Good Job!"
+        val channelPostCommentDto = ChannelPostCommentDto(accountId = savedUser.accountId, channelPostComment = channelComment)
+
+        //when
+        mockMvc.perform(post("/api/channels/${channelId}/channelPosts/${channelPostId}/channelPostComments")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelPostCommentDto))
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelPostCommentId").isNotEmpty)
+                .andExpect(jsonPath("channelPostComment").value(channelComment))
+                .andExpect(jsonPath("accountId").value(savedUser.accountId!!))
+                .andExpect(jsonPath("channelPostId").value(channelPostId))
         /*
         *  e : Update Channel Content
         * */

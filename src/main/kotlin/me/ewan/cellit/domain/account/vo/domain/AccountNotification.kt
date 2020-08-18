@@ -1,8 +1,6 @@
 package me.ewan.cellit.domain.account.vo.domain
 
-import me.ewan.cellit.domain.cell.vo.domain.AccountCell
-import org.codehaus.jackson.annotate.JsonIgnore
-import org.hibernate.annotations.CreationTimestamp
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.jpa.repository.Temporal
 import java.text.SimpleDateFormat
 import java.util.*

@@ -1,7 +1,6 @@
 package me.ewan.cellit.domain.channel.vo.domain
 
-import me.ewan.cellit.domain.cell.vo.domain.Cell
-import org.codehaus.jackson.annotate.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.jpa.repository.Temporal
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,6 +18,7 @@ class ChannelPostComment (
         @Column
         var accountId: Long? = null,
 
+        @JsonIgnore // prevent infinity loop when trans JSON
         @ManyToOne
         @JoinColumn(name = "channelPostId")
         var channelPost: ChannelPost,

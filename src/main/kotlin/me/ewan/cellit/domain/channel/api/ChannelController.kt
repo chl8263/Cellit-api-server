@@ -1,12 +1,17 @@
 package me.ewan.cellit.domain.channel.api
 
+import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostCommentDtoValidator
 import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostDtoValidator
 import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPost
+import me.ewan.cellit.domain.channel.vo.domain.ChannelPostComment
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
+import me.ewan.cellit.domain.channel.vo.dto.ChannelPostCommentDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelPostContentDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
+import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostCommentEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostContentEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostEntityModel
 import me.ewan.cellit.global.error.ErrorHelper
@@ -36,6 +41,9 @@ class ChannelController {
     lateinit var channelService: ChannelService
 
     @Autowired
+    lateinit var accountService: AccountService
+
+    @Autowired
     lateinit var modelMapper: ModelMapper
 
     @Autowired
@@ -43,6 +51,9 @@ class ChannelController {
 
     @Autowired
     private lateinit var channelPostDtoValidator: ChannelPostDtoValidator
+
+    @Autowired
+    private lateinit var channelPostCommentDtoValidator: ChannelPostCommentDtoValidator
 
     @PostMapping
     fun createChannel(@RequestBody channelDto: ChannelDto): ResponseEntity<Any> {
@@ -270,6 +281,61 @@ class ChannelController {
             channelPostEntityModel.add(selfLink)
 
             return ResponseEntity.ok(channelPostEntityModel)
+
+        } catch (e: Exception) {
+            log.error { e.message }
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
+    @PostMapping("{channelId}/channelPosts/{channelPostId}/channelPostComments")
+    fun createChannelPostComments(@PathVariable channelId: Long,
+                                  @PathVariable channelPostId: Long,
+                           @RequestBody channelPostCommentDto: ChannelPostCommentDto): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = channelPostCommentDtoValidator.validate(channelPostCommentDto)
+
+            val foundedChannel = channelService.getChannelByChannelId(channelId)
+            if (foundedChannel == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
+            }
+
+            val foundedChannelPost = channelService.getChannelPostById(channelPostId)
+            if (foundedChannelPost == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel Post.", errorList)
+            }
+
+            val foundedAccount= accountService.getAccountById(channelPostCommentDto.accountId?: -1) //prevent null point exception
+            if (foundedAccount == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this account", errorList)
+            }
+
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val channelPostComment = ChannelPostComment(
+                    channelPostComment = channelPostCommentDto.channelPostComment,
+                    accountId = channelPostCommentDto.accountId,
+                    channelPost = foundedChannelPost
+            )
+
+            val savedChannelPostComment = channelService.saveChannelPostComment(channelPostComment)
+
+            val entityModel = savedChannelPostComment.run {
+                val channelPostCommentEntityModel = ChannelPostCommentEntityModel(this, foundedChannelPost.channelPostId!!)
+                val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPost").slash(channelPostId).slash("channelPostComments").withSelfRel()
+                channelPostCommentEntityModel.add(selfLink)
+            }
+
+            val linkBuilder = linkTo(methodOn(ChannelController::class.java).createChannelPostComments(channelId, channelPostId, channelPostCommentDto))
+            val createUrl = linkBuilder.toUri()
+
+            return ResponseEntity.created(createUrl).body(entityModel)
 
         } catch (e: Exception) {
             log.error { e.message }

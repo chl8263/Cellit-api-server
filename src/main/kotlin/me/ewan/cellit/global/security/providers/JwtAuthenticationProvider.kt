@@ -27,7 +27,7 @@ class JwtAuthenticationProvider: AuthenticationProvider {
         val username = token.getUsername()
         val password = token.getPassword()
 
-        val account = accountService.getAccountWithName(username)
+        val account = accountService.getAccountByName(username)
 
         if(isCorrectPassword(password, account!!)){
             return PostAuthorizationToken.getTokenFromAccountContext(AccountContext.fromAccountModel(account!!))

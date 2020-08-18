@@ -14,12 +14,8 @@ import me.ewan.cellit.domain.cell.api.CellController
 import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
-import me.ewan.cellit.domain.cell.vo.query.CellQuery
 import me.ewan.cellit.global.common.ConvertQueryToClass
 import me.ewan.cellit.global.error.ErrorHelper
-import me.ewan.cellit.global.error.ErrorToJson
-import me.ewan.cellit.global.error.vo.ErrorVo
-import me.ewan.cellit.global.error.vo.HTTP_STATUS
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
@@ -63,7 +59,7 @@ class AccountController{
                     password = accountDto.password!!,
                     role = AccountRole.ROLE_USER)
 
-            accountService.getAccountWithName(accountDto.accountname!!)?.let {
+            accountService.getAccountByName(accountDto.accountname!!)?.let {
                 val body = errorHelper.getUnexpectError("This account already exit, Please try another one.")
                 return ResponseEntity.badRequest().body(body)
             }
@@ -90,7 +86,7 @@ class AccountController{
     @GetMapping("/{accountName}")
     fun getAccountWithUserName(@PathVariable accountName: String): ResponseEntity<Any>{
         try {
-            val account = accountService.getAccountWithName(accountName)?.let {
+            val account = accountService.getAccountByName(accountName)?.let {
                 val accountModel = AccountEntityModel(it)
                 val selfLink = linkTo(AccountController::class.java).slash(it.accountId).withSelfRel()
                 accountModel.add(selfLink)
@@ -108,7 +104,7 @@ class AccountController{
     @GetMapping("/{accountId}/cells")
     fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<Any> {
         try {
-            val accountCells = accountService.getAccountCellsWithAccountId(accountId) ?: ArrayList<AccountCell>()
+            val accountCells = accountService.getAccountCellsByAccountId(accountId) ?: ArrayList<AccountCell>()
 
             val cellsEntityModel = accountCells.map {
                 val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName, cellDescription = it.cell.cellDescription, createDate = it.cell.createDate)
@@ -163,7 +159,7 @@ class AccountController{
                                    @RequestBody @Valid accountNotificationDto: AccountNotificationDto): ResponseEntity<Any> {
         try{
             // s: validator
-            val foundAccount = accountService.getAccountWithId(accountId)
+            val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
                 val body = errorHelper.getUnexpectError("Not exits this account.")
                 return ResponseEntity.badRequest().body(body)

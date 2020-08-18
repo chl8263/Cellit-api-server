@@ -37,7 +37,7 @@ class CellService {
 
     fun createCell(cellDto: CellDto, name: String): Cell {
 
-        val currentUser = accountService.getAccountWithName(name) ?: throw NoSuchElementException("Cannot find this account for create cell")
+        val currentUser = accountService.getAccountByName(name) ?: throw NoSuchElementException("Cannot find this account for create cell")
 
         val cell = Cell(cellName = cellDto.cellName!!.trim(), cellDescription = cellDto.cellDescription)
         //val cell = modelMapper.map(cellDto, Cell::class.java)

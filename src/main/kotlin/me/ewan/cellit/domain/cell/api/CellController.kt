@@ -136,7 +136,7 @@ class CellController {
             if(foundCell == null){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
             }
-            val foundAccount = accountService.getAccountWithId(accountId)
+            val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
                 errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
             }
@@ -231,7 +231,7 @@ class CellController {
         try {
             // s: validator
             var errorList = ArrayList<ErrorVo>()
-            val foundAccount = accountService.getAccountWithId(accountId)
+            val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
                 errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits this account.", errorList = errorList)
             }
@@ -254,7 +254,7 @@ class CellController {
             // e: validator
 
             val cell = cellService.getCellWithId(cellId = cellId)
-            val requestAccount = accountService.getAccountWithId(accountId)
+            val requestAccount = accountService.getAccountById(accountId)
             val cellRequest = CellRequest(cell = cell!!, accountId = requestAccount?.accountId, accountName = requestAccount?.accountname)
 
             cellRequestService.createCellRequest(cellRequest)
@@ -283,7 +283,7 @@ class CellController {
         try {
             // s: validator
             var errorList = ArrayList<ErrorVo>()
-            val foundAccount = accountService.getAccountWithId(accountId)
+            val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
                 errorList = errorHelper.addErrorAttributes(status = BAD_REQUEST, message = "Not exits this account.", errorList = errorList)
             }

@@ -43,12 +43,12 @@ class AccountService : UserDetailsService {
         return savedAccount
     }
 
-    fun getAccountWithId(accountId: Long): Account? = accountRepository.findByAccountId(accountId)
-    fun getAccountWithName(username: String): Account? = accountRepository.findByAccountname(username)
+    fun getAccountById(accountId: Long): Account? = accountRepository.findByAccountId(accountId)
+    fun getAccountByName(username: String): Account? = accountRepository.findByAccountname(username)
 //        return accountRepository.findByAccountname(username)?: throw NoSuchElementException("Cannot find this account.")
 //    }
 
-    fun getAccountCellsWithAccountId (accountId: Long): List<AccountCell>? {
+    fun getAccountCellsByAccountId (accountId: Long): List<AccountCell>? {
         val account = accountRepository.findAccountFetch(accountId)
 
         return account?.accountCells

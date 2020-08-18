@@ -2,11 +2,13 @@ package me.ewan.cellit.domain.channel.service
 
 import com.querydsl.core.Tuple
 import me.ewan.cellit.domain.cell.dao.CellRepository
+import me.ewan.cellit.domain.channel.dao.ChannelPostCommentRepository
 import me.ewan.cellit.domain.channel.dao.ChannelPostContentRepository
 import me.ewan.cellit.domain.channel.dao.ChannelPostRepository
 import me.ewan.cellit.domain.channel.dao.ChannelRepository
 import me.ewan.cellit.domain.channel.vo.domain.Channel
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPost
+import me.ewan.cellit.domain.channel.vo.domain.ChannelPostComment
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPostContent
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +27,9 @@ class ChannelService {
 
     @Autowired
     lateinit var cellRepository: CellRepository
+
+    @Autowired
+    lateinit var cellPostCommentRepository: ChannelPostCommentRepository
 
     @Autowired
     lateinit var channelPostContentRepository: ChannelPostContentRepository
@@ -71,5 +76,9 @@ class ChannelService {
     fun getChannelPostContent(channelPost: ChannelPost): ChannelPostContent {
         val channelPostContentId = channelPost.channelPostContent?.channelPostContentId
         return channelPostContentRepository.getOne(channelPostContentId!!)
+    }
+
+    fun saveChannelPostComment(channelPostComment: ChannelPostComment): ChannelPostComment {
+        return cellPostCommentRepository.save(channelPostComment)
     }
 }

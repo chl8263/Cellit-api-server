@@ -29,7 +29,7 @@ class ChannelService {
     lateinit var cellRepository: CellRepository
 
     @Autowired
-    lateinit var cellPostCommentRepository: ChannelPostCommentRepository
+    lateinit var channelPostCommentRepository: ChannelPostCommentRepository
 
     @Autowired
     lateinit var channelPostContentRepository: ChannelPostContentRepository
@@ -79,6 +79,11 @@ class ChannelService {
     }
 
     fun saveChannelPostComment(channelPostComment: ChannelPostComment): ChannelPostComment {
-        return cellPostCommentRepository.save(channelPostComment)
+        return channelPostCommentRepository.save(channelPostComment)
+    }
+
+    fun getChannelPostCommentByChannelPostId(channelPostId: Long): List<ChannelPostComment> {
+        val channelPostComments = channelPostCommentRepository.findByChannelPostId(channelPostId)
+        return channelPostComments
     }
 }

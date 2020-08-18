@@ -203,9 +203,9 @@ class CellController {
             }
             // e: validator
 
-            val cellRequest = cellRequestService.getCellRequestsWithCell(foundCell.cellId!!)
+            val cellRequests = cellRequestService.getCellRequestsWithCell(foundCell.cellId!!)
 
-            val cellsRequestEntityModel = cellRequest.map {
+            val cellsRequestEntityModel = cellRequests.map {
                 val tempCellRequestDto = CellRequestDto(cellRequestId = it.cellRequestId, cellId = it.cell.cellId, accountId = it.accountId, accountName = it.accountName!!, createDate = it.createDate)
                 val cellModel = CellRequestEntityModel(tempCellRequestDto)
                 val selfLink = linkTo(CellController::class.java).slash(foundCell.cellId).slash("cellRequest").slash(it.cellRequestId).withSelfRel()

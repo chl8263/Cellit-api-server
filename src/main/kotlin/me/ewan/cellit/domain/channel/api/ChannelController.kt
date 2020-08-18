@@ -1,8 +1,11 @@
 package me.ewan.cellit.domain.channel.api
 
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.cell.api.CellController
+import me.ewan.cellit.domain.cell.vo.dto.CellRequestDto
 import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostCommentDtoValidator
 import me.ewan.cellit.domain.cell.vo.dto.validator.ChannelPostDtoValidator
+import me.ewan.cellit.domain.cell.vo.entityModel.CellRequestEntityModel
 import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPost
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPostComment
@@ -22,6 +25,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PagedResourcesAssembler
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
@@ -328,7 +332,7 @@ class ChannelController {
 
             val entityModel = savedChannelPostComment.run {
                 val channelPostCommentEntityModel = ChannelPostCommentEntityModel(this, foundedChannelPost.channelPostId!!)
-                val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPost").slash(channelPostId).slash("channelPostComments").withSelfRel()
+                val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPost").slash(channelPostId).slash("channelPostComments").slash(savedChannelPostComment.channelPostCommentId).withSelfRel()
                 channelPostCommentEntityModel.add(selfLink)
             }
 
@@ -336,6 +340,49 @@ class ChannelController {
             val createUrl = linkBuilder.toUri()
 
             return ResponseEntity.created(createUrl).body(entityModel)
+
+        } catch (e: Exception) {
+            log.error { e.message }
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
+    @GetMapping("{channelId}/channelPosts/{channelPostId}/channelPostComments")
+    fun getChannelPostComments(@PathVariable channelId: Long,
+                              @PathVariable channelPostId: Long): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = ArrayList<ErrorVo>()
+
+            val foundedChannel = channelService.getChannelByChannelId(channelId)
+            if (foundedChannel == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
+            }
+
+            val foundedChannelPost = channelService.getChannelPostById(channelPostId)
+            if (foundedChannelPost == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel Post.", errorList)
+            }
+
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val channelComments = channelService.getChannelPostCommentByChannelPostId(channelPostId)
+
+            val channelPostCommentsEntityModel = channelComments.map {
+                val channelPostCommentModel = ChannelPostCommentEntityModel(it, channelPostId)
+                val selfLink = linkTo(ChannelController::class.java).slash(channelId).slash("/channelPost").slash(channelPostId).slash("channelPostComments").slash(it.channelPostCommentId).withSelfRel()
+                channelPostCommentModel.add(selfLink)
+            }
+
+            val selfLink = linkTo(methodOn(ChannelController::class.java).getChannelPostComments(channelId, channelPostId)).withSelfRel()
+            val resultEntityModel = CollectionModel(channelPostCommentsEntityModel, selfLink)
+
+            return ResponseEntity.ok(resultEntityModel)
 
         } catch (e: Exception) {
             log.error { e.message }

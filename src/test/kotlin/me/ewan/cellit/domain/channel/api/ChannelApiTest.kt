@@ -669,18 +669,12 @@ internal class ChannelApiTest : BaseControllerTest() {
         * */
 
         /*
-        *  s : Update Channel Post view Count
+        *  s : Create Channel Post Comment
         * */
         val responseOfChannelPost: MockHttpServletResponse = resultOfCreateChannelPost.andReturn().response
         val responseBody2 = responseOfChannelPost.contentAsString
         val parser2 = Jackson2JsonParser()
         val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
-
-//        //given
-//        val modifiedChannelPostName = "Test new post Subject 2"
-//        val modifiedChannelPostContent = "content test 2"
-//        val modifiedChannelPostDto = ChannelPostDto(channelPostName = modifiedChannelPostName,
-//                channelPostContent = modifiedChannelPostContent)
 
         val channelComment = "Good Job!"
         val channelPostCommentDto = ChannelPostCommentDto(accountId = savedUser.accountId, channelPostComment = channelComment)
@@ -700,7 +694,135 @@ internal class ChannelApiTest : BaseControllerTest() {
                 .andExpect(jsonPath("accountId").value(savedUser.accountId!!))
                 .andExpect(jsonPath("channelPostId").value(channelPostId))
         /*
-        *  e : Update Channel Content
+        *  e : Create Channel Post Comment
+        * */
+    }
+
+    @Test
+    fun `Get Channel Post Comments`(){
+        /*
+        *  s : Create Channel
+        * */
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val savedUser = createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName = "common"
+        val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
+
+        //when
+        val resultOfCreateChannel = mockMvc.perform(post("/api/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelDto))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelId").exists())
+                .andExpect(jsonPath("channelName").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel
+        * */
+
+        /*
+        *  s : Create Channel Post
+        * */
+        //given
+        val responseOfCreateChannel: MockHttpServletResponse = resultOfCreateChannel.andReturn().response
+        val responseBody = responseOfCreateChannel.contentAsString
+        val parser = Jackson2JsonParser()
+        val channelId = parser.parseMap(responseBody)["channelId"].toString()
+        val cellId = parser.parseMap(responseBody)["cellId"].toString()
+
+        val channelPostName = "Test new post Subject"
+        val channelPostContent = "content test"
+        val channelPostDto = ChannelPostDto(channelPostName = channelPostName,
+                channelPostContent = channelPostContent,
+                accountId = savedUser.accountId!!,
+                accountName = savedUser.accountname!!)
+
+        //when
+        val resultOfCreateChannelPost = mockMvc.perform(post("/api/channels/${channelId}/channelPosts")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelPostDto))
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelPostId").exists())
+                .andExpect(jsonPath("channelPostName").exists())
+                .andExpect(jsonPath("accountId").exists())
+                .andExpect(jsonPath("accountName").exists())
+                .andExpect(jsonPath("createDate").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        *  e : Create Channel Post
+        * */
+
+        /*
+        *  s : Create Channel Post Comment
+        * */
+        val responseOfChannelPost: MockHttpServletResponse = resultOfCreateChannelPost.andReturn().response
+        val responseBody2 = responseOfChannelPost.contentAsString
+        val parser2 = Jackson2JsonParser()
+        val channelPostId = parser2.parseMap(responseBody2)["channelPostId"].toString()
+
+        val channelComments = arrayOf("Good Job!", "Good Job! 2", "Good Job! 3", "Good Job! 4", "Good Job! 5")
+
+        channelComments.forEach {
+            val channelPostCommentDto = ChannelPostCommentDto(accountId = savedUser.accountId, channelPostComment = it)
+
+            //when
+            mockMvc.perform(post("/api/channels/${channelId}/channelPosts/${channelPostId}/channelPostComments")
+                    .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaTypes.HAL_JSON)
+                    .content(objectMapper.writeValueAsString(channelPostCommentDto))
+            )
+                    //then
+                    .andDo(print())
+                    .andExpect(status().isCreated)
+                    .andExpect(jsonPath("channelPostCommentId").isNotEmpty)
+                    .andExpect(jsonPath("channelPostComment").value(it))
+                    .andExpect(jsonPath("accountId").value(savedUser.accountId!!))
+                    .andExpect(jsonPath("channelPostId").value(channelPostId))
+        }
+
+        /*
+        *  e : Create Channel Post Comment
+        * */
+
+        /*
+        *  s : Get Channel Post Comments
+        * */
+        //when
+        mockMvc.perform(get("/api/channels/${channelId}/channelPosts/${channelPostId}/channelPostComments")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+//                .andExpect(jsonPath("channelPostId").value(channelPostId))
+//                .andExpect(jsonPath("accountName").value(savedUser.accountname))
+//                .andExpect(jsonPath("channelPostName").value(channelPostName))
+//                .andExpect(jsonPath("channelPostContent").value(channelPostContent))
+
+        /*
+        *  e : Get Channel Post Comments
         * */
     }
 

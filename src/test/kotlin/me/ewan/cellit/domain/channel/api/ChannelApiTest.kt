@@ -816,11 +816,7 @@ internal class ChannelApiTest : BaseControllerTest() {
                 //then
                 .andDo(print())
                 .andExpect(status().isOk)
-//                .andExpect(jsonPath("channelPostId").value(channelPostId))
-//                .andExpect(jsonPath("accountName").value(savedUser.accountname))
-//                .andExpect(jsonPath("channelPostName").value(channelPostName))
-//                .andExpect(jsonPath("channelPostContent").value(channelPostContent))
-
+                .andExpect(jsonPath("_embedded.channelPostCommentEntityModelList").exists())
         /*
         *  e : Get Channel Post Comments
         * */

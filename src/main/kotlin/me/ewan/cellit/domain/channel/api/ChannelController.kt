@@ -325,6 +325,7 @@ class ChannelController {
             val channelPostComment = ChannelPostComment(
                     channelPostComment = channelPostCommentDto.channelPostComment,
                     accountId = channelPostCommentDto.accountId,
+                    accountName = foundedAccount?.accountname!!,
                     channelPost = foundedChannelPost
             )
 
@@ -354,7 +355,7 @@ class ChannelController {
         try {
             // s: validator
             val errorList = ArrayList<ErrorVo>()
-
+ 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
             if (foundedChannel == null) {
                 errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)

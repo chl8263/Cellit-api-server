@@ -18,6 +18,9 @@ class ChannelPostComment (
         @Column
         var accountId: Long? = null,
 
+        @Column
+        var accountName: String = "",
+
         @JsonIgnore // prevent infinity loop when trans JSON
         @ManyToOne
         @JoinColumn(name = "channelPostId")

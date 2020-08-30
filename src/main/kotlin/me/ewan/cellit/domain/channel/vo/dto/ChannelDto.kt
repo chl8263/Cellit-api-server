@@ -13,5 +13,7 @@ data class ChannelDto(
 
         @NotEmpty
         @NotNull
-        var channelName: String? = null
+        var channelName: String? = null,
+
+        var active: Int? = null
 )

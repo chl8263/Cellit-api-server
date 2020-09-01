@@ -82,6 +82,47 @@ class ChannelController {
         }
     }
 
+    @PatchMapping("{channelId}/active")
+    fun updateChannelActive(@PathVariable channelId: Long,
+                            @RequestBody activeState: Int): ResponseEntity<Any>{
+        try {
+            // s: validator
+            val errorList = ArrayList<ErrorVo>()
+
+            val foundedChannel = channelService.getChannelByChannelId(channelId)
+            if (foundedChannel == null) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Not exits this Channel.", errorList)
+            }
+
+            if (activeState !is Int) {
+                errorHelper.addErrorAttributes(BAD_REQUEST, "Active state must be integer", errorList)
+            }
+
+            if (errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            foundedChannel!!.active = activeState
+            val savedChannel = channelService.saveChannel(foundedChannel!!)
+
+            val entityModel = savedChannel.run {
+                val tempChannelDto = modelMapper.map(this, ChannelDto::class.java)
+                val channelEntityModel = ChannelEntityModel(tempChannelDto)
+                val selfLink = linkTo(ChannelController::class.java).slash(channelId).withSelfRel()
+                channelEntityModel.add(selfLink)
+            }
+
+            return ResponseEntity.ok(entityModel)
+
+        } catch (e: Exception) {
+            log.error { e.message }
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
     @PostMapping("{channelId}/channelPosts")
     fun createChannelPosts(@PathVariable channelId: Long,
                            @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any> {

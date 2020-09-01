@@ -171,18 +171,17 @@ class CellController {
     }
 
     @GetMapping("/{cellId}/channels")
-    fun getChannelsWithCellId(@PathVariable cellId: Long): ResponseEntity<Any>{
-
+    fun getChannelsByCellId(@PathVariable cellId: Long): ResponseEntity<Any>{
         try {
             val channels = channelService.getChannelsByCellId(cellId)
 
-            val channelsEntityModel = channels.map {
+            val channelsEntityModel = channels.sortedBy { x -> x.createDate }.map {
                 val channelModel = ChannelEntityModel(modelMapper.map(it, ChannelDto::class.java))
                 val selfLink = linkTo(ChannelController::class.java).slash(it.channelId).withSelfRel()
                 channelModel.add(selfLink)
             }
 
-            val selfLink = linkTo(methodOn(CellController::class.java).getChannelsWithCellId(cellId)).withSelfRel()
+            val selfLink = linkTo(methodOn(CellController::class.java).getChannelsByCellId(cellId)).withSelfRel()
             val resultEntityModel = CollectionModel(channelsEntityModel, selfLink)
 
             return ResponseEntity.ok(resultEntityModel)

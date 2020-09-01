@@ -44,6 +44,8 @@ class ChannelService {
         return savedChannel
     }
 
+    fun saveChannel (channel: Channel) = channelRepository.save(channel)
+
     fun getChannelByChannelId(channelId: Long): Channel? = channelRepository.getOne(channelId)
 
     fun getChannelsByCellId(cellId: Long): List<Channel> {

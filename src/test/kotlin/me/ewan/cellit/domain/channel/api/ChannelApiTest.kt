@@ -108,6 +108,67 @@ internal class ChannelApiTest : BaseControllerTest() {
     }
 
     @Test
+    fun `Update Channel active state`(){
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        createAccount(name = name, pw = pw)
+
+        val jwtToken = getJwtToken(name, pw)
+
+        val cellName = "Accounting"
+        val cellDto = CellDto(cellName = cellName)
+        val savedCell = cellService.createCell(cellDto, name)
+
+        val channelName = "common"
+        val channelDto = ChannelDto(cellId = savedCell.cellId ,channelName = channelName)
+
+        //when
+        val result = mockMvc.perform(post("/api/channels")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(channelDto))
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("channelId").exists())
+                .andExpect(jsonPath("channelName").exists())
+                .andExpect(jsonPath("_links.self").exists())
+
+        /*
+        *  s : Update Channel active state
+        * */
+        val response2: MockHttpServletResponse = result.andReturn().response
+        val responseBody2 = response2.contentAsString
+        val parser2 = Jackson2JsonParser()
+        val channelId = parser2.parseMap(responseBody2)["channelId"].toString()
+        val cellId = parser2.parseMap(responseBody2)["cellId"].toString()
+
+        //given
+        val activeState = 0
+
+        //when
+        mockMvc.perform(patch("/api/channels/${channelId}/active")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content("$activeState")
+        )
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("channelId").value(channelId))
+                .andExpect(jsonPath("cellId").value(cellId))
+                .andExpect(jsonPath("active").value(activeState))
+        /*
+        *  e : Update Channel Content
+        * */
+    }
+
+    @Test
     fun `Create Channel Post`(){
         //given
         val name = appProperties.testUserAccountname

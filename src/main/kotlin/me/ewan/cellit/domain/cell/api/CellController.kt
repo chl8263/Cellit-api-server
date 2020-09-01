@@ -1,6 +1,8 @@
 package me.ewan.cellit.domain.cell.api
 
+import me.ewan.cellit.domain.account.api.AccountController
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
 import me.ewan.cellit.domain.cell.service.CellRequestService
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
@@ -127,8 +129,44 @@ class CellController {
         }
     }
 
+    @GetMapping("/{cellId}/accounts")
+    fun getAccountsAtCell(@PathVariable cellId: Long): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = ArrayList<ErrorVo>()
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
+            }
+
+            if(errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val accountList = cellService.findAccountsInCell(foundCell!!.cellId!!)
+
+            val entityModel = accountList.map {
+                val cellModel = AccountEntityModel(it)
+                val selfLink = linkTo(AccountController::class.java).slash(it.accountId).withSelfRel()
+                cellModel.add(selfLink)
+            }
+
+            val selfLink = linkTo(methodOn(CellController::class.java).getAccountsAtCell(cellId)).withSelfRel()
+            val resultEntityModel = CollectionModel(entityModel, selfLink)
+
+            return ResponseEntity.ok(resultEntityModel)
+
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
     @PostMapping("/{cellId}/accounts/{accountId}")
-    fun insertAccountAtCell(@PathVariable cellId: Long, @PathVariable accountId: Long): ResponseEntity<Any> {
+    fun insertAccountAtCell(@PathVariable cellId: Long,
+                            @PathVariable accountId: Long): ResponseEntity<Any> {
         try {
             // s: validator
             val errorList = ArrayList<ErrorVo>()

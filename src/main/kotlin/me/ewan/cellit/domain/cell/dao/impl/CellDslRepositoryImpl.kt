@@ -43,4 +43,15 @@ class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), Cel
                         .and(account.accountId.eq(accountId)))
                 .fetchOne()
     }
+
+    override fun findAccounts(cellId: Long): List<Account> {
+        val cell = QCell.cell
+        val account = QAccount.account
+        val accountCell = QAccountCell.accountCell
+
+        return from(account)
+                .innerJoin(account.accountCells, accountCell).fetchJoin()
+                .where(accountCell.cell.cellId.eq(cellId))
+                .fetch()
+    }
 }

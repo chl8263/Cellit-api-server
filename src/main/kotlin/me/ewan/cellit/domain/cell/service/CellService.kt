@@ -67,4 +67,9 @@ class CellService {
         val account = cellRepository.findAccountInCell(cellId, accountId)
         return account
     }
+
+    fun findAccountsInCell(cellId: Long): List<Account> {
+        val accounts = cellRepository.findAccounts(cellId)
+        return accounts
+    }
 }

@@ -7,4 +7,5 @@ import me.ewan.cellit.domain.cell.vo.query.CellQuery
 interface CellDslRepository {
     fun findCellsWithQuery(cellQuery: CellQuery): List<Cell>
     fun findAccountInCell(cellId: Long, accountId: Long): Account?
+    fun findAccounts(cellId: Long): List<Account>
 }

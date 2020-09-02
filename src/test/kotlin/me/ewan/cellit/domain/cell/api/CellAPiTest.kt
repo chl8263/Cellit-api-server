@@ -316,9 +316,71 @@ internal class CellAPiTest : BaseControllerTest() {
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("_links.self").exists())
-
+                .andExpect(jsonPath("_embedded.accountEntityModelList").exists())
+                .andExpect(jsonPath("_embedded.accountEntityModelList[0].accountName").value(name))
+                .andExpect(jsonPath("_embedded.accountEntityModelList[1].accountName").value(name2))
         /*
         * e: Get accounts from cell
+        * */
+    }
+
+    @Test
+    fun `Delete account in cell`(){
+
+        /*
+        * s: Insert account in specific cell
+        * */
+        //given
+        val name = appProperties.testUserAccountname
+        val pw = appProperties.testUserPassword
+        val name2 = appProperties.testUserAccountname2
+        val pw2 = appProperties.testUserPassword2
+        val testAccount1 =createAccount(name = name, pw = pw)
+        val testAccount2 = createAccount(name = name2, pw = pw2)
+
+        val jwtToken = getJwtToken(name2, pw2)
+
+        val cellName1 = "Cell_test1"
+        val cellDto1 = CellDto(cellName = cellName1)
+        val savedCell1 = cellService.createCell(cellDto1, testAccount1.accountname)
+
+        mockMvc.perform(post("/api/cells/${savedCell1.cellId}/cellRequests/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+        //when
+        mockMvc.perform(post("/api/cells/${savedCell1.cellId}/accounts/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("_links.self").exists())
+        /*
+        * e: Insert account in specific cell
+        * */
+
+        /*
+        * s: Delete account in cell
+        * */
+        //when
+        mockMvc.perform(delete("/api/cells/${savedCell1.cellId}/account/${testAccount2.accountId}")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
+                .accept(MediaTypes.HAL_JSON)
+        )
+
+                //then
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("_links.self").exists())
+//                .andExpect(jsonPath("_embedded.accountEntityModelList").exists())
+//                .andExpect(jsonPath("_embedded.accountEntityModelList[0].accountName").value(name))
+//                .andExpect(jsonPath("_embedded.accountEntityModelList[1].accountName").value(name2))
+        /*
+        * e: Delete account in cell
         * */
     }
 

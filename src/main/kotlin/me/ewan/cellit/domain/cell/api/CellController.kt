@@ -164,6 +164,47 @@ class CellController {
         }
     }
 
+    @DeleteMapping("/{cellId}/account/{accountId}")
+    fun deleteAccountAtCell(@PathVariable cellId: Long,
+                            @PathVariable accountId: Long): ResponseEntity<Any> {
+        try {
+            // s: validator
+            val errorList = ArrayList<ErrorVo>()
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
+            }
+            val foundAccount = accountService.getAccountById(accountId)
+            if(foundAccount == null){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "This Account doesn't exits.", errorList)
+            }
+
+            if(errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validator
+
+            val savedAccountCell = cellService.deleteAccountAtCell(foundCell!!.cellId!!, foundAccount!!.accountId!!)
+
+            if(savedAccountCell != 1L){
+                val body = errorHelper.getUnexpectError("Cannot delete account at cell.")
+                return ResponseEntity.badRequest().body(body)
+            }
+
+            val cellModel = AccountEntityModel(foundAccount)
+            val selfLink = linkTo(AccountController::class.java).slash(foundAccount.accountId).withSelfRel()
+
+            cellModel.add(selfLink)
+
+            return ResponseEntity.ok(cellModel)
+        }catch (e: Exception){
+            val body = errorHelper.getUnexpectError("Please try again..")
+            return ResponseEntity.badRequest().body(body)
+        }
+    }
+
+
     @PostMapping("/{cellId}/accounts/{accountId}")
     fun insertAccountAtCell(@PathVariable cellId: Long,
                             @PathVariable accountId: Long): ResponseEntity<Any> {

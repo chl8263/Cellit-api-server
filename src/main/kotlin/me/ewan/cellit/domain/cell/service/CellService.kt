@@ -52,6 +52,10 @@ class CellService {
         return savedCell
     }
 
+    fun deleteAccountAtCell(cellId: Long, accountId: Long): Long {
+        return cellRepository.deleteAccount(cellId, accountId)
+    }
+
     fun insertAccountAtCell(foundAccount: Account, foundCell: Cell): AccountCell {
         val accountCell = AccountCell(cellRole = CellRole.USER, account = foundAccount, cell = foundCell)
         accountCellRepository.save(accountCell)

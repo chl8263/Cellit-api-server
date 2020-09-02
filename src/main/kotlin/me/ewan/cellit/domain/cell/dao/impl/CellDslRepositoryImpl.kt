@@ -9,8 +9,10 @@ import me.ewan.cellit.domain.cell.dao.CellDslRepository
 import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.domain.QAccountCell
 import me.ewan.cellit.domain.cell.vo.domain.QCell
+import me.ewan.cellit.domain.cell.vo.domain.QCellRequest
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
+import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
@@ -54,4 +56,18 @@ class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), Cel
                 .where(accountCell.cell.cellId.eq(cellId))
                 .fetch()
     }
+
+    @Transactional
+    override fun deleteAccount(cellId: Long, accountId: Long): Long {
+        val accountCell = QAccountCell.accountCell
+        val cell = QCell.cell
+        val account = QAccount.account
+
+        return delete(accountCell)
+                .where(accountCell.cell.cellId.eq(cellId)
+                        .and(accountCell.account.accountId.eq(accountId)))
+                .execute()
+    }
+
+
 }

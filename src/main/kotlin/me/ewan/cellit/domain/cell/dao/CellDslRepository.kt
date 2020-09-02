@@ -8,4 +8,5 @@ interface CellDslRepository {
     fun findCellsWithQuery(cellQuery: CellQuery): List<Cell>
     fun findAccountInCell(cellId: Long, accountId: Long): Account?
     fun findAccounts(cellId: Long): List<Account>
+    fun deleteAccount(cellId: Long, accountId: Long): Long
 }

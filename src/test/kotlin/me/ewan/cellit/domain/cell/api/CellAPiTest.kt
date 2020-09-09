@@ -367,7 +367,7 @@ internal class CellAPiTest : BaseControllerTest() {
         * s: Delete account in cell
         * */
         //when
-        mockMvc.perform(delete("/api/cells/${savedCell1.cellId}/account/${testAccount2.accountId}")
+        mockMvc.perform(delete("/api/cells/${savedCell1.cellId}/accounts/${testAccount2.accountId}")
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + jwtToken)
                 .accept(MediaTypes.HAL_JSON)
         )

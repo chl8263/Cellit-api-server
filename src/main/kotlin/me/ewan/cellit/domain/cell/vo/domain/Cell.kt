@@ -1,5 +1,6 @@
 package me.ewan.cellit.domain.cell.vo.domain
 
+import me.ewan.cellit.domain.calendar.vo.domain.Calendar
 import me.ewan.cellit.domain.channel.vo.domain.Channel
 import org.codehaus.jackson.annotate.JsonIgnore
 import org.springframework.data.jpa.repository.Temporal
@@ -8,7 +9,6 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator::class, property = "cellId")
 class Cell(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var cellId: Long? = null,
@@ -33,6 +33,11 @@ class Cell(
         @JsonIgnore // prevent infinity loop when trans JSON
         @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
         var cellRequests: MutableList<CellRequest> = mutableListOf(),
+
+        @JsonIgnore // prevent infinity loop when trans JSON
+        @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+        @JoinColumn(name = "calendarId", nullable = false)
+        var calendar: Calendar? = null,
 
         //@CreationTimestamp
         @Column

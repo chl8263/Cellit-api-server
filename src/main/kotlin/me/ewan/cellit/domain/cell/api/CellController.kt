@@ -164,7 +164,7 @@ class CellController {
         }
     }
 
-    @DeleteMapping("/{cellId}/account/{accountId}")
+    @DeleteMapping("/{cellId}/accounts/{accountId}")
     fun deleteAccountAtCell(@PathVariable cellId: Long,
                             @PathVariable accountId: Long): ResponseEntity<Any> {
         try {

@@ -30,14 +30,4 @@ import org.springframework.web.context.WebApplicationContext
 
 internal class CalendarApiTest : BaseControllerTest() {
 
-    @Test
-    fun `Create Calendar`(){
-        //given
-    }
-
-    @Test
-    fun `Get Calendar data based on month`(){
-        //given
-    }
-
 }

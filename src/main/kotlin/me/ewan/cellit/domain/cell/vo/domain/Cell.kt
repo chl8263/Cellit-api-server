@@ -56,10 +56,10 @@ class Cell(
         @OneToMany(mappedBy = "cell", fetch = FetchType.LAZY)
         var cellRequests: MutableList<CellRequest> = mutableListOf(),
 
-        @JsonIgnore // prevent infinity loop when trans JSON
-        @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-        @JoinColumn(name = "calendarId", nullable = false)
-        var calendar: Calendar? = null,
+//        @JsonIgnore // prevent infinity loop when trans JSON
+//        @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+//        @JoinColumn(name = "calendarId", nullable = false)
+//        var calendar: Calendar? = null,
 
         //@CreationTimestamp
         @Column

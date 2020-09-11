@@ -52,38 +52,91 @@ class AccountService : UserDetailsService {
     @Autowired
     private lateinit var passWordEncoder: PasswordEncoder
 
+    /**
+     * Get account from DB for JWT token.
+     *
+     * @author Ewan
+     * @param username
+     * @return
+     */
     override fun loadUserByUsername(username: String?): UserDetails {
         val account = accountRepository.findByAccountname(username)
         return getAccountContext(account!!)
     }
 
+    /**
+     * Get account in AccountContext.
+     *
+     * @author Ewan
+     * @param account
+     * @return
+     */
     private fun getAccountContext(account: Account): AccountContext = AccountContext.fromAccountModel(account)
 
+    /**
+     * Create account.
+     *
+     * @author Ewan
+     * @param account
+     * @return
+     */
     fun createAccount(account: Account) : Account {
         account.password = passWordEncoder.encode(account.password)
         val savedAccount = accountRepository.save(account)
         return savedAccount
     }
 
+    /**
+     * Get account by accountId.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
     fun getAccountById(accountId: Long): Account? = accountRepository.findByAccountId(accountId)
-    fun getAccountByName(username: String): Account? = accountRepository.findByAccountname(username)
-//        return accountRepository.findByAccountname(username)?: throw NoSuchElementException("Cannot find this account.")
-//    }
 
+    /**
+     * Get account by account name.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
+    fun getAccountByName(accountName: String): Account? = accountRepository.findByAccountname(accountName)
+
+    /**
+     * Get Account_Cell domain list by account id.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
     fun getAccountCellsByAccountId (accountId: Long): List<AccountCell>? {
         val account = accountRepository.findAccountFetch(accountId)
-
         return account?.accountCells
     }
 
+    /**
+     * Create account notification.
+     *
+     * @author Ewan
+     * @param accountNotification account notification information
+     * @return
+     */
     fun createAccountNotification(accountNotification: AccountNotification): AccountNotification {
         val accountNotification = accountNotificationRepository.save(accountNotification)
         return accountNotification
     }
 
+    /**
+     * Get AccountNotification domain list with search query.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
     fun getAccountNotificationWithQuery(accountId: Long, convertedQuery: AccountNotificationQuery): List<AccountNotification> {
         val accountNotifications = accountNotificationRepository.findAccountNotificationWithQuery(accountId, convertedQuery)
         return accountNotifications
     }
-
 }

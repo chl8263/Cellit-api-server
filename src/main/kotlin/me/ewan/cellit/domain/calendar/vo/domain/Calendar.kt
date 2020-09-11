@@ -40,9 +40,9 @@ class Calendar(
         var content: String? = null,
 
         // default fetch type = LAZY
-        @JsonIgnore // prevent infinity loop when trans JSON
-        @OneToOne(mappedBy = "cell", fetch = FetchType.LAZY)
-        var cell: Cell? = null,
+//        @JsonIgnore // prevent infinity loop when trans JSON
+//        @OneToOne(mappedBy = "cell", fetch = FetchType.LAZY)
+//        var cell: Cell? = null,
 
         //@CreationTimestamp
         @Column

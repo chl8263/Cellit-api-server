@@ -22,8 +22,8 @@
 
 package me.ewan.cellit.domain.account.api
 
-import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.service.AccountService
+import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.vo.domain.AccountNotification
 import me.ewan.cellit.domain.account.vo.domain.AccountRole
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
@@ -33,12 +33,11 @@ import me.ewan.cellit.domain.account.vo.entityModel.AccountEntityModel
 import me.ewan.cellit.domain.account.vo.entityModel.AccountNotificationEntityModel
 import me.ewan.cellit.domain.account.vo.query.AccountNotificationQuery
 import me.ewan.cellit.domain.cell.api.CellController
-import me.ewan.cellit.domain.cell.vo.domain.AccountCell
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.entityModel.CellEntityModel
 import me.ewan.cellit.global.common.ConvertQueryToClass
+import me.ewan.cellit.global.error.Const.UNEXPECTED_ERROR_WORD
 import me.ewan.cellit.global.error.ErrorHelper
-import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.MediaTypes
@@ -46,7 +45,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.ServletWebRequest
 import javax.validation.Valid
 
 @RestController
@@ -60,22 +58,25 @@ class AccountController{
     private lateinit var accountDtoValidator: AccountDtoValidator
 
     @Autowired
-    private lateinit var modelMapper: ModelMapper
-
-    @Autowired
     private lateinit var errorHelper: ErrorHelper
 
+    /**
+     * Create new Account.
+     *
+     * @author Ewan
+     * @param AccountDto account information
+     * @return
+     */
     @PostMapping
-    fun createAccount(@RequestBody @Valid accountDto: AccountDto,
-                      request: ServletWebRequest): ResponseEntity<Any>{
+    fun createAccount(@RequestBody @Valid accountDto: AccountDto): ResponseEntity<Any>{
         try {
-            // s: validator
+            // s: validations
             val errorList = accountDtoValidator.validate(accountDto)
             if (errorList.isNotEmpty()) {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val account = Account(accountname = accountDto.accountname!!,
                     password = accountDto.password!!,
@@ -100,33 +101,62 @@ class AccountController{
             return ResponseEntity.created(createdUri).body(accountEntityModel)
 
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Get single user by account name.
+     *
+     * @author Ewan
+     * @param accountName
+     * @return
+     */
     @GetMapping("/{accountName}")
-    fun getAccountWithUserName(@PathVariable accountName: String): ResponseEntity<Any>{
+    fun getAccountByAccountName(@PathVariable accountName: String): ResponseEntity<Any>{
         try {
-            val account = accountService.getAccountByName(accountName)?.let {
+            // s: validations
+            val foundAccount = accountService.getAccountByName(accountName)
+            if(foundAccount == null){
+                val body = errorHelper.getUnexpectError("Not exits this account.")
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validations
+
+            val entityModel = foundAccount?.let {
                 val accountModel = AccountEntityModel(it)
                 val selfLink = linkTo(AccountController::class.java).slash(it.accountId).withSelfRel()
                 accountModel.add(selfLink)
-                return ResponseEntity.ok(accountModel)
             }
-            val body = errorHelper.getUnexpectError("This account doesn't exist.")
-            return ResponseEntity.badRequest().body(body)
+
+            return ResponseEntity.ok(entityModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
-
+    /**
+     * Get cell list by account id.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
     @GetMapping("/{accountId}/cells")
-    fun getCellsFromAccountId(@PathVariable accountId: Long): ResponseEntity<Any> {
+    fun getCellsByAccountId(@PathVariable accountId: Long): ResponseEntity<Any> {
         try {
-            val accountCells = accountService.getAccountCellsByAccountId(accountId) ?: ArrayList<AccountCell>()
+            // s: validations
+            val foundAccount = accountService.getAccountById(accountId)
+            if(foundAccount == null){
+                val body = errorHelper.getUnexpectError("Not exits this account.")
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validations
+
+            val accountCells = accountService.getAccountCellsByAccountId(accountId) ?: ArrayList()
 
             val cellsEntityModel = accountCells.map {
                 val tempCellDto = CellDto(cellId = it.cell.cellId, cellName = it.cell.cellName, cellDescription = it.cell.cellDescription, createDate = it.cell.createDate)
@@ -136,16 +166,27 @@ class AccountController{
                 cellModel.add(selfLink)
             }
 
-            val selfLink = linkTo(methodOn(AccountController::class.java).getCellsFromAccountId(accountId)).withSelfRel()
+            val selfLink = linkTo(methodOn(AccountController::class.java).getCellsByAccountId(accountId)).withSelfRel()
             val resultEntityModel = CollectionModel(cellsEntityModel, selfLink)
 
             return ResponseEntity.ok(resultEntityModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Get account notification list by account id.
+     *
+     * @author Ewan
+     * @param accountId
+     * @param query For search as specific word
+     * @param offset Start number of list
+     * @param limit End number of list
+     * @return
+     */
     @GetMapping("/{accountId}/accountNotifications")
     fun getAccountNotifications(@PathVariable accountId: Long?,
                                 @RequestParam query: String?,
@@ -176,17 +217,25 @@ class AccountController{
         }
     }
 
+    /**
+     * Create account notification.
+     *
+     * @author Ewan
+     * @param accountId
+     * @param accountNotificationDto account notification data
+     * @return
+     */
     @PostMapping("/{accountId}/accountNotifications")
     fun createAccountNotifications(@PathVariable accountId: Long,
                                    @RequestBody @Valid accountNotificationDto: AccountNotificationDto): ResponseEntity<Any> {
         try{
-            // s: validator
+            // s: validations
             val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
                 val body = errorHelper.getUnexpectError("Not exits this account.")
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val accountNotification = AccountNotification(account = foundAccount, message = accountNotificationDto.message, status = accountNotificationDto.status)
             val savedAccountNotification = accountService.createAccountNotification(accountNotification)

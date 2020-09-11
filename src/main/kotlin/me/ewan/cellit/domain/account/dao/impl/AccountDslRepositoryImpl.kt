@@ -30,6 +30,13 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 class AccountDslRepositoryImpl() : QuerydslRepositorySupport(Account::class.java), AccountDslRepository{
 
+    /**
+     * Get whole account data in account domain as fetch join because the relation with many to many.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
     override fun findAccountFetch(accountId: Long): Account? {
         val account = QAccount.account
         val accountCell = QAccountCell.accountCell

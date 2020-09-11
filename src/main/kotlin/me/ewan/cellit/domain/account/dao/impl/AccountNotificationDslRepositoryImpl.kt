@@ -34,6 +34,13 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 class AccountNotificationDslRepositoryImpl : QuerydslRepositorySupport(AccountNotification::class.java), AccountNotificationDslRepository {
 
+    /**
+     * Get Notification list with dynamic search query.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return
+     */
     override fun findAccountNotificationWithQuery(accountId: Long, accountNotificationQuery: AccountNotificationQuery): List<AccountNotification> {
         val accountNotification = QAccountNotification.accountNotification
         val account = QAccount.account

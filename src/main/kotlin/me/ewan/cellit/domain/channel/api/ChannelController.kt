@@ -108,7 +108,7 @@ class ChannelController {
     fun updateChannelActive(@PathVariable channelId: Long,
                             @RequestBody activeState: Int): ResponseEntity<Any>{
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -124,7 +124,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             foundedChannel!!.active = activeState
             val savedChannel = channelService.saveChannel(foundedChannel!!)
@@ -149,7 +149,7 @@ class ChannelController {
     fun createChannelPosts(@PathVariable channelId: Long,
                            @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = channelPostDtoValidator.validate(channelPostDto)
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -161,7 +161,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val channelPost = ChannelPost(channelPostName = channelPostDto.channelPostName!!,
                     //channelPostContent = channelPostDto.channelPostContent!!,
@@ -197,13 +197,13 @@ class ChannelController {
                        pageable: Pageable,
                        assembler: PagedResourcesAssembler<ChannelPost>): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val foundChannel = channelService.getChannelByChannelId(channelId)
             if (foundChannel == null) {
                 val body = errorHelper.getUnexpectError("Not exits this Channel.")
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val page = this.channelService.getChannelPosts(channelId, postNameToSearch, pageable)
             val pageEntityModel = assembler.toModel(page) { entity: ChannelPost ->
@@ -223,7 +223,7 @@ class ChannelController {
     fun getChannelPostContent(@PathVariable channelId: Long,
                               @PathVariable channelPostId: Long): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -235,7 +235,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
             val foundChannelPost = channelService.getChannelPostById(channelPostId)
             val foundChannelPostContent = channelService.getChannelPostContent(foundChannelPost)
 
@@ -266,7 +266,7 @@ class ChannelController {
                                  @PathVariable channelPostId: Long,
                                  @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = channelPostDtoValidator.validate(channelPostDto)
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -283,7 +283,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val foundChannelPost = channelService.getChannelPostById(channelPostId)
             val foundChannelPostContent = channelService.getChannelPostContent(foundChannelPost)
@@ -320,7 +320,7 @@ class ChannelController {
                                    @RequestBody viewCount: Long
                                  ): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -337,7 +337,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             foundChannelPost.viewCount = viewCount
             foundChannelPost.modifyDate = SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").format(Date())
@@ -361,7 +361,7 @@ class ChannelController {
                                   @PathVariable channelPostId: Long,
                            @RequestBody channelPostCommentDto: ChannelPostCommentDto): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = channelPostCommentDtoValidator.validate(channelPostCommentDto)
 
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -383,7 +383,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val channelPostComment = ChannelPostComment(
                     channelPostComment = channelPostCommentDto.channelPostComment,
@@ -416,7 +416,7 @@ class ChannelController {
     fun getChannelPostComments(@PathVariable channelId: Long,
                               @PathVariable channelPostId: Long): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
  
             val foundedChannel = channelService.getChannelByChannelId(channelId)
@@ -433,7 +433,7 @@ class ChannelController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val channelComments = channelService.getChannelPostCommentByChannelPostId(channelPostId)
 

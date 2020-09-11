@@ -118,7 +118,7 @@ class CellController {
     fun createCell(@RequestBody @Valid cellDto: CellDto): ResponseEntity<Any> {
 
         try {
-            // s: validator
+            // s: validations
             val errorList = cellDtoValidator.validate(cellDto)
             if (errorList.isNotEmpty()) {
                 val body = errorHelper.getErrorAttributes(errorList)
@@ -130,7 +130,7 @@ class CellController {
                 val body = errorHelper.getUnexpectError("This cell already exit, Please try another one.")
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val savedCell = cellService.createCell(cellDto, auth.name)
 
@@ -154,7 +154,7 @@ class CellController {
     @GetMapping("/{cellId}/accounts")
     fun getAccountsAtCell(@PathVariable cellId: Long): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
             val foundCell = cellService.getCellWithId(cellId)
             if(foundCell == null){
@@ -165,7 +165,7 @@ class CellController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val accountList = cellService.findAccountsInCell(foundCell!!.cellId!!)
 
@@ -190,7 +190,7 @@ class CellController {
     fun deleteAccountAtCell(@PathVariable cellId: Long,
                             @PathVariable accountId: Long): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
             val foundCell = cellService.getCellWithId(cellId)
             if(foundCell == null){
@@ -205,7 +205,7 @@ class CellController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val savedAccountCell = cellService.deleteAccountAtCell(foundCell!!.cellId!!, foundAccount!!.accountId!!)
 
@@ -231,7 +231,7 @@ class CellController {
     fun insertAccountAtCell(@PathVariable cellId: Long,
                             @PathVariable accountId: Long): ResponseEntity<Any> {
         try {
-            // s: validator
+            // s: validations
             val errorList = ArrayList<ErrorVo>()
             val foundCell = cellService.getCellWithId(cellId)
             if(foundCell == null){
@@ -246,7 +246,7 @@ class CellController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val savedAccountCell = cellService.insertAccountAtCell(foundAccount!!, foundCell!!)
 
@@ -295,13 +295,13 @@ class CellController {
     @GetMapping("/{cellId}/cellRequests")
     fun getCellRequests(@PathVariable cellId: Long): ResponseEntity<Any>{
         try{
-            // s: validator
+            // s: validations
             val foundCell = cellService.getCellWithId(cellId)
             if(foundCell == null){
                 val body = errorHelper.getUnexpectError("Not exits this cell.")
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val cellRequests = cellRequestService.getCellRequestsWithCell(foundCell.cellId!!)
 
@@ -329,7 +329,7 @@ class CellController {
                            @PathVariable accountId: Long): ResponseEntity<Any>{
 
         try {
-            // s: validator
+            // s: validations
             var errorList = ArrayList<ErrorVo>()
             val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
@@ -351,7 +351,7 @@ class CellController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             val cell = cellService.getCellWithId(cellId = cellId)
             val requestAccount = accountService.getAccountById(accountId)
@@ -381,7 +381,7 @@ class CellController {
                            @PathVariable accountId: Long): ResponseEntity<Any>{
 
         try {
-            // s: validator
+            // s: validations
             var errorList = ArrayList<ErrorVo>()
             val foundAccount = accountService.getAccountById(accountId)
             if(foundAccount == null){
@@ -399,7 +399,7 @@ class CellController {
                 val body = errorHelper.getErrorAttributes(errorList)
                 return ResponseEntity.badRequest().body(body)
             }
-            // e: validator
+            // e: validations
 
             if(cellRequestService.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId) != 1L){
                 val body = errorHelper.getUnexpectError("Cannot delete cell request.")

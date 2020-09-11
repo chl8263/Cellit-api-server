@@ -26,6 +26,11 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped
 import me.ewan.cellit.domain.account.vo.domain.Account
 import org.springframework.hateoas.RepresentationModel
 
+/**
+ * Account Entity Model.
+ *
+ * @author Ewan
+ */
 class AccountEntityModel : RepresentationModel<AccountEntityModel> {
 
     @JsonUnwrapped

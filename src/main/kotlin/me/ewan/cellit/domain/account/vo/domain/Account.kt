@@ -30,9 +30,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
-
+/**
+ * Account domain.
+ *
+ * <p>
+ *     Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem.
+ * </p>
+ * @author Ewan
+ */
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator::class, property = "accountId")
 class Account(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,19 +76,3 @@ class Account(
 
         var active: Int = 1
 )
-//{
-//        override fun toString() = kotlinToString(properties = toStringProperties)
-//
-//        override fun equals(other: Any?) = kotlinEquals(other = other, properties = equalsAndHashCodeProperties)
-//
-//        override fun hashCode() = kotlinHashCode(properties = equalsAndHashCodeProperties)
-//
-//
-//        companion object {
-//                private val equalsAndHashCodeProperties = arrayOf(Account::accountId)
-//                private val toStringProperties = arrayOf(
-//                        Account::accountId,
-//                        Account::accountname
-//                )
-//        }
-//}

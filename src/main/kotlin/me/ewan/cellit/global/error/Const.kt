@@ -20,33 +20,8 @@
  * SOFTWARE.
  *******************************************************************************************/
 
-package me.ewan.cellit.domain.account.vo.query
+package me.ewan.cellit.global.error
 
-import me.ewan.cellit.domain.account.vo.domain.Account
-import me.ewan.cellit.global.common.Query
-import java.text.SimpleDateFormat
-import java.util.*
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
-
-/**
- * For search query for Account Notification.
- *
- * <p>
- *     When search as query in this api server, use query converter class and processed as dynamic query.
- * </p>
- * @author Ewan
- */
-data class AccountNotificationQuery(
-        var accountNotificationId: Long? = null,
-
-        var message: String? = null,
-
-        var accountId: Long? = null,
-
-        var createDate: String? = null,
-
-        override var offset: Long? = null,
-
-        override var limit: Long? = null
-) : Query()
+object Const {
+    const val UNEXPECTED_ERROR_WORD = "Please try again.."
+}

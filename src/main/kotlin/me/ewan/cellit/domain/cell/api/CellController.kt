@@ -42,6 +42,8 @@ import me.ewan.cellit.domain.channel.service.ChannelService
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.global.common.ConvertQueryToClass
+import me.ewan.cellit.global.error.Const
+import me.ewan.cellit.global.error.Const.UNEXPECTED_ERROR_WORD
 import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.vo.ErrorVo
 import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
@@ -57,6 +59,9 @@ import org.springframework.web.bind.annotation.*
 import java.lang.Exception
 import javax.validation.Valid
 
+/**
+ * @author Ewan
+ */
 @RestController
 @RequestMapping(value = ["/api/cells"], produces = [MediaTypes.HAL_JSON_VALUE])
 class CellController {
@@ -82,6 +87,15 @@ class CellController {
     @Autowired
     private lateinit var errorHelper: ErrorHelper
 
+    /**
+     * Get cell list by query.
+     *
+     * @author Ewan
+     * @param query For retrieve as specific word
+     * @param offset Start number of list
+     * @param limit End number of list
+     * @return
+     */
     @GetMapping
     fun getCells(@RequestParam query: String?,
                  @RequestParam offset: Int?,
@@ -90,11 +104,10 @@ class CellController {
         try {
             if (query == null) {
                 // TODO
-                println("11111")
                 return ResponseEntity.badRequest().body("aaa")
             } else {
                 val convertedQuery = ConvertQueryToClass.convert<CellQuery>(query, offset, limit)
-                val cells = cellService.getCellsWithQuery(convertedQuery as CellQuery)
+                val cells = cellService.getCellsWithQuery(convertedQuery)
 
                 val cellsEntityModel = cells.map {
                     val tempCellDto = modelMapper.map(it, CellDto::class.java)
@@ -109,11 +122,18 @@ class CellController {
                 return ResponseEntity.ok(resultEntityModel)
             }
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Create cell.
+     *
+     * @author Ewan
+     * @param cellDto cell data
+     * @return
+     */
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto): ResponseEntity<Any> {
 
@@ -145,12 +165,20 @@ class CellController {
             val createdUri = linkBuilder.toUri()
 
             return ResponseEntity.created(createdUri).body(entityModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Get account data from specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return
+     */
     @GetMapping("/{cellId}/accounts")
     fun getAccountsAtCell(@PathVariable cellId: Long): ResponseEntity<Any> {
         try {
@@ -181,11 +209,19 @@ class CellController {
             return ResponseEntity.ok(resultEntityModel)
 
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Delete account from specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     @DeleteMapping("/{cellId}/accounts/{accountId}")
     fun deleteAccountAtCell(@PathVariable cellId: Long,
                             @PathVariable accountId: Long): ResponseEntity<Any> {
@@ -216,17 +252,24 @@ class CellController {
 
             val cellModel = AccountEntityModel(foundAccount)
             val selfLink = linkTo(AccountController::class.java).slash(foundAccount.accountId).withSelfRel()
-
             cellModel.add(selfLink)
 
             return ResponseEntity.ok(cellModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
-
+    /**
+     * Insert account to specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     @PostMapping("/{cellId}/accounts/{accountId}")
     fun insertAccountAtCell(@PathVariable cellId: Long,
                             @PathVariable accountId: Long): ResponseEntity<Any> {
@@ -265,15 +308,36 @@ class CellController {
             val createdUri = linkBuilder.toUri()
 
             return ResponseEntity.created(createdUri).body(entityModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Get Channel list from specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return
+     */
     @GetMapping("/{cellId}/channels")
     fun getChannelsByCellId(@PathVariable cellId: Long): ResponseEntity<Any>{
         try {
+            // s: validations
+            val errorList = ArrayList<ErrorVo>()
+            val foundCell = cellService.getCellWithId(cellId)
+            if(foundCell == null){
+                errorHelper.addErrorAttributes(BAD_REQUEST, "This Cell doesn't exits.", errorList)
+            }
+
+            if(errorList.isNotEmpty()) {
+                val body = errorHelper.getErrorAttributes(errorList)
+                return ResponseEntity.badRequest().body(body)
+            }
+            // e: validations
+
             val channels = channelService.getChannelsByCellId(cellId)
 
             val channelsEntityModel = channels.sortedBy { x -> x.createDate }.map {
@@ -286,12 +350,20 @@ class CellController {
             val resultEntityModel = CollectionModel(channelsEntityModel, selfLink)
 
             return ResponseEntity.ok(resultEntityModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Get Requested account list from specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return
+     */
     @GetMapping("/{cellId}/cellRequests")
     fun getCellRequests(@PathVariable cellId: Long): ResponseEntity<Any>{
         try{
@@ -319,11 +391,19 @@ class CellController {
 
         }catch (e: Exception){
             println(e.message)
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Create to join request to specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun createCellRequests(@PathVariable cellId: Long,
                            @PathVariable accountId: Long): ResponseEntity<Any>{
@@ -370,12 +450,21 @@ class CellController {
             val createdUri = linkBuilder.toUri()
 
             return ResponseEntity.created(createdUri).body(entityModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Delete join request from specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     @DeleteMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun deleteCellRequests(@PathVariable cellId: Long,
                            @PathVariable accountId: Long): ResponseEntity<Any>{
@@ -412,10 +501,10 @@ class CellController {
             cellModel.add(selfLink)
 
             return ResponseEntity.ok(cellModel)
+
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
-
 }

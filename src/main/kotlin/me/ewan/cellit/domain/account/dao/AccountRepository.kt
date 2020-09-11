@@ -29,6 +29,22 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
 interface AccountRepository : JpaRepository<Account, Long>, AccountDslRepository{
+
+    /**
+     * Retrieve Account from the data store by account name, returning an Account which satisfied with user name.
+     *
+     * @author Ewan
+     * @param username
+     * @return an Account of matching with username
+     */
     fun findByAccountname(username: String?): Account?
+
+    /**
+     * Retrieve Account from the data store by account id, returning an Account which satisfied with user id.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return an AccountNotification of matching with accountId
+     */
     fun findByAccountId(accountId: Long): Account?
 }

@@ -25,5 +25,13 @@ package me.ewan.cellit.domain.account.dao
 import me.ewan.cellit.domain.account.vo.domain.Account
 
 interface AccountDslRepository {
+
+    /**
+     * Retrieve Account from the data store by account id, returning a account which satisfied with condition.
+     *
+     * @author Ewan
+     * @param accountId
+     * @return an Account of matching with account id
+     */
     fun findAccountFetch(accountId: Long): Account?
 }

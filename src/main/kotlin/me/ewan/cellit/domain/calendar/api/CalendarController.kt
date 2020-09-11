@@ -28,6 +28,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * For Extension
+ *
+ * @author
+ */
 @RestController
 @RequestMapping(value = ["/api/calendars"], produces = [MediaTypes.HAL_JSON_VALUE])
 class CalendarController {

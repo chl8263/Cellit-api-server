@@ -40,6 +40,13 @@ import javax.persistence.PersistenceContext
 
 class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), CellDslRepository {
 
+    /**
+     * Get cell list with dynamic retrieve query.
+     *
+     * @author Ewan
+     * @param cellQuery query for retrieve
+     * @return
+     */
     override fun findCellsWithQuery(cellQuery: CellQuery): List<Cell> {
         val cell = QCell.cell
         val query = from(cell)
@@ -56,8 +63,15 @@ class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), Cel
         return query.fetch()
     }
 
+    /**
+     * Get specific account in specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     override fun findAccountInCell(cellId: Long, accountId: Long): Account? {
-        val cell = QCell.cell
         val account = QAccount.account
         val accountCell = QAccountCell.accountCell
 
@@ -68,8 +82,14 @@ class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), Cel
                 .fetchOne()
     }
 
+    /**
+     * Get account list in specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return
+     */
     override fun findAccounts(cellId: Long): List<Account> {
-        val cell = QCell.cell
         val account = QAccount.account
         val accountCell = QAccountCell.accountCell
 
@@ -79,17 +99,21 @@ class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), Cel
                 .fetch()
     }
 
+    /**
+     * Delete specific account in specific cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     @Transactional
     override fun deleteAccount(cellId: Long, accountId: Long): Long {
         val accountCell = QAccountCell.accountCell
-        val cell = QCell.cell
-        val account = QAccount.account
 
         return delete(accountCell)
                 .where(accountCell.cell.cellId.eq(cellId)
                         .and(accountCell.account.accountId.eq(accountId)))
                 .execute()
     }
-
-
 }

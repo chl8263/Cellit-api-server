@@ -30,10 +30,10 @@ import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
 /**
- * For search query for Account Notification.
+ * For retrieve query for Account Notification.
  *
  * <p>
- *     When search as query in this api server, use query converter class and processed as dynamic query.
+ *     When retrieve as query in this api server, use query converter class and processed as dynamic query.
  * </p>
  * @author Ewan
  */

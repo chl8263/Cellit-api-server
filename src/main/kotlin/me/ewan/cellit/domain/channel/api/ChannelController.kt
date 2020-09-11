@@ -39,6 +39,8 @@ import me.ewan.cellit.domain.channel.vo.entityModel.ChannelEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostCommentEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostContentEntityModel
 import me.ewan.cellit.domain.channel.vo.entityModel.ChannelPostEntityModel
+import me.ewan.cellit.global.error.Const
+import me.ewan.cellit.global.error.Const.UNEXPECTED_ERROR_WORD
 import me.ewan.cellit.global.error.ErrorHelper
 import me.ewan.cellit.global.error.vo.ErrorVo
 import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
@@ -99,7 +101,7 @@ class ChannelController {
             return ResponseEntity.created(createUrl).body(entityModel)
 
         } catch (e: Exception) {
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -140,7 +142,7 @@ class ChannelController {
 
         } catch (e: Exception) {
             log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -186,7 +188,7 @@ class ChannelController {
 
         } catch (e: Exception) {
             log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -214,7 +216,7 @@ class ChannelController {
 
             return ResponseEntity.ok(pageEntityModel)
         } catch (e: Exception) {
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -256,7 +258,7 @@ class ChannelController {
 
         } catch (e: Exception) {
             log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -309,7 +311,7 @@ class ChannelController {
 
         } catch (e: Exception) {
             log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -351,7 +353,7 @@ class ChannelController {
 
         } catch (e: Exception) {
             log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -406,8 +408,7 @@ class ChannelController {
             return ResponseEntity.created(createUrl).body(entityModel)
 
         } catch (e: Exception) {
-            log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -449,8 +450,7 @@ class ChannelController {
             return ResponseEntity.ok(resultEntityModel)
 
         } catch (e: Exception) {
-            log.error { e.message }
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }

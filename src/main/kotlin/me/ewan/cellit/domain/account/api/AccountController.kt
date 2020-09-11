@@ -47,6 +47,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
+/**
+ * @author Ewan
+ */
 @RestController
 @RequestMapping(value = ["/api/accounts"], produces = [MediaTypes.HAL_JSON_VALUE])
 class AccountController{
@@ -65,7 +68,7 @@ class AccountController{
      *
      * @author Ewan
      * @param AccountDto account information
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @PostMapping
     fun createAccount(@RequestBody @Valid accountDto: AccountDto): ResponseEntity<Any>{
@@ -111,7 +114,7 @@ class AccountController{
      *
      * @author Ewan
      * @param accountName
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping("/{accountName}")
     fun getAccountByAccountName(@PathVariable accountName: String): ResponseEntity<Any>{
@@ -143,7 +146,7 @@ class AccountController{
      *
      * @author Ewan
      * @param accountId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping("/{accountId}/cells")
     fun getCellsByAccountId(@PathVariable accountId: Long): ResponseEntity<Any> {
@@ -178,14 +181,14 @@ class AccountController{
     }
 
     /**
-     * Get account notification list by account id.
+     * Get account notification list by account id, query.
      *
      * @author Ewan
      * @param accountId
-     * @param query For search as specific word
+     * @param query For retrieve as specific word
      * @param offset Start number of list
      * @param limit End number of list
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping("/{accountId}/accountNotifications")
     fun getAccountNotifications(@PathVariable accountId: Long?,
@@ -212,7 +215,7 @@ class AccountController{
 
             return ResponseEntity.ok(resultEntityModel)
         }catch (e: java.lang.Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
@@ -223,7 +226,7 @@ class AccountController{
      * @author Ewan
      * @param accountId
      * @param accountNotificationDto account notification data
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @PostMapping("/{accountId}/accountNotifications")
     fun createAccountNotifications(@PathVariable accountId: Long,
@@ -251,7 +254,7 @@ class AccountController{
 
             return ResponseEntity.created(createdUri).body(accountNotificationEntityModel)
         }catch (e: Exception){
-            val body = errorHelper.getUnexpectError("Please try again..")
+            val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }

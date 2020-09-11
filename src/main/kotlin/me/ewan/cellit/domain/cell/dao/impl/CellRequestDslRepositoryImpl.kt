@@ -35,9 +35,14 @@ import javax.persistence.PersistenceContext
 
 class CellRequestDslRepositoryImpl : QuerydslRepositorySupport(CellRequest::class.java), CellRequestDslRepository {
 
-//    @PersistenceContext
-//    private lateinit var em: EntityManager
-
+    /**
+     * Get cell requests for specific cell and specific account.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     override fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest? {
 
         val cellRequest = QCellRequest.cellRequest
@@ -47,16 +52,15 @@ class CellRequestDslRepositoryImpl : QuerydslRepositorySupport(CellRequest::clas
                 .where(cell.cellId.eq(cellId)
                         .and(cellRequest.accountId.eq(accountId)))
                 .fetchOne()
-
-        //val qf = JPAQueryFactory(em)
-
-        //
-//        return qf.selectFrom(cellRequest)
-//                .where(cell.cellId.eq(cellId)
-//                        .and(cellRequest.accountId.eq(accountId)))
-//                .fetchOne()
     }
 
+    /**
+     * Get cell request list with sorted as create date.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return
+     */
     override fun findByCellIdOrderByCreateDate(cellId: Long): List<CellRequest> {
         val cellRequest = QCellRequest.cellRequest
         val cell = QCell.cell
@@ -67,6 +71,14 @@ class CellRequestDslRepositoryImpl : QuerydslRepositorySupport(CellRequest::clas
                 .fetch()
     }
 
+    /**
+     * Delete cell request for specific cell and specific account.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return
+     */
     @Transactional
     override fun deleteCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): Long {
         val cellRequest = QCellRequest.cellRequest

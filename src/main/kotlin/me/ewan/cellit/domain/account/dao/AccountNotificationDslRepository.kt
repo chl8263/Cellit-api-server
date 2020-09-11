@@ -22,10 +22,18 @@
 
 package me.ewan.cellit.domain.account.dao
 
-import me.ewan.cellit.domain.account.vo.domain.Account
 import me.ewan.cellit.domain.account.vo.domain.AccountNotification
 import me.ewan.cellit.domain.account.vo.query.AccountNotificationQuery
 
 interface AccountNotificationDslRepository {
+
+    /**
+     * Retrieve AccountNotifications from the data store by query, returning an AccountNotification list which satisfied with condition.
+     *
+     * @author Ewan
+     * @param accountId
+     * @param accountNotificationQuery query for search
+     * @return an AccountNotification of matching with query
+     */
     fun findAccountNotificationWithQuery(accountId: Long, accountNotificationQuery: AccountNotificationQuery): List<AccountNotification>
 }

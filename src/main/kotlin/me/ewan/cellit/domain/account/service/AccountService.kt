@@ -57,7 +57,7 @@ class AccountService : UserDetailsService {
      *
      * @author Ewan
      * @param username
-     * @return
+     * @return a UserDetails Object of matching with username
      */
     override fun loadUserByUsername(username: String?): UserDetails {
         val account = accountRepository.findByAccountname(username)
@@ -69,7 +69,7 @@ class AccountService : UserDetailsService {
      *
      * @author Ewan
      * @param account
-     * @return
+     * @return an AccountContext of matching with account
      */
     private fun getAccountContext(account: Account): AccountContext = AccountContext.fromAccountModel(account)
 
@@ -78,7 +78,7 @@ class AccountService : UserDetailsService {
      *
      * @author Ewan
      * @param account
-     * @return
+     * @return an Account of matching with account
      */
     fun createAccount(account: Account) : Account {
         account.password = passWordEncoder.encode(account.password)
@@ -91,7 +91,7 @@ class AccountService : UserDetailsService {
      *
      * @author Ewan
      * @param accountId
-     * @return
+     * @return an Account of matching with accountId
      */
     fun getAccountById(accountId: Long): Account? = accountRepository.findByAccountId(accountId)
 
@@ -99,8 +99,8 @@ class AccountService : UserDetailsService {
      * Get account by account name.
      *
      * @author Ewan
-     * @param accountId
-     * @return
+     * @param accountName
+     * @return an Account of matching with accountName
      */
     fun getAccountByName(accountName: String): Account? = accountRepository.findByAccountname(accountName)
 
@@ -109,7 +109,7 @@ class AccountService : UserDetailsService {
      *
      * @author Ewan
      * @param accountId
-     * @return
+     * @return an Accounts of matching with accountId
      */
     fun getAccountCellsByAccountId (accountId: Long): List<AccountCell>? {
         val account = accountRepository.findAccountFetch(accountId)
@@ -121,7 +121,7 @@ class AccountService : UserDetailsService {
      *
      * @author Ewan
      * @param accountNotification account notification information
-     * @return
+     * @return an AccountNotification of matching with accountNotification
      */
     fun createAccountNotification(accountNotification: AccountNotification): AccountNotification {
         val accountNotification = accountNotificationRepository.save(accountNotification)
@@ -129,11 +129,12 @@ class AccountService : UserDetailsService {
     }
 
     /**
-     * Get AccountNotification domain list with search query.
+     * Get AccountNotification domain list with retrieve query.
      *
      * @author Ewan
      * @param accountId
-     * @return
+     * @param convertedQuery converted
+     * @return an AccountNotification of matching with accountNotification
      */
     fun getAccountNotificationWithQuery(accountId: Long, convertedQuery: AccountNotificationQuery): List<AccountNotification> {
         val accountNotifications = accountNotificationRepository.findAccountNotificationWithQuery(accountId, convertedQuery)

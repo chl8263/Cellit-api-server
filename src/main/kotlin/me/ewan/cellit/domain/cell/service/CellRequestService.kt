@@ -34,8 +34,22 @@ class CellRequestService {
     @Autowired
     private lateinit var cellRequestRepository: CellRequestRepository
 
+    /**
+     * Create account notification.
+     *
+     * @author Ewan
+     * @param accountNotification account notification information
+     * @return
+     */
     fun getCellRequestWithId(id: Long) = cellRequestRepository.getOne(id)
 
+    /**
+     * Create account notification.
+     *
+     * @author Ewan
+     * @param accountNotification account notification information
+     * @return
+     */
     fun getCellRequestsWithCell(cellId: Long): List<CellRequest> {
         val cellRequests = cellRequestRepository.findByCellIdOrderByCreateDate(cellId)
         return cellRequests

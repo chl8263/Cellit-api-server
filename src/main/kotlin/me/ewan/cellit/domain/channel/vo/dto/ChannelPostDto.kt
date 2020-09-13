@@ -25,6 +25,9 @@ package me.ewan.cellit.domain.channel.vo.dto
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+/**
+ * @author Ewan
+ */
 data class ChannelPostDto(
 
         var channelPostId: Long? = null,

@@ -27,6 +27,9 @@ import java.util.*
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+/**
+ * @author Ewan
+ */
 data class ChannelPostCommentDto(
         var channelPostId: Long? = null,
         var accountId: Long? = null,

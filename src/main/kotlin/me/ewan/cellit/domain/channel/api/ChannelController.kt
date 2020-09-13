@@ -59,6 +59,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * @author Ewan
+ */
 @RestController
 @RequestMapping(value = ["/api/channels"], produces = [MediaTypes.HAL_JSON_VALUE])
 class ChannelController {
@@ -83,6 +86,13 @@ class ChannelController {
     @Autowired
     private lateinit var channelPostCommentDtoValidator: ChannelPostCommentDtoValidator
 
+    /**
+     * Create new Channel.
+     *
+     * @author Ewan
+     * @param channelDto channel information
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @PostMapping
     fun createChannel(@RequestBody channelDto: ChannelDto): ResponseEntity<Any> {
         try {
@@ -106,6 +116,14 @@ class ChannelController {
         }
     }
 
+    /**
+     * Update Channel Active status.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param activeState
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @PatchMapping("{channelId}/active")
     fun updateChannelActive(@PathVariable channelId: Long,
                             @RequestBody activeState: Int): ResponseEntity<Any>{
@@ -147,6 +165,14 @@ class ChannelController {
         }
     }
 
+    /**
+     * Create new ChannelPost.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param channelPostDto
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @PostMapping("{channelId}/channelPosts")
     fun createChannelPosts(@PathVariable channelId: Long,
                            @RequestBody channelPostDto: ChannelPostDto): ResponseEntity<Any> {
@@ -193,6 +219,16 @@ class ChannelController {
         }
     }
 
+    /**
+     * Retrieve ChannelPost List as Pagenation.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param assembler
+     * @param pageable
+     * @param postNameToSearch
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @GetMapping("{channelId}/channelPosts")
     fun getChannelPost(@PathVariable channelId: Long,
                        postNameToSearch: String,
@@ -215,12 +251,23 @@ class ChannelController {
             }
 
             return ResponseEntity.ok(pageEntityModel)
+
         } catch (e: Exception) {
             val body = errorHelper.getUnexpectError(UNEXPECTED_ERROR_WORD)
             return ResponseEntity.badRequest().body(body)
         }
     }
 
+    /**
+     * Retrieve ChannelPost List as Pagenation.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param assembler
+     * @param pageable
+     * @param postNameToSearch
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @GetMapping("{channelId}/channelPosts/{channelPostId}/channelContent")
     fun getChannelPostContent(@PathVariable channelId: Long,
                               @PathVariable channelPostId: Long): ResponseEntity<Any> {
@@ -263,6 +310,15 @@ class ChannelController {
         }
     }
 
+    /**
+     * Update ChannelPostContent.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param channelPostId
+     * @param channelPostDto
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @PatchMapping("{channelId}/channelPosts/{channelPostId}/channelContent")
     fun updateChannelPostContent(@PathVariable channelId: Long,
                                  @PathVariable channelPostId: Long,
@@ -316,6 +372,15 @@ class ChannelController {
         }
     }
 
+    /**
+     * Update viewCount of ChannelPostContent.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param channelPostId
+     * @param viewCount
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @PatchMapping("{channelId}/channelPosts/{channelPostId}/viewCount")
     fun updateChannelPostViewCount(@PathVariable channelId: Long,
                                    @PathVariable channelPostId: Long,
@@ -358,6 +423,15 @@ class ChannelController {
         }
     }
 
+    /**
+     * Create new ChannelPostComment.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param channelPostId
+     * @param channelPostCommentDto
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @PostMapping("{channelId}/channelPosts/{channelPostId}/channelPostComments")
     fun createChannelPostComments(@PathVariable channelId: Long,
                                   @PathVariable channelPostId: Long,
@@ -413,6 +487,14 @@ class ChannelController {
         }
     }
 
+    /**
+     * Get ChannelPostComments.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param channelPostId
+     * @return a ResponseEntity as satisfied with REST hateoas
+     */
     @GetMapping("{channelId}/channelPosts/{channelPostId}/channelPostComments")
     fun getChannelPostComments(@PathVariable channelId: Long,
                               @PathVariable channelPostId: Long): ResponseEntity<Any> {

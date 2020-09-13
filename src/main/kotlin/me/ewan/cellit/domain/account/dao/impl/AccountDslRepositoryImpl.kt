@@ -28,6 +28,9 @@ import me.ewan.cellit.domain.account.vo.domain.QAccount
 import me.ewan.cellit.domain.cell.vo.domain.QAccountCell
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
+/**
+ * @author Ewan
+ */
 class AccountDslRepositoryImpl() : QuerydslRepositorySupport(Account::class.java), AccountDslRepository{
 
     /**

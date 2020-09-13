@@ -22,6 +22,9 @@
 
 package me.ewan.cellit.domain.cell.vo.domain
 
+/**
+ * @author Ewan
+ */
 enum class CellRole {
     CREATOR, ADMIN, USER
 }

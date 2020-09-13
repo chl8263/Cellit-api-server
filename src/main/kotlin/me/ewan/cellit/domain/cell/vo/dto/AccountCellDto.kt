@@ -29,6 +29,9 @@ import javax.persistence.*
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+/**
+ * @author Ewan
+ */
 data class AccountCellDto(
 
         var accountCellId : Long? = null,

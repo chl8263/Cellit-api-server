@@ -28,6 +28,9 @@ import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+/**
+ * @author Ewan
+ */
 @Service
 class CellRequestService {
 

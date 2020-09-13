@@ -28,6 +28,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
+/**
+ * ChannelPostComment domain.
+ *
+ * <p>
+ *     ChannelPostComment is Comment in ChannelPost.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
+ * </p>
+ * @author Ewan
+ */
 @Entity
 class ChannelPostComment (
 

@@ -24,7 +24,17 @@ package me.ewan.cellit.domain.channel.dao
 
 import me.ewan.cellit.domain.channel.vo.domain.ChannelPostComment
 
+/**
+ * @author Ewan
+ */
 interface ChannelPostCommentDslRepository {
 
+    /**
+     * Retrieve ChannelPostComment from the data store by channelPostId.
+     *
+     * @author Ewan
+     * @param channelPostId
+     * @return a ChannelPostComment of matching with channelPostId
+     */
     fun findByChannelPostId(channelPostId: Long): List<ChannelPostComment>
 }

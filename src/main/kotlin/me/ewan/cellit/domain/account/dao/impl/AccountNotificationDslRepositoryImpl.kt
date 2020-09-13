@@ -32,6 +32,9 @@ import me.ewan.cellit.domain.account.vo.domain.QAccountNotification
 import me.ewan.cellit.domain.account.vo.query.AccountNotificationQuery
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
+/**
+ * @author Ewan
+ */
 class AccountNotificationDslRepositoryImpl : QuerydslRepositorySupport(AccountNotification::class.java), AccountNotificationDslRepository {
 
     /**

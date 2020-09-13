@@ -37,6 +37,9 @@ import me.ewan.cellit.domain.channel.vo.domain.Channel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+/**
+ * @author Ewan
+ */
 @Service
 class CellService {
     @Autowired

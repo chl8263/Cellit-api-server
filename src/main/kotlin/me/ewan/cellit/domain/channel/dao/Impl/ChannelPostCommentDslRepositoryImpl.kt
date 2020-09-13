@@ -28,8 +28,18 @@ import me.ewan.cellit.domain.channel.vo.domain.QChannelPost
 import me.ewan.cellit.domain.channel.vo.domain.QChannelPostComment
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
+/**
+ * @author Ewan
+ */
 class ChannelPostCommentDslRepositoryImpl : QuerydslRepositorySupport(ChannelPostComment::class.java), ChannelPostCommentDslRepository {
 
+    /**
+     * Get ChannelPostComment By ChannelPostId.
+     *
+     * @author Ewan
+     * @param channelPostId
+     * @return
+     */
     override fun findByChannelPostId(channelPostId: Long): List<ChannelPostComment> {
         val channelPost = QChannelPost.channelPost
         val channelPostComment = QChannelPostComment.channelPostComment1

@@ -29,6 +29,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
+/**
+ * Channel domain.
+ *
+ * <p>
+ *     Channel is one of component in Cell.
+ *     Purpose of Channel is share some information with other member in Cell.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
+ * </p>
+ * @author Ewan
+ */
 @Entity
 class Channel (
 

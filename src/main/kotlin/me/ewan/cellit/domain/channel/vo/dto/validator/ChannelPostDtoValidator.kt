@@ -32,6 +32,11 @@ import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
 
+/**
+ * <code>Validator</code> for <code>ChannelPostDto</code>.
+ *
+ * @author Ewan
+ */
 @Component
 class ChannelPostDtoValidator {
 

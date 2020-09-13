@@ -28,6 +28,9 @@ import java.util.*
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+/**
+ * @author Ewan
+ */
 data class CellRequestDto(
 
         var cellRequestId: Long? = null,

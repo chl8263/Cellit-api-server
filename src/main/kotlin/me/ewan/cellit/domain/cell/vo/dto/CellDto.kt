@@ -25,6 +25,9 @@ package me.ewan.cellit.domain.cell.vo.dto
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+/**
+ * @author Ewan
+ */
 data class CellDto(
 
         var cellId: Long? = null,

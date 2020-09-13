@@ -56,6 +56,13 @@ class ChannelService {
     @Autowired
     lateinit var channelPostContentRepository: ChannelPostContentRepository
 
+    /**
+     * Create new Channel.
+     *
+     * @author Ewan
+     * @param channelDto
+     * @return a Channel of matching with Channel data
+     */
     fun createChannel(channelDto: ChannelDto): Channel {
 
         val cell = cellRepository.getOne(channelDto.cellId!!)
@@ -66,18 +73,62 @@ class ChannelService {
         return savedChannel
     }
 
+    /**
+     * Save Channel.
+     *
+     * @author Ewan
+     * @param channel
+     * @return saved Channel
+     */
     fun saveChannel (channel: Channel) = channelRepository.save(channel)
 
+    /**
+     * Retrieve Channel by channelId.
+     *
+     * @author Ewan
+     * @param channelId
+     * @return a Channel of matching with ChannelId
+     */
     fun getChannelByChannelId(channelId: Long): Channel? = channelRepository.getOne(channelId)
 
+    /**
+     * Retrieve Channel by cellId.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return a Channel of matching with cellId
+     */
     fun getChannelsByCellId(cellId: Long): List<Channel> {
         val cell = cellRepository.getOne(cellId)
         return cell.channels
     }
 
+    /**
+     * Save ChannelPost.
+     *
+     * @author Ewan
+     * @param channelPost
+     * @return saved ChannelPost
+     */
     fun saveChannelPost(channelPost: ChannelPost): ChannelPost = channelPostRepository.save(channelPost)
+
+    /**
+     * Save ChannelPostContent.
+     *
+     * @author Ewan
+     * @param channelPostContent
+     * @return saved ChannelPostContent
+     */
     fun saveChannelPostContent(channelPostContent: ChannelPostContent): ChannelPostContent = channelPostContentRepository.save(channelPostContent)
 
+    /**
+     * Save ChannelPost with ChannelPostContent.
+     *
+     * @author Ewan
+     * @param channelPost
+     * @param channelPostContent
+     * @return saved ChannelPostContent
+     */
     fun saveChannelPost(channelPost: ChannelPost, channelPostContent: String): ChannelPost {
 
         val channelPostContent = ChannelPostContent(channelPostContent = channelPostContent, channelPost = channelPost)
@@ -89,23 +140,60 @@ class ChannelService {
         return savedChannelPost
     }
 
+    /**
+     * Retrieve ChannelPost by channelPostId.
+     *
+     * @author Ewan
+     * @param channelPostId
+     * @return a ChannelPost of matching with channelPostId
+     */
     fun getChannelPostById(channelPostId: Long) = channelPostRepository.getOne(channelPostId)
 
+    /**
+     * Retrieve ChannelPosts by channelPostId, search text.
+     *
+     * @author Ewan
+     * @param channelId
+     * @param postNameToSearch
+     * @param pageable
+     * @return a ChannelPost list as Pageable of matching with channelId and satisfied with search text.
+     */
     fun getChannelPosts(channelId: Long, postNameToSearch: String, pageable: Pageable): Page<ChannelPost> {
         val foundChannel = channelRepository.getOne(channelId)
         //return channelPostRepository.findByChannel(foundChannel, pageable)
         return channelPostRepository.findByChannelAndChannelPostNameContaining(foundChannel, postNameToSearch, pageable)
     }
 
+    /**
+     * Retrieve ChannelPostContent by channelPost.
+     *
+     * @author Ewan
+     * @param channelPost
+     * @return a ChannelPostContent of matching with channelId.
+     */
     fun getChannelPostContent(channelPost: ChannelPost): ChannelPostContent {
         val channelPostContentId = channelPost.channelPostContent?.channelPostContentId
         return channelPostContentRepository.getOne(channelPostContentId!!)
     }
 
+    /**
+     * Save ChannelPostComment.
+     *
+     * @author Ewan
+     * @param channelPostComment
+     * @return saved ChannelPostComment.
+     */
     fun saveChannelPostComment(channelPostComment: ChannelPostComment): ChannelPostComment {
         return channelPostCommentRepository.save(channelPostComment)
     }
 
+    /**
+     * Retrieve ChannelPostCommnet by channelPostId.
+     *
+     * @author Ewan
+     * @param channelPostId
+     * @return a ChannelPostComment list of matching with channelPostId
+     */
     fun getChannelPostCommentByChannelPostId(channelPostId: Long): List<ChannelPostComment> {
         val channelPostComments = channelPostCommentRepository.findByChannelPostId(channelPostId)
         return channelPostComments

@@ -22,6 +22,9 @@
 
 package me.ewan.cellit.domain.account.vo.domain
 
+/**
+ * @author Ewan
+ */
 enum class AccountRole {
     ROLE_ADMIN, ROLE_USER;
 

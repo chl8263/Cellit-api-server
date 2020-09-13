@@ -30,6 +30,11 @@ import me.ewan.cellit.domain.channel.vo.dto.ChannelPostContentDto
 import me.ewan.cellit.domain.channel.vo.dto.ChannelPostDto
 import org.springframework.hateoas.RepresentationModel
 
+/**
+ * ChannelPostContent Entity Model.
+ *
+ * @author Ewan
+ */
 class ChannelPostContentEntityModel : RepresentationModel<ChannelPostContentEntityModel> {
 
     @JsonUnwrapped

@@ -26,6 +26,11 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped
 import me.ewan.cellit.domain.channel.vo.dto.ChannelDto
 import org.springframework.hateoas.RepresentationModel
 
+/**
+ * Channel Entity Model.
+ *
+ * @author Ewan
+ */
 class ChannelEntityModel : RepresentationModel<ChannelEntityModel> {
 
     @JsonUnwrapped

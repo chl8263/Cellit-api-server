@@ -28,9 +28,29 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
+/**
+ * @author Ewan
+ */
 interface ChannelPostRepository : JpaRepository<ChannelPost, Long> {
 
+    /**
+     * Retrieve ChannelPost as Pageable from the data store by Channel.
+     *
+     * @author Ewan
+     * @param channel
+     * @param pageable
+     * @return a ChannelPostComment as ChannelPost of matching with channelPostId
+     */
     fun findByChannel(channel: Channel, pageable: Pageable): Page<ChannelPost>
 
+    /**
+     * Retrieve ChannelPost as Pageable from the data store by Channel, channelPostName.
+     *
+     * @author Ewan
+     * @param channel
+     * @param channelPostName
+     * @param pageable
+     * @return a ChannelPostComment as ChannelPost of matching with channel, channelPostName
+     */
     fun findByChannelAndChannelPostNameContaining(channel: Channel, channelPostName: String, pageable: Pageable): Page<ChannelPost>
 }

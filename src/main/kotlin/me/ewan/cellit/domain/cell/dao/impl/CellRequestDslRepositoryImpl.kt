@@ -33,6 +33,9 @@ import javax.persistence.EntityManager
 import javax.persistence.EntityManagerFactory
 import javax.persistence.PersistenceContext
 
+/**
+ * @author Ewan
+ */
 class CellRequestDslRepositoryImpl : QuerydslRepositorySupport(CellRequest::class.java), CellRequestDslRepository {
 
     /**

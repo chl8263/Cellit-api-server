@@ -38,6 +38,9 @@ import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
+/**
+ * @author Ewan
+ */
 class CellDslRepositoryImpl() : QuerydslRepositorySupport(Cell::class.java), CellDslRepository {
 
     /**

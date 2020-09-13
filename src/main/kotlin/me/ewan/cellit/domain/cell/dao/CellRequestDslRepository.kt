@@ -26,6 +26,9 @@ import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
 
+/**
+ * @author Ewan
+ */
 interface CellRequestDslRepository {
 
     /**

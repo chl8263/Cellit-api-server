@@ -26,6 +26,11 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped
 import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import org.springframework.hateoas.RepresentationModel
 
+/**
+ * CellEntityModel Entity Model.
+ *
+ * @author Ewan
+ */
 class CellEntityModel : RepresentationModel<CellEntityModel> {
 
     @JsonUnwrapped
@@ -37,5 +42,4 @@ class CellEntityModel : RepresentationModel<CellEntityModel> {
         this.cell = cell
         this.role = role
     }
-
 }

@@ -28,8 +28,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
+/**
+ * AccountCell domain.
+ *
+ * <p>
+ *     AccountCell domain is proxy table for solve the problem of Many to Many relation.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
+ * </p>
+ * @author Ewan
+ */
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator::class, property = "accountCellId")
 class AccountCell (
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var accountCellId : Long? = null,
@@ -62,18 +71,3 @@ class AccountCell (
         var active: Int = 1
 
 )
-//{
-//        override fun toString() = kotlinToString(properties = toStringProperties)
-//
-//        override fun equals(other: Any?) = kotlinEquals(other = other, properties = equalsAndHashCodeProperties)
-//
-//        override fun hashCode() = kotlinHashCode(properties = equalsAndHashCodeProperties)
-//
-//
-//        companion object {
-//                private val equalsAndHashCodeProperties = arrayOf(AccountCell::accountCellId)
-//                private val toStringProperties = arrayOf(
-//                        AccountCell::accountCellId
-//                )
-//        }
-//}

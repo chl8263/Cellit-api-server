@@ -54,15 +54,37 @@ class CellService {
     @Autowired
     lateinit var cellRequestRepository: CellRequestRepository
 
+    /**
+     * Get Cell by cell id
+     *
+     * @author Ewan
+     * @param cellId
+     * @return a Cell of matching with Cell id
+     */
     fun getCellWithId(cellId: Long): Cell? = cellRepository.getOne(cellId)
+
+    /**
+     * Get Cell by cellName.
+     *
+     * @author Ewan
+     * @param cellName
+     * @return a Cell of matching with CellName.
+     */
     fun getCellWithName(cellName: String): Cell? = cellRepository.findByCellName(cellName)
 
-    fun createCell(cellDto: CellDto, name: String): Cell {
+    /**
+     * Create Cell by cell cellDto, cellName.
+     *
+     * @author Ewan
+     * @param cellDto
+     * @param cellName
+     * @return a CellRequest of matching with CellDto, cellName
+     */
+    fun createCell(cellDto: CellDto, cellName: String): Cell {
 
-        val currentUser = accountService.getAccountByName(name) ?: throw NoSuchElementException("Cannot find this account for create cell")
+        val currentUser = accountService.getAccountByName(cellName) ?: throw NoSuchElementException("Cannot find this account for create cell")
 
         val cell = Cell(cellName = cellDto.cellName!!.trim(), cellDescription = cellDto.cellDescription)
-        //val cell = modelMapper.map(cellDto, Cell::class.java)
         val savedCell = cellRepository.save(cell)
         val accountCell = AccountCell(cellRole = CellRole.CREATOR, account = currentUser, cell = savedCell)
 
@@ -74,26 +96,65 @@ class CellService {
         return savedCell
     }
 
+    /**
+     * Delete account from specific Cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return a number of result
+     */
     fun deleteAccountAtCell(cellId: Long, accountId: Long): Long {
         return cellRepository.deleteAccount(cellId, accountId)
     }
 
-    fun insertAccountAtCell(foundAccount: Account, foundCell: Cell): AccountCell {
-        val accountCell = AccountCell(cellRole = CellRole.USER, account = foundAccount, cell = foundCell)
+    /**
+     * Insert account in specific Cell.
+     *
+     * @author Ewan
+     * @param
+     * @param account
+     * @param cell
+     * @return an AccountCell of inserted account
+     */
+    fun insertAccountAtCell(account: Account, cell: Cell): AccountCell {
+        val accountCell = AccountCell(cellRole = CellRole.USER, account = account, cell = cell)
         accountCellRepository.save(accountCell)
         return accountCell
     }
 
+    /**
+     * Get Cell list by query.
+     *
+     * @author Ewan
+     * @param cellQuery
+     * @return a Cell list of matching with Cell query
+     */
     fun getCellsWithQuery(cellQuery: CellQuery): List<Cell> {
         val cells = cellRepository.findCellsWithQuery(cellQuery)
         return cells
     }
 
+    /**
+     * Get Account from specific Cell.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return an Account of matching with Cell id, account id
+     */
     fun findAccountInCell(cellId: Long, accountId: Long): Account? {
         val account = cellRepository.findAccountInCell(cellId, accountId)
         return account
     }
 
+    /**
+     * Get Account list by cellId.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return an Account list of matching with CellId
+     */
     fun findAccountsInCell(cellId: Long): List<Account> {
         val accounts = cellRepository.findAccounts(cellId)
         return accounts

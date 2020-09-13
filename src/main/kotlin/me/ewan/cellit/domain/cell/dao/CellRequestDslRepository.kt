@@ -27,7 +27,33 @@ import me.ewan.cellit.domain.cell.vo.domain.CellRequest
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
 
 interface CellRequestDslRepository {
+
+    /**
+     * Retrieve CellRequest from the data store by cellId, accountId, returning a CellRequest.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return a CellRequest of matching with cellId, accountId
+     */
     fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest?
+
+    /**
+     * Retrieve CellRequests from the data store by cellId, returning a CellRequest list.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return a CellRequest list of matching with cellId
+     */
     fun findByCellIdOrderByCreateDate(cellId: Long): List<CellRequest>
+
+    /**
+     * Delete CellRequest from the data store by cellId, accountId, returning number as Long type.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return a Number of result
+     */
     fun deleteCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): Long
 }

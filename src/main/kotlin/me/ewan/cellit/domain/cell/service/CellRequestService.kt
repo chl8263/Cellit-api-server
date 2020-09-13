@@ -35,32 +35,55 @@ class CellRequestService {
     private lateinit var cellRequestRepository: CellRequestRepository
 
     /**
-     * Create account notification.
+     * Get CellRequest by cellRequest id.
      *
      * @author Ewan
-     * @param accountNotification account notification information
-     * @return
+     * @param cellRequestId
+     * @return a CellRequest of matching with CellRequest id
      */
-    fun getCellRequestWithId(id: Long) = cellRequestRepository.getOne(id)
+    fun getCellRequestWithId(cellRequestId: Long) = cellRequestRepository.getOne(cellRequestId)
 
     /**
-     * Create account notification.
+     * Get CellRequest by cell id.
      *
      * @author Ewan
-     * @param accountNotification account notification information
-     * @return
+     * @param cellId
+     * @return a CellRequest of matching with Cell id
      */
     fun getCellRequestsWithCell(cellId: Long): List<CellRequest> {
         val cellRequests = cellRequestRepository.findByCellIdOrderByCreateDate(cellId)
         return cellRequests
     }
 
+    /**
+     * Create CellRequest.
+     *
+     * @author Ewan
+     * @param cellRequest
+     * @return CellRequest
+     */
     fun createCellRequest(cellRequest: CellRequest) = cellRequestRepository.save(cellRequest)
 
+    /**
+     * Get CellRequest by cell id, account id.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return a CellRequest of matching with Cell id, account id
+     */
     fun findCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): CellRequest?{
         return cellRequestRepository.findCellRequestsWithCellIdAndAccountId(cellId, accountId)
     }
 
+    /**
+     * Delete CellRequest by cell id.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return a number of result
+     */
     fun deleteCellRequestsWithCellIdAndAccountId(cellId: Long, accountId: Long): Long {
         return cellRequestRepository.deleteCellRequestsWithCellIdAndAccountId(cellId, accountId)
     }

@@ -26,6 +26,14 @@ import me.ewan.cellit.global.common.Query
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+/**
+ * For retrieve query for Cell.
+ *
+ * <p>
+ *     When retrieve as query in this api server, use query converter class and processed as dynamic query.
+ * </p>
+ * @author Ewan
+ */
 data class CellQuery(
         var cellId: Long? = null,
 

@@ -27,8 +27,41 @@ import me.ewan.cellit.domain.cell.vo.domain.Cell
 import me.ewan.cellit.domain.cell.vo.query.CellQuery
 
 interface CellDslRepository {
+
+    /**
+     * Retrieve Cells from the data store by query, returning a Cell list which satisfied with condition.
+     *
+     * @author Ewan
+     * @param cellQuery query for search
+     * @return a Cells of matching with query
+     */
     fun findCellsWithQuery(cellQuery: CellQuery): List<Cell>
+
+    /**
+     * Retrieve Account from the data store by cellId, accountId, returning an Account.
+     *
+     * @author Ewan
+     * @param cellQuery query for search
+     * @return an Account of matching with cellId, accountId
+     */
     fun findAccountInCell(cellId: Long, accountId: Long): Account?
+
+    /**
+     * Retrieve Accounts from the data store by cellId, returning an Account list.
+     *
+     * @author Ewan
+     * @param cellId
+     * @return an Account of matching with cellId
+     */
     fun findAccounts(cellId: Long): List<Account>
+
+    /**
+     * Delete Account from the data store by cellId, accountId, returning number as Long type.
+     *
+     * @author Ewan
+     * @param cellId
+     * @param accountId
+     * @return a Number of result
+     */
     fun deleteAccount(cellId: Long, accountId: Long): Long
 }

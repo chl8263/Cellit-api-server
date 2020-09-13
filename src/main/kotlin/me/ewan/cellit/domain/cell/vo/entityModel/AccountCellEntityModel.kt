@@ -29,6 +29,11 @@ import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.dto.CellRequestDto
 import org.springframework.hateoas.RepresentationModel
 
+/**
+ * AccountCellEntityModel Entity Model.
+ *
+ * @author Ewan
+ */
 class AccountCellEntityModel : RepresentationModel<AccountCellEntityModel> {
 
     @JsonUnwrapped

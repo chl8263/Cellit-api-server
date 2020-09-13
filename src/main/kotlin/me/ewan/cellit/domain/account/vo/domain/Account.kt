@@ -34,7 +34,11 @@ import javax.persistence.*
  * Account domain.
  *
  * <p>
- *     Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem.
+ *     Account has account name, password as encoded and has a role.
+ *     In this domain has a AccountCell because Account and Cell domain relation is Many to Many,
+ *     so for solve the problem of Many to Many, there is AccountCell domain.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
  * </p>
  * @author Ewan
  */

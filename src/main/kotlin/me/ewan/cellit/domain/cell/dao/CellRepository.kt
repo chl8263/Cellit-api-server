@@ -28,6 +28,22 @@ import me.ewan.cellit.domain.cell.vo.query.CellQuery
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface CellRepository : JpaRepository<Cell, Long>, CellDslRepository{
+
+    /**
+     * Retrieve Cells from the data store by query, returning a Cell list which satisfied with condition.
+     *
+     * @author Ewan
+     * @param cellQuery query for search
+     * @return a Cells of matching with query
+     */
     override fun findCellsWithQuery(cellQuery: CellQuery): List<Cell>
+
+    /**
+     * Retrieve Cell from the data store by cellName, returning a Cell.
+     *
+     * @author Ewan
+     * @param cellName
+     * @return a Cell of matching with cellName
+     */
     fun findByCellName(cellName: String): Cell?
 }

@@ -28,6 +28,11 @@ import me.ewan.cellit.domain.cell.vo.dto.CellDto
 import me.ewan.cellit.domain.cell.vo.dto.CellRequestDto
 import org.springframework.hateoas.RepresentationModel
 
+/**
+ * CellRequestEntityModel Entity Model.
+ *
+ * @author Ewan
+ */
 class CellRequestEntityModel : RepresentationModel<CellRequestEntityModel> {
 
     @JsonUnwrapped
@@ -36,5 +41,4 @@ class CellRequestEntityModel : RepresentationModel<CellRequestEntityModel> {
     constructor(cellRequest: CellRequestDto){
         this.cellRequest = cellRequest
     }
-
 }

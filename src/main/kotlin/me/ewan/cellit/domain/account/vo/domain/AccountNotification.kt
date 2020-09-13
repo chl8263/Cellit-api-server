@@ -32,7 +32,9 @@ import javax.persistence.*
  * AccountNotification domain.
  *
  * <p>
- *     Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem.
+ *      AccountNotification domain is for notice message to Account.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
  * </p>
  * @author Ewan
  */

@@ -94,7 +94,7 @@ class CellController {
      * @param query For retrieve as specific word
      * @param offset Start number of list
      * @param limit End number of list
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping
     fun getCells(@RequestParam query: String?,
@@ -132,7 +132,7 @@ class CellController {
      *
      * @author Ewan
      * @param cellDto cell data
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @PostMapping
     fun createCell(@RequestBody @Valid cellDto: CellDto): ResponseEntity<Any> {
@@ -177,7 +177,7 @@ class CellController {
      *
      * @author Ewan
      * @param cellId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping("/{cellId}/accounts")
     fun getAccountsAtCell(@PathVariable cellId: Long): ResponseEntity<Any> {
@@ -220,7 +220,7 @@ class CellController {
      * @author Ewan
      * @param cellId
      * @param accountId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @DeleteMapping("/{cellId}/accounts/{accountId}")
     fun deleteAccountAtCell(@PathVariable cellId: Long,
@@ -268,7 +268,7 @@ class CellController {
      * @author Ewan
      * @param cellId
      * @param accountId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @PostMapping("/{cellId}/accounts/{accountId}")
     fun insertAccountAtCell(@PathVariable cellId: Long,
@@ -320,7 +320,7 @@ class CellController {
      *
      * @author Ewan
      * @param cellId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping("/{cellId}/channels")
     fun getChannelsByCellId(@PathVariable cellId: Long): ResponseEntity<Any>{
@@ -362,7 +362,7 @@ class CellController {
      *
      * @author Ewan
      * @param cellId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @GetMapping("/{cellId}/cellRequests")
     fun getCellRequests(@PathVariable cellId: Long): ResponseEntity<Any>{
@@ -402,7 +402,7 @@ class CellController {
      * @author Ewan
      * @param cellId
      * @param accountId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @PostMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun createCellRequests(@PathVariable cellId: Long,
@@ -463,7 +463,7 @@ class CellController {
      * @author Ewan
      * @param cellId
      * @param accountId
-     * @return
+     * @return a ResponseEntity as satisfied with REST hateoas
      */
     @DeleteMapping("/{cellId}/cellRequests/accounts/{accountId}")
     fun deleteCellRequests(@PathVariable cellId: Long,

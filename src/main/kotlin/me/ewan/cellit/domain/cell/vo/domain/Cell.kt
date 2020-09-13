@@ -30,6 +30,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
+/**
+ * Cell domain.
+ *
+ * <p>
+ *     Cell is the unit of group.
+ *     Business model in this project, Cell is most important model. Cell is the unit of group.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
+ * </p>
+ * @author Ewan
+ */
 @Entity
 class Cell(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,19 +85,3 @@ class Cell(
         @Column
         var active: Int = 1
 )
-//{
-//       override fun toString() = kotlinToString(properties = toStringProperties)
-//
-//       override fun equals(other: Any?) = kotlinEquals(other = other, properties = equalsAndHashCodeProperties)
-//
-//       override fun hashCode() = kotlinHashCode(properties = equalsAndHashCodeProperties)
-//
-//
-//       companion object {
-//              private val equalsAndHashCodeProperties = arrayOf(Cell::cellId)
-//              private val toStringProperties = arrayOf(
-//                      Cell::cellId,
-//                      Cell::cellName
-//              )
-//       }
-//}

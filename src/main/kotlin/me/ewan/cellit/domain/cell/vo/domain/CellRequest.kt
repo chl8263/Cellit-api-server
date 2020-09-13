@@ -28,6 +28,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
+/**
+ * CellRequest domain.
+ *
+ * <p>
+ *     CellRequest domain is use for someone request to join specific CellUnit.
+ *
+ *     * Don't use data class because the hashCode, toString that automatically made from data class cause infinity problem. *
+ * </p>
+ * @author Ewan
+ */
 @Entity
 class CellRequest(
 

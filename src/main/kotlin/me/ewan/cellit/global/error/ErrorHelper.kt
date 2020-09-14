@@ -27,6 +27,11 @@ import me.ewan.cellit.global.error.vo.HTTP_STATUS
 import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
 import org.springframework.stereotype.Component
 
+/**
+ * In order to manage Error as common status, should use this class.
+ *
+ * @author Ewan
+ */
 @Component
 class ErrorHelper{
 

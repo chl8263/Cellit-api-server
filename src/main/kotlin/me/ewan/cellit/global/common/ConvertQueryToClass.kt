@@ -31,6 +31,11 @@ import org.springframework.stereotype.Component
 import java.lang.Exception
 import java.lang.StringBuilder
 
+/**
+ * Util class for Convert Query to Class.
+ *
+ * @author Ewan
+ */
 @Component
 class ConvertQueryToClass {
 
@@ -38,6 +43,15 @@ class ConvertQueryToClass {
         const val INVALID_EQUAL_MSG = "This query hasn't valid Equal at API server."
         const val EQUAL = "="
 
+        /**
+         * Convert query to Generic Class.
+         *
+         * @author Ewan
+         * @param query query for retrieve
+         * @param offset start number of list
+         * @param limit end number of list
+         * @return Generic class
+         */
         inline fun <reified T> convert(query: String? = null, offset: Int? = null, limit: Int? = null): T{
             try{
                 val json = convertToJson(query, offset, limit)
@@ -49,6 +63,15 @@ class ConvertQueryToClass {
             }
         }
 
+        /**
+         * Conver Json to Class.
+         *
+         * @author Ewan
+         * @param query query for retrieve
+         * @param offset start number of list
+         * @param limit end number of list
+         * @return Generic class
+         */
         fun convertToJson(query: String?, offset: Int?, limit: Int?): String{
             val sb = StringBuilder()
             sb.append("{")

@@ -22,6 +22,9 @@
 
 package me.ewan.cellit.global.error
 
+/**
+ * @author Ewan
+ */
 object Const {
     const val UNEXPECTED_ERROR_WORD = "Please try again.."
 }

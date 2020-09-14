@@ -22,6 +22,11 @@
 
 package me.ewan.cellit.global.common
 
+/**
+ * The class for query must has offset and limit.
+ *
+ * @author Ewan
+ */
 abstract class Query(
         open var offset: Long? = null,
         open var limit: Long? = null

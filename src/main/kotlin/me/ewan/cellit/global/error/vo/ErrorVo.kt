@@ -22,10 +22,12 @@
 
 package me.ewan.cellit.global.error.vo
 
-import org.hibernate.annotations.CreationTimestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * @author Ewan
+ */
 data class ErrorVo(
         var status: Int,
         var message: String,

@@ -30,6 +30,11 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 import javax.validation.constraints.NotEmpty
 
+/**
+ * Property list as Object value from 'application.yml'.
+ *
+ * @author Ewan
+ */
 @Component
 @ConfigurationProperties(prefix = "my-app")
 class AppProperties{

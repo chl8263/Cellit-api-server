@@ -28,6 +28,11 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import org.springframework.validation.Errors
 import java.io.IOException
 
+/**
+ * For use this .
+ *
+ * @author Ewan
+ */
 class ErrorSerializer : JsonSerializer<Errors>(){
 
     override fun serialize(value: Errors, gen: JsonGenerator, serializers: SerializerProvider) {
@@ -47,18 +52,6 @@ class ErrorSerializer : JsonSerializer<Errors>(){
                 e.printStackTrace()
             }
         }
-
-//        value.globalErrors.forEach {
-//            try{
-//                gen.writeStartObject()
-//                gen.writeStringField("objectName", it.objectName)
-//                gen.writeStringField("code", it.code)
-//                gen.writeStringField("defaultMessage", it.defaultMessage)
-//                gen.writeEndObject()
-//            }catch (e: IOException){
-//                e.printStackTrace()
-//            }
-//        }
 
         gen.writeEndArray()
     }

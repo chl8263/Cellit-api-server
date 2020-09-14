@@ -27,7 +27,11 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.springframework.stereotype.Component
 
-
+/**
+ * For get ApplicationContext Object which provide from Spring framework.
+ *
+ * @author Ewan
+ */
 @Component
 class ApplicationContextProvider : ApplicationContextAware{
 
@@ -40,5 +44,4 @@ class ApplicationContextProvider : ApplicationContextAware{
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         context = applicationContext
     }
-
 }

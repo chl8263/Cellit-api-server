@@ -49,6 +49,9 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
+/**
+ * @author Ewan
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -99,11 +102,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(web: WebSecurity?) {
         web?.let {
-//            it.ignoring()
-//                    .antMatchers("/assets/**")
-//                    .antMatchers("/dist/**")
-//                    .antMatchers("/images/**")
-//                    .antMatchers("/common/**")
         }
     }
 

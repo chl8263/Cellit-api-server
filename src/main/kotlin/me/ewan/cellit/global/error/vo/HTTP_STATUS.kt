@@ -22,6 +22,9 @@
 
 package me.ewan.cellit.global.error.vo
 
+/**
+ * @author Ewan
+ */
 object HTTP_STATUS {
     const val OK = 200
     const val CREATED = 201

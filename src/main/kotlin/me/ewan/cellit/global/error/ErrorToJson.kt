@@ -28,6 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
 
+/**
+ * For use this .
+ *
+ * @author Ewan
+ */
 @Component
 class ErrorToJson {
 

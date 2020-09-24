@@ -35,12 +35,28 @@ import org.springframework.stereotype.Component
 @Component
 class ErrorHelper{
 
+    /**
+     * Get final error attribute as Hashmap for response.
+     *
+     * @author Ewan
+     * @param errorList
+     * @return HashMap<String, List<ErrorVo>>
+     */
     fun getErrorAttributes(errorList: List<ErrorVo>): HashMap<String, List<ErrorVo>> {
         val containAttributes = HashMap<String, List<ErrorVo>>()
         containAttributes["errors"] = errorList
         return containAttributes
     }
 
+    /**
+     * Put error data in ErrorList and return array.
+     *
+     * @author Ewan
+     * @param status
+     * @param message
+     * @param errorList
+     * @return ArrayList<ErrorVo>
+     */
     fun addErrorAttributes(status: Int, message: String, errorList: ArrayList<ErrorVo>): ArrayList<ErrorVo>{
         return if(errorList.isEmpty()){
             errorList.add(ErrorVo(status = status, message = message))
@@ -50,6 +66,13 @@ class ErrorHelper{
         }
     }
 
+    /**
+     * If occur unexpected error, need to response as BAD_QUEST 400 with reason.
+     *
+     * @author Ewan
+     * @param message
+     * @return HashMap<String, List<ErrorVo>>
+     */
     fun getUnexpectError(message: String): HashMap<String, List<ErrorVo>> {
         val containAttributes = HashMap<String, List<ErrorVo>>()
         containAttributes["errors"] = arrayListOf(ErrorVo(status = BAD_REQUEST, message = message))

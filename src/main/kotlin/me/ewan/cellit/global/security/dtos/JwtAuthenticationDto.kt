@@ -24,6 +24,11 @@ package me.ewan.cellit.global.security.dtos
 
 import org.codehaus.jackson.annotate.JsonProperty
 
+/**
+ * Dto for get Jwt authentication
+ *
+ * @author Ewan
+ */
 data class JwtAuthenticationDto(
         @field:JsonProperty("accountname")
         val accountname: String? = null,

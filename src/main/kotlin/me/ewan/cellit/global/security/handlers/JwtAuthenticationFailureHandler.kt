@@ -34,6 +34,10 @@ import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ *
+ * @author Ewan
+ */
 @Component
 class JwtAuthenticationFailureHandler : AuthenticationFailureHandler {
 
@@ -45,6 +49,16 @@ class JwtAuthenticationFailureHandler : AuthenticationFailureHandler {
     @Autowired
     private lateinit var errorHelper: ErrorHelper
 
+    /**
+     * Try authentication at BasicAuthenticationFilter.
+     * This method perform is to extract jwt token in http Authorization.
+     *
+     * @author Ewan
+     * @param req
+     * @param res
+     * @param exception
+     * @return
+     */
     override fun onAuthenticationFailure(req: HttpServletRequest, res: HttpServletResponse, exception: AuthenticationException?) {
         log.error { exception?.message }
 

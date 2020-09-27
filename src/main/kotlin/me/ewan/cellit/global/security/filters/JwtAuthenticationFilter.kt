@@ -34,6 +34,10 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ *
+ * @author Ewan
+ */
 class JwtAuthenticationFilter(defaultFilterProcessesUrl: String?) : AbstractAuthenticationProcessingFilter(defaultFilterProcessesUrl) {
 
     private var myAuthenticationSuccessHandler: AuthenticationSuccessHandler? = null
@@ -44,6 +48,14 @@ class JwtAuthenticationFilter(defaultFilterProcessesUrl: String?) : AbstractAuth
         this.myAuthenticationFailureHandler = authenticationFailureHandler
     }
 
+    /**
+     * Authentication for jwt token as UsernamePasswordAuthenticationToken.
+     *
+     * @author Ewan
+     * @param req
+     * @param res
+     * @return Authentication
+     */
     override fun attemptAuthentication(req: HttpServletRequest, res: HttpServletResponse): Authentication {
 
         val formLoginDto = ObjectMapper().readValue(req.reader, JwtAuthenticationDto::class.java)
@@ -53,18 +65,31 @@ class JwtAuthenticationFilter(defaultFilterProcessesUrl: String?) : AbstractAuth
         return super.getAuthenticationManager().authenticate(token)
     }
 
-    /*
-    * Try authentication at FormLoginAuthenticationProvider
-    * This method perform to make JWT token and inject to response
-    * */
+    /**
+     * Try authentication at FormLoginAuthenticationProvider.
+     * This method perform to make JWT token and inject to response.
+     *
+     * @author Ewan
+     * @param request
+     * @param response
+     * @param chain
+     * @param authResult
+     * @return
+     */
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
         this.myAuthenticationSuccessHandler?.onAuthenticationSuccess(request, response, authResult)
     }
 
-    /*
-    * Try authentication at FormLoginAuthenticationProvider
-    * This method perform to handle error about FormLoginAuthenticationProvider result
-    * */
+    /**
+     * Try authentication at FormLoginAuthenticationProvider.
+     * This method perform to handle error about FormLoginAuthenticationProvider result.
+     *
+     * @author Ewan
+     * @param request
+     * @param response
+     * @param failed
+     * @return
+     */
     override fun unsuccessfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, failed: AuthenticationException?) {
         //super.unsuccessfulAuthentication(request, response, failed)
         this.myAuthenticationFailureHandler?.onAuthenticationFailure(request, response, failed)

@@ -23,11 +23,9 @@
 package me.ewan.cellit.domain.account.vo.dto.validator
 
 import me.ewan.cellit.domain.account.vo.dto.AccountDto
-import me.ewan.cellit.global.ValidErrorCode.*
 import me.ewan.cellit.global.error.vo.ErrorVo
 import me.ewan.cellit.global.error.vo.HTTP_STATUS.BAD_REQUEST
 import org.springframework.stereotype.Component
-import org.springframework.validation.Errors
 
 /**
  * <code>Validator</code> for <code>AccountDto</code>.

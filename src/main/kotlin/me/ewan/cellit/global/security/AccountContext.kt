@@ -28,7 +28,10 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 
-
+/**
+ *
+ * @author Ewan
+ */
 class AccountContext : User {
 
     var account: Account? = null

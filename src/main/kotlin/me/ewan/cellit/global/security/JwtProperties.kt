@@ -22,6 +22,10 @@
 
 package me.ewan.cellit.global.security
 
+/**
+ *
+ * @author Ewan
+ */
 object JwtProperties {
     const val ISSUER: String = "cellit"
     const val USER_NAME: String = "USER_NAME"

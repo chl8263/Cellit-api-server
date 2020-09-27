@@ -34,9 +34,23 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ *
+ * @author Ewan
+ */
 class JwtAuthorizationFilter(authenticationManager: AuthenticationManager, private val extractor: HeaderTokenExtractor, private val decoder: JwtDecoder)
     : BasicAuthenticationFilter(authenticationManager) {
 
+    /**
+     * Try authentication at BasicAuthenticationFilter.
+     * This method perform is to extract jwt token in http Authorization.
+     *
+     * @author Ewan
+     * @param request
+     * @param response
+     * @param chain
+     * @return
+     */
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
 
         val tokenPayload = request.getHeader(HEADER_STRING)

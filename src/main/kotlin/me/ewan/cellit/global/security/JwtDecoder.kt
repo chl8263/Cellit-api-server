@@ -31,11 +31,22 @@ import me.ewan.cellit.global.security.JwtProperties.USER_ROLE
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 
+/**
+ *
+ * @author Ewan
+ */
 @Component
 class JwtDecoder {
 
     private val log = KotlinLogging.logger {}
 
+    /**
+     * Decode Jwt Token then parse AccountContext.
+     *
+     * @author Ewan
+     * @param token
+     * @return String
+     */
     fun decodeJwt(token: String): AccountContext{
         val decodedJWT: DecodedJWT = isValidToken(token)
 
@@ -45,6 +56,13 @@ class JwtDecoder {
         return AccountContext(userName, "****", role)
     }
 
+    /**
+     * valid token.
+     *
+     * @author Ewan
+     * @param token
+     * @return String
+     */
     private fun isValidToken(token: String) : DecodedJWT {
 
         lateinit var jwt: DecodedJWT

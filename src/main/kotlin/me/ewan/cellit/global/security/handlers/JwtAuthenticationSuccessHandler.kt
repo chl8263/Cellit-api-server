@@ -38,6 +38,10 @@ import java.io.IOException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ *
+ * @author Ewan
+ */
 @Component
 class JwtAuthenticationSuccessHandler : AuthenticationSuccessHandler {
 
@@ -47,9 +51,15 @@ class JwtAuthenticationSuccessHandler : AuthenticationSuccessHandler {
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
 
-    /*
-    * This method get PostAuthorizationToken from authenticate of FormLoginAuthenticationProvider -> successfulAuthentication of FormLoginFilter
-    * */
+    /**
+     * This method get PostAuthorizationToken from authenticate of FormLoginAuthenticationProvider -> successfulAuthentication of FormLoginFilter.
+     *
+     * @author Ewan
+     * @param req
+     * @param res
+     * @param auth
+     * @return
+     */
     override fun onAuthenticationSuccess(req: HttpServletRequest, res: HttpServletResponse, auth: Authentication) {
         val token = auth as PostAuthorizationToken
         val context = token.principal as AccountContext
@@ -59,6 +69,15 @@ class JwtAuthenticationSuccessHandler : AuthenticationSuccessHandler {
 
     private fun writeDto(token: String): TokenDto = TokenDto(token)
 
+    /**
+     * Write content type and status at Response.
+     *
+     * @author Ewan
+     * @param req
+     * @param res
+     * @param auth
+     * @return
+     */
     @Throws(JsonProcessingException::class, IOException::class)
     private fun processResponse(res: HttpServletResponse, dto: TokenDto){
         res.contentType = MediaType.APPLICATION_JSON_VALUE

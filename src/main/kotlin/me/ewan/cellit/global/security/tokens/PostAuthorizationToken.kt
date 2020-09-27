@@ -26,6 +26,10 @@ import me.ewan.cellit.global.security.AccountContext
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
 
+/**
+ *
+ * @author Ewan
+ */
 class PostAuthorizationToken(principal: Any?, credentials: Any?, authorities: MutableCollection<out GrantedAuthority>?)
     : UsernamePasswordAuthenticationToken(principal, credentials, authorities) {
 

@@ -36,6 +36,10 @@ import org.springframework.security.jwt.Jwt
 import org.springframework.stereotype.Component
 import java.io.UnsupportedEncodingException
 
+/**
+ *
+ * @author Ewan
+ */
 @Component
 class JwtFactory {
 

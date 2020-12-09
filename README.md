@@ -28,7 +28,7 @@ Program structure
 |Domain Specific Language|[Querydsl](http://www.querydsl.com/)|
 <br/>
 
-![structrue](img\structure.PNG)
+![structrue](./img/structure.PNG)
 
 In order to request Api on client need to put JWT token on 'Authorization' of http header.
 

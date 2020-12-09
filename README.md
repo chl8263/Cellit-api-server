@@ -88,7 +88,7 @@ Every response of request has body based on `HAL - Hypertext Application Languag
 
 ### DB ERD
 
-![ERD](img\ERD.PNG)
+![ERD](./img/ERD.PNG)
 
 Rule of interest for programming on thos project.
 -------------
@@ -128,7 +128,7 @@ val account = QAccount.account
 
 ### Branch strategy
 
-![ERD](img\gitflow.PNG)
+![ERD](./img/gitflow.PNG)
 
 Cellit project manage code by follow Git Flow.
 

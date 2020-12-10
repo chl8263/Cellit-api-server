@@ -15,8 +15,6 @@ Release 1.0 version is focus on overall structure.
 :factory: Program structure
 -------------
 
-<br/>
-
 ### Technology set
 
 |Technical Name|Value|
@@ -31,6 +29,8 @@ Release 1.0 version is focus on overall structure.
 ![structrue](./img/structure.PNG)
 
 In order to request Api on client need to put JWT token on 'Authorization' of http header.
+
+<br/>
 
 ### Response as HAL - Hypertext Application Language
 
@@ -86,6 +86,8 @@ Every response of request has body based on `HAL - Hypertext Application Languag
 }
 ~~~
 
+<br/>
+
 ### DB ERD
 
 ![ERD](./img/ERD.PNG)
@@ -100,17 +102,19 @@ This project follow koltin code convension by official kotlin site.
 https://kotlinlang.org/docs/reference/coding-conventions.html
 ```
 
+<br/>
+
 ### Writing Test code
 
 Create Test code for every each api. High stability against incidental bugs that may arise against code modifications.
 
 * Create test code by using [Mockito](https://site.mockito.org/) for solid test code.
 
+<br/>
+
 ### Efforts for readable and maintainable code
 
-
 Coherent blocks of code and aggressive use `Query DSL` instead of `JPQL`.
-
 
 ~~~
 SELECT a FROM Account a  JOIN FETCH a.accountCells WHERE a.accountId = :accountId
@@ -125,6 +129,8 @@ val account = QAccount.account
                     .and(accountCell.cell.active.eq(1)))
             .fetchOne()
 ~~~
+
+<br/>
 
 ### Branch strategy
 

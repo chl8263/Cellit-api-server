@@ -12,7 +12,7 @@ Manager of cell can manage about channel and users. Forexample reject for reques
 Release 1.0 version is focus on overall structure.
 
 
-Program structure
+:factory: Program structure
 -------------
 
 <br/>
@@ -90,7 +90,7 @@ Every response of request has body based on `HAL - Hypertext Application Languag
 
 ![ERD](./img/ERD.PNG)
 
-Rule of interest for programming on thos project.
+:pushpin: Rule of interest for programming on thos project.
 -------------
 ### Code convension
 
@@ -141,7 +141,7 @@ Cellit project manage code by follow Git Flow.
 A successful Git branching model : https://nvie.com/posts/a-successful-git-branching-model/
 
 
-Working with Petclinic in your IDE
+:hammer: Working with Cellit in your IDE
 -------------
 
 ### Prerequisites
